@@ -23,5 +23,7 @@ pluginManagement {
             name 'frcHome'
             url frcHomeMaven
         }
+        include ':common'
+        include ':common:robot'
     }
 }
