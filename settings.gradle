@@ -4,6 +4,9 @@ pluginManagement {
     repositories {
         mavenLocal()
         gradlePluginPortal()
+        include ':common'
+        include ':common:robot'
+
         String frcYear = '2020'
         File frcHome
         if (OperatingSystem.current().isWindows()) {
