@@ -34,34 +34,31 @@ import org.frcteam2910.common.robot.UpdateManager;
  */
 public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
 
-  private static final double TRACKWIDTH = 1.0;
-  private static final double WHEELBASE = 1.0;
-
   private static final SS_Drivebase instance;
 
-  private final CPRSwerveModule frontLeftModule = new CPRSwerveModule(new Vector2(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), 
+  private final CPRSwerveModule frontLeftModule = new CPRSwerveModule(new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0), 
   RobotMap.FRONT_LEFT_MODULE_OFFSET, new TalonSRX(RobotMap.FRONT_LEFT_ANGLE_MOTOR), 
   new CANSparkMax(RobotMap.FRONT_LEFT_DRIVE_MOTOR, MotorType.kBrushless));
 
-  private final CPRSwerveModule frontRightModule = new CPRSwerveModule(new Vector2(TRACKWIDTH / 2.0, WHEELBASE / 2.0), 
+  private final CPRSwerveModule frontRightModule = new CPRSwerveModule(new Vector2(RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), 
   RobotMap.FRONT_RIGHT_MODULE_OFFSET, new TalonSRX(RobotMap.FRONT_RIGHT_ANGLE_MOTOR), 
   new CANSparkMax(RobotMap.FRONT_RIGHT_DRIVE_MOTOR, MotorType.kBrushless));
 
-  private final CPRSwerveModule backLeftModule = new CPRSwerveModule(new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0), 
+  private final CPRSwerveModule backLeftModule = new CPRSwerveModule(new Vector2(-RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0), 
   RobotMap.BACK_LEFT_MODULE_OFFSET, new TalonSRX(RobotMap.BACK_LEFT_ANGLE_MOTOR), 
   new CANSparkMax(RobotMap.BACK_LEFT_DRIVE_MOTOR, MotorType.kBrushless));
 
-  private final CPRSwerveModule backRightModule = new CPRSwerveModule(new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), 
+  private final CPRSwerveModule backRightModule = new CPRSwerveModule(new Vector2(-RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), 
   RobotMap.BACK_RIGHT_MODULE_OFFSET, new TalonSRX(RobotMap.BACK_RIGHT_ANGLE_MOTOR), 
   new CANSparkMax(RobotMap.BACK_RIGHT_DRIVE_MOTOR, MotorType.kBrushless));
 
   private final SwerveModule[] modules = {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
   private final SwerveKinematics kinematics = new SwerveKinematics(
-            new Vector2(TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Front Left
-            new Vector2(TRACKWIDTH / 2.0, -WHEELBASE / 2.0), // Front Right
-            new Vector2(-TRACKWIDTH / 2.0, WHEELBASE / 2.0), // Back Left
-            new Vector2(-TRACKWIDTH / 2.0, -WHEELBASE / 2.0) // Back Right
+            new Vector2(RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), // Front Left
+            new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0), // Front Right
+            new Vector2(-RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), // Back Left
+            new Vector2(-RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0) // Back Right
     );
   
   private final SwerveOdometry odometry = new SwerveOdometry(kinematics, RigidTransform2.ZERO);
