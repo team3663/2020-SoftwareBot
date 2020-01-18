@@ -50,7 +50,11 @@ public class SS_NavX extends SubsystemBase {
     SmartDashboard.putNumber("yaw Rotation", getAngle());
     SmartDashboard.putNumber("pitch Rotation", getAngle(Axis.PITCH));
     SmartDashboard.putNumber("roll Rotation", getAngle(Axis.ROLL));
-    
+
+  }
+
+  public void reset(){
+    navx.reset();
   }
   public enum Axis{
     PITCH,
