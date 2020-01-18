@@ -7,38 +7,38 @@
 
 package frc.robot.commands;
 
+import org.frcteam2910.common.math.Vector2;
+
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Robot;
+import frc.robot.subsystems.SS_Drivebase;
 
 public class C_Drive extends Command {
   public C_Drive() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    requires(SS_Drivebase.getInstance());
   }
 
-  // Called just before this Command runs the first time
-  @Override
-  protected void initialize() {
-  }
-
-  // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    double forward = Robot.getOi().getDriveForwardAxis().get(true);
+    double strafe = Robot.getOi().getDriveStrafeAxis().get(true);
+    double rotation = Robot.getOi().getDriveRotationAxis().get(true);
+
+    SS_Drivebase.getInstance().drive(new Vector2(forward, strafe), rotation, true);
   }
 
-  // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     return false;
   }
 
-  // Called once after isFinished returns true
   @Override
   protected void end() {
+    SS_Drivebase.getInstance().drive(Vector2.ZERO, 0.0, false);
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
   }
 }

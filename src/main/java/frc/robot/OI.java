@@ -7,8 +7,47 @@
 
 package frc.robot;
 
+import org.frcteam2910.common.math.Rotation2;
+import org.frcteam2910.common.robot.input.Axis;
+import org.frcteam2910.common.robot.input.Controller;
+import org.frcteam2910.common.robot.input.XboxController;
+
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.subsystems.SS_Drivebase;
+
 /**
  * Add your docs here.
  */
 public class OI {
+    private Controller controller = new XboxController(RobotMap.DRIVE_CONTROLLER_ID);
+
+    public OI() {
+        controller.getLeftXAxis().setInverted(true);
+        controller.getRightXAxis().setInverted(true);
+
+        controller.getRightXAxis().setScale(0.45);
+    }
+
+    public void bindButtons() {
+        getResetGyroButton().whenPressed(new InstantCommand(() ->
+                SS_Drivebase.getInstance().resetGyroAngle(Rotation2.ZERO)
+        ));
+    }
+
+    public Axis getDriveForwardAxis() {
+        return controller.getLeftYAxis();
+    }
+
+    public Axis getDriveStrafeAxis() {
+        return controller.getLeftXAxis();
+    }
+
+    public Axis getDriveRotationAxis() {
+        return controller.getRightXAxis();
+    }
+
+    public Button getResetGyroButton() {
+        return controller.getBackButton();
+    }
 }

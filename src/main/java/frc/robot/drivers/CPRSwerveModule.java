@@ -57,10 +57,7 @@ public final class CPRSwerveModule extends SwerveModule {
      * @param angleMotor     the motor controller that controls the angle motor
      * @param driveMotor     the motor controller that controls the drive motor
      */
-    public CPRSwerveModule(Vector2 modulePosition,
-                           double offsetAngle,
-                           TalonSRX angleMotor,
-                           CANSparkMax driveMotor) {
+    public CPRSwerveModule(Vector2 modulePosition, double offsetAngle, TalonSRX angleMotor, CANSparkMax driveMotor) {
         super(modulePosition);
         this.offsetAngle = offsetAngle;
         this.angleMotor = angleMotor;
