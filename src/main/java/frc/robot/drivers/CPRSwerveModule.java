@@ -4,6 +4,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.drivers.SwerveModule;
 
@@ -34,12 +37,12 @@ public final class CPRSwerveModule extends SwerveModule {
      * <p>
      * This value was taken from our 2018 robot.
      */
-    private static final double DEFAULT_DRIVE_TICKS_PER_UNIT = 36.65;
+    private static final double DEFAULT_DRIVE_TICKS_PER_UNIT = 36.65; //TODO: find drive ticks per inch with a NEO drive motor
 
     private final double offsetAngle;
 
     private final TalonSRX angleMotor;
-    private final TalonSRX driveMotor;
+    private final CANSparkMax driveMotor;
 
     /**
      * The amount of drive encoder ticks that occur for one unit of travel.
@@ -57,7 +60,7 @@ public final class CPRSwerveModule extends SwerveModule {
     public CPRSwerveModule(Vector2 modulePosition,
                            double offsetAngle,
                            TalonSRX angleMotor,
-                           TalonSRX driveMotor) {
+                           CANSparkMax driveMotor) {
         super(modulePosition);
         this.offsetAngle = offsetAngle;
         this.angleMotor = angleMotor;
@@ -74,18 +77,15 @@ public final class CPRSwerveModule extends SwerveModule {
         this.angleMotor.setNeutralMode(NeutralMode.Brake);
 
         // Configure drive motor
-        this.driveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, CAN_TIMEOUT_MS);
-        this.driveMotor.setSensorPhase(true);
-        this.driveMotor.config_kP(0, 15, CAN_TIMEOUT_MS);
-        this.driveMotor.config_kI(0, 0.01, CAN_TIMEOUT_MS);
-        this.driveMotor.config_kD(0, 0.1, CAN_TIMEOUT_MS);
-        this.driveMotor.config_kF(0, 0.2, CAN_TIMEOUT_MS);
+        this.driveMotor.getPIDController().setP(15);
+        this.driveMotor.getPIDController().setI(.01);
+        this.driveMotor.getPIDController().setD(.1);
+        this.driveMotor.getPIDController().setFF(.2);
+
+        this.driveMotor.setIdleMode(IdleMode.kBrake);
 
         // Setup current limiting
-        this.driveMotor.configContinuousCurrentLimit(30, CAN_TIMEOUT_MS);
-        this.driveMotor.configPeakCurrentLimit(30, CAN_TIMEOUT_MS);
-        this.driveMotor.configPeakCurrentDuration(100, CAN_TIMEOUT_MS);
-        this.driveMotor.enableCurrentLimit(true);
+        this.driveMotor.setSmartCurrentLimit(25);
     }
 
     /**
@@ -115,7 +115,7 @@ public final class CPRSwerveModule extends SwerveModule {
 
     @Override
     public double readDistance() {
-        return driveMotor.getSelectedSensorPosition() / driveTicksPerUnit;
+        return driveMotor.getEncoder().getPosition() / driveTicksPerUnit;
     }
 
     @Override
@@ -125,6 +125,6 @@ public final class CPRSwerveModule extends SwerveModule {
 
     @Override
     public void setDriveOutput(double output) {
-        driveMotor.set(ControlMode.PercentOutput, output);
+        driveMotor.set(output);
     }
 }
