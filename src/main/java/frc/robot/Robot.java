@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.robot.subsystems.SS_NavX;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -17,7 +18,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
-  
+  SS_NavX navX = new SS_NavX();
+
 
   /**
    * This function is run when the robot is first started up and should be
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    navX.updateTelemetry();
   }
 
   /**
