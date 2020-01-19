@@ -14,10 +14,10 @@ public class RobotMap
     public static final double WHEELBASE = 23.63;
 
     //SWERVE MODULE ANGLE ENCODER OFFSETS (in radians, obviously)
-    public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(8);
-    public static final double FRONT_RIGHT_MODULE_OFFSET = Math.toRadians(9);
-    public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(18);
-    public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(39);
+    public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(67);
+    public static final double FRONT_RIGHT_MODULE_OFFSET = Math.toRadians(-13);
+    public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(82);
+    public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-2);
 
     //SWERVE CAN IDs
     public static final int FRONT_LEFT_DRIVE_MOTOR = 1;

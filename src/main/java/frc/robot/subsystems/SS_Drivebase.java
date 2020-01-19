@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import frc.robot.commands.*;
 import frc.robot.drivers.*;
 import frc.robot.RobotMap;
@@ -65,7 +66,7 @@ public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
 
   private final Object sensorLock = new Object();
   @GuardedBy("sensorLock")
-  private final NavX navX = new NavX(I2C.Port.kOnboard, RobotMap.NAVX_UPDATE_RATE);
+  private final NavX navX = new NavX(Port.kUSB, RobotMap.NAVX_UPDATE_RATE);
 
   private final Object kinematicsLock = new Object();
   @GuardedBy("kinematicsLock")

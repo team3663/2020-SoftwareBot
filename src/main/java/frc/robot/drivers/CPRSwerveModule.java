@@ -66,10 +66,10 @@ public final class CPRSwerveModule extends SwerveModule {
         // Configure angle motor
         this.angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, CAN_TIMEOUT_MS);
         this.angleMotor.configFeedbackNotContinuous(true, CAN_TIMEOUT_MS);
-        this.angleMotor.setSensorPhase(true);
-        this.angleMotor.config_kP(0, 30, CAN_TIMEOUT_MS);
+        this.angleMotor.setSensorPhase(false);
+        this.angleMotor.config_kP(0, 20, CAN_TIMEOUT_MS); //TODO: Tune PID
         this.angleMotor.config_kI(0, 0.001, CAN_TIMEOUT_MS);
-        this.angleMotor.config_kD(0, 200, CAN_TIMEOUT_MS);
+        this.angleMotor.config_kD(0, 300, CAN_TIMEOUT_MS);
         this.angleMotor.config_kF(0, 0, CAN_TIMEOUT_MS);
         this.angleMotor.setNeutralMode(NeutralMode.Brake);
 
