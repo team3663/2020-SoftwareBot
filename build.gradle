@@ -47,7 +47,16 @@ dependencies {
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
 
-    compileOnly project(':common:robot')
+    // This makes build work (including common lib jar file generation) but references to common library classes don't resolve in editor.
+    //compileOnly project(':common:robot')
+    
+    // This make references to common library classes work in Intellisense but causes jar files for common lib not to be generated
+    //compile project(':common:robot')
+
+    // Import prebuilt libs directly from local lib directly, this seems give us at least a temporary solution but it requires
+    // that we have to manually rebuild/copy the libs if we make any changes to them.
+    compile files('libs/common-2020.0.0.jar')
+    compile files('libs/robot-2020.0.0.jar')
 
     implementation wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
