@@ -34,6 +34,12 @@ public class RobotMap
     public static final int DRIVE_CONTROLLER_ID = 0;
 
     //MISC
-    public static final byte NAVX_UPDATE_RATE = (byte) 200;
+    static int hawkeye = 200;
+    public static final byte NAVX_UPDATE_RATE = (byte) hawkeye;
+
+
+    //TEST
+    public static final int TEST_ANGLE_MOTOR  = 20;
+    public static final int TEST_DRIVE_MOTOR = 21;
     
 }

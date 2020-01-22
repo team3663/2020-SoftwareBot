@@ -4,7 +4,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANAnalog;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
+import com.revrobotics.CANAnalog.AnalogMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import org.frcteam2910.common.math.Vector2;
@@ -41,8 +44,10 @@ public final class CPRSwerveModule extends SwerveModule {
 
     private final double offsetAngle;
 
-    private final TalonSRX angleMotor;
+    private final CANSparkMax angleMotor;
     private final CANSparkMax driveMotor;
+
+    private final CANAnalog angleEncoder;
 
     /**
      * The amount of drive encoder ticks that occur for one unit of travel.
@@ -57,21 +62,19 @@ public final class CPRSwerveModule extends SwerveModule {
      * @param angleMotor     the motor controller that controls the angle motor
      * @param driveMotor     the motor controller that controls the drive motor
      */
-    public CPRSwerveModule(Vector2 modulePosition, double offsetAngle, TalonSRX angleMotor, CANSparkMax driveMotor) {
+    public CPRSwerveModule(Vector2 modulePosition, double offsetAngle, CANSparkMax angleMotor, CANSparkMax driveMotor) {
         super(modulePosition);
         this.offsetAngle = offsetAngle;
         this.angleMotor = angleMotor;
         this.driveMotor = driveMotor;
 
-        // Configure angle motor
-        this.angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, CAN_TIMEOUT_MS);
-        this.angleMotor.configFeedbackNotContinuous(true, CAN_TIMEOUT_MS);
-        this.angleMotor.setSensorPhase(false);
-        this.angleMotor.config_kP(0, 20, CAN_TIMEOUT_MS); //TODO: Tune PID
-        this.angleMotor.config_kI(0, 0.001, CAN_TIMEOUT_MS);
-        this.angleMotor.config_kD(0, 300, CAN_TIMEOUT_MS);
-        this.angleMotor.config_kF(0, 0, CAN_TIMEOUT_MS);
-        this.angleMotor.setNeutralMode(NeutralMode.Brake);
+
+        //Config angle motor TODO: Tune PID        
+        this.angleMotor.getPIDController().setP(0);//was 30 originally
+        this.angleMotor.getPIDController().setI(0);//was .001
+        this.angleMotor.getPIDController().setD(0);//was 300
+        this.angleMotor.getPIDController().setFF(0);//was 0
+        this.angleMotor.setIdleMode(IdleMode.kBrake);
 
         // Configure drive motor
         this.driveMotor.getPIDController().setP(15);
@@ -83,6 +86,10 @@ public final class CPRSwerveModule extends SwerveModule {
 
         // Setup current limiting
         this.driveMotor.setSmartCurrentLimit(25);
+
+        //Configure absolute encoder
+        this.angleEncoder = new CANAnalog(this.angleMotor, AnalogMode.kAbsolute);
+        this.angleEncoder.setInverted(false);
     }
 
     /**
@@ -101,7 +108,9 @@ public final class CPRSwerveModule extends SwerveModule {
 
     @Override
     protected double readAngle() {
-        double angle = angleMotor.getSelectedSensorPosition() / ANGLE_TICKS_PER_RADIAN + offsetAngle;
+        
+
+        double angle = angleEncoder.getPosition() / ANGLE_TICKS_PER_RADIAN + offsetAngle;
         angle %= 2.0 * Math.PI;
         if (angle < 0.0) {
             angle += 2.0 * Math.PI;
@@ -114,10 +123,12 @@ public final class CPRSwerveModule extends SwerveModule {
     public double readDistance() {
         return driveMotor.getEncoder().getPosition() / driveTicksPerUnit;
     }
-
+    /**
+     * @param angle IN RADIANS
+     */
     @Override
-    protected void setTargetAngle(double angle) {
-        angleMotor.set(ControlMode.Position, angle * ANGLE_TICKS_PER_RADIAN);
+	public void setTargetAngle(double angle) {
+        angleMotor.getPIDController().setReference(angle * ANGLE_TICKS_PER_RADIAN, ControlType.kPosition);
     }
 
     @Override

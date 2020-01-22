@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
     updateManager.startLoop(5.0e-3);
   }
 
-  public static OI getOi() {
+  public static OI getOI() {
     return oi;
   }
 

@@ -50,4 +50,7 @@ public class OI {
     public Button getResetGyroButton() {
         return controller.getBackButton();
     }
+    public Controller getController() {
+        return controller;
+    }
 }

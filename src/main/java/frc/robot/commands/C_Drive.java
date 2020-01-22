@@ -20,9 +20,9 @@ public class C_Drive extends Command {
 
   @Override
   protected void execute() {
-    double forward = Robot.getOi().getDriveForwardAxis().get(true);
-    double strafe = Robot.getOi().getDriveStrafeAxis().get(true);
-    double rotation = Robot.getOi().getDriveRotationAxis().get(true);
+    double forward = Robot.getOI().getDriveForwardAxis().get(true);
+    double strafe = Robot.getOI().getDriveStrafeAxis().get(true);
+    double rotation = Robot.getOI().getDriveRotationAxis().get(true);
 
     SS_Drivebase.getInstance().drive(new Vector2(forward, strafe), rotation, true);
   }
