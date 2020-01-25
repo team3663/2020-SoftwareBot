@@ -15,7 +15,7 @@ import frc.robot.subsystems.SS_Drivebase;
 
 public class C_Drive extends Command {
   public C_Drive() {
-    requires(SS_Drivebase.getInstance());
+    //requires(SS_Drivebase.getInstance());
   }
 
   @Override
@@ -24,7 +24,7 @@ public class C_Drive extends Command {
     double strafe = Robot.getOI().getDriveStrafeAxis().get(true);
     double rotation = Robot.getOI().getDriveRotationAxis().get(true);
 
-    SS_Drivebase.getInstance().drive(new Vector2(forward, strafe), rotation, true);
+    //SS_Drivebase.getInstance().drive(new Vector2(forward, strafe), rotation, true);
   }
 
   @Override
@@ -34,7 +34,7 @@ public class C_Drive extends Command {
 
   @Override
   protected void end() {
-    SS_Drivebase.getInstance().drive(Vector2.ZERO, 0.0, false);
+    //SS_Drivebase.getInstance().drive(Vector2.ZERO, 0.0, false);
   }
 
   @Override

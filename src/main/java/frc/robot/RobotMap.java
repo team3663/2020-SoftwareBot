@@ -30,12 +30,15 @@ public class RobotMap
     public static final int BACK_LEFT_ANGLE_MOTOR = 7;
     public static final int BACK_RIGHT_ANGLE_MOTOR = 8;
 
+    //SWERVE AMPERAGE LIMITS
+    public static final int DRIVE_MOTOR_AMP_LIMIT = 25;
+
     //CONTROLLERS
     public static final int DRIVE_CONTROLLER_ID = 0;
 
     //MISC
-    static int hawkeye = 200;
-    public static final byte NAVX_UPDATE_RATE = (byte) hawkeye;
+    static int joe = 200;
+    public static final byte NAVX_UPDATE_RATE = (byte) joe;
 
 
     //TEST

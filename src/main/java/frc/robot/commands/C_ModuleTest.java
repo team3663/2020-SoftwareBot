@@ -13,28 +13,31 @@ import frc.robot.subsystems.SS_ModuleTest;
 
 public class C_ModuleTest extends Command {
   public C_ModuleTest() {
-    requires(SS_ModuleTest.getInstance());
+    requires(Robot.getModuleTest());
   }
+
+  private double targetAngle = 0.0;
 
   @Override
   protected void initialize() {
-  SS_ModuleTest.getInstance().setAngle(0);
   }
 
   @Override
   protected void execute() {
-    if(Robot.getOI().getController().getBButton().get()) {
-      SS_ModuleTest.getInstance().setAngle(0);
+    /*if(Robot.getOI().getController().getBButton().get()){
+      targetAngle = 0;
     }
     if(Robot.getOI().getController().getYButton().get()){
-      SS_ModuleTest.getInstance().setAngle(Math.PI / 2);
+      targetAngle = Math.PI / 2;
     }
     if(Robot.getOI().getController().getXButton().get()) {
-      SS_ModuleTest.getInstance().setAngle(Math.PI);
+      targetAngle = Math.PI;
     }
     if(Robot.getOI().getController().getAButton().get()) {
-      SS_ModuleTest.getInstance().setAngle(3 * Math.PI / 2);
-    }
+      targetAngle = 3 * Math.PI / 2;
+    }*/
+    
+    Robot.getModuleTest().setAngle(targetAngle);
   }
 
   @Override
@@ -44,7 +47,7 @@ public class C_ModuleTest extends Command {
 
   @Override
   protected void end() {
-    SS_ModuleTest.getInstance().setAngle(0);
+    Robot.getModuleTest().setAngle(0);
   }
 
   @Override

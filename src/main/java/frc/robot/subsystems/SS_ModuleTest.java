@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -24,55 +23,62 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import org.frcteam2910.common.robot.UpdateManager;
 /**
  * Add your docs here.
  */
-public class SS_ModuleTest extends Subsystem {
-  private static final SS_ModuleTest instance;
+public class SS_ModuleTest extends Subsystem implements UpdateManager.Updatable{
+  //private static final SS_ModuleTest instance;
   private final CPRSwerveModule module;
-  private final NavX navx= new NavX(Port.kUSB, RobotMap.NAVX_UPDATE_RATE);
+  //private final NavX navx= new NavX(Port.kUSB, RobotMap.NAVX_UPDATE_RATE);
 
+  /*
   static {
     instance = new SS_ModuleTest();
   }
 
   public static SS_ModuleTest getInstance() {
     return instance;
-  }
+  }*/
 
-  private NetworkTableEntry poseXEntry;
-  private NetworkTableEntry poseYEntry;
-  private NetworkTableEntry poseAngleEntry;
+  private NetworkTableEntry moduleEncoderVoltage;
+  private NetworkTableEntry moduleAbsoluteAngleEntry;
 
-  private NetworkTableEntry moduleAngleEntry;
+  private NetworkTableEntry moduleIntegratedAngleEntry;
 
   public SS_ModuleTest() {
     module = new CPRSwerveModule(new Vector2(0, 1), 0, new CANSparkMax(RobotMap.TEST_ANGLE_MOTOR, MotorType.kBrushless), new CANSparkMax(RobotMap.TEST_DRIVE_MOTOR, MotorType.kBrushless));
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-
-    poseXEntry = tab.add("Pose X", 0.0)
-            .withPosition(0, 0)
-            .withSize(1, 1)
-            .getEntry();
-    poseYEntry = tab.add("Pose Y", 0.0)
-            .withPosition(0, 1)
-            .withSize(1, 1)
-            .getEntry();
-    poseAngleEntry = tab.add("Pose Angle", 0.0)
-            .withPosition(0, 2)
-            .withSize(1, 1)
-            .getEntry();
     ShuffleboardLayout testModulesContainer = tab.getLayout("Test Module", BuiltInLayouts.kList)
             .withPosition(1, 0)
             .withSize(2, 3);
-    moduleAngleEntry = testModulesContainer.add("Angle", 0.0).getEntry();
+    moduleAbsoluteAngleEntry = testModulesContainer.add("Absolute Encoder Angle", 0.0).getEntry();
+    moduleEncoderVoltage = testModulesContainer.add("Voltage", 0.0).getEntry();
+    moduleIntegratedAngleEntry = testModulesContainer.add("Integrated Encoder Angle", 0.0).getEntry();
   }
+
+  public void update(double timestamp, double dt) {
+    updateModule(dt);
+  }
+
+  public void updateModule(double dt) {
+    module.updateState(dt);
+  }
+
   /**
    * @param angle IN RADIANS
    */
   public void setAngle(double angle) {
     module.setTargetAngle(angle);
+  }
+
+  @Override
+  public void periodic() {
+    super.periodic();
+    moduleAbsoluteAngleEntry.setDouble(Math.toDegrees(module.readAngle()));
+    moduleEncoderVoltage.setDouble(module.getEncoderVoltage());
+    moduleIntegratedAngleEntry.setDouble(module.getIntegratedEncoderAngle());
   }
 
   @Override

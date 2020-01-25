@@ -20,7 +20,7 @@ import frc.robot.subsystems.SS_Drivebase;
  * Add your docs here.
  */
 public class OI {
-    private Controller controller = new XboxController(RobotMap.DRIVE_CONTROLLER_ID);
+    private XboxController controller = new XboxController(RobotMap.DRIVE_CONTROLLER_ID);
 
     public OI() {
         controller.getLeftXAxis().setInverted(true);
@@ -28,13 +28,13 @@ public class OI {
 
         controller.getRightXAxis().setScale(0.45);
     }
-
+/*
     public void bindButtons() {
         getResetGyroButton().whenPressed(new InstantCommand(() ->
                 SS_Drivebase.getInstance().resetGyroAngle(Rotation2.ZERO)
         ));
     }
-
+*/
     public Axis getDriveForwardAxis() {
         return controller.getLeftYAxis();
     }
@@ -50,7 +50,7 @@ public class OI {
     public Button getResetGyroButton() {
         return controller.getBackButton();
     }
-    public Controller getController() {
+    public XboxController getController() {
         return controller;
     }
 }
