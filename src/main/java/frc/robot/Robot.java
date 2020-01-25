@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.robot.subsystems.SS_Intake;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -17,7 +18,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
-  
+  public static SS_Intake ss_Intake;
+
+  public static OI oi;
+
+public static RobotMap robotMap;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -25,7 +30,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
+    ss_Intake = new SS_Intake(); 
+    robotMap = new RobotMap();
+    oi = new OI();
+  }
+
+
+  public static SS_Intake getIntake() {
+      return ss_Intake;
   }
 
   /**
