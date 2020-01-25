@@ -13,30 +13,29 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.robot.subsystems.SS_Drivebase;
-import frc.robot.subsystems.SS_ModuleTest;
+import frc.robot.OI;
 
 public class Robot extends TimedRobot {
-  
-  private static final SS_ModuleTest ss_ModuleTest = new SS_ModuleTest();
+  private static final SS_Drivebase ss_Drivebase = new SS_Drivebase();
   private static final OI oi = new OI();
 
-  //private UpdateManager updateManager = new UpdateManager(SS_Drivebase.getInstance());
+  private UpdateManager updateManager = new UpdateManager(getDrivebase());
  
   @Override
   public void robotInit() {
     LiveWindow.disableAllTelemetry();
 
-    //oi.bindButtons();
+    oi.bindButtons();
 
-    //updateManager.startLoop(5.0e-3);
+    updateManager.startLoop(5.0e-3);
+  }
+
+  public static SS_Drivebase getDrivebase() {
+    return ss_Drivebase;
   }
 
   public static OI getOI() {
     return oi;
-  }
-
-  public static SS_ModuleTest getModuleTest() {
-    return ss_ModuleTest;
   }
 
   @Override

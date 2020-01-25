@@ -39,10 +39,5 @@ public class RobotMap
     //MISC
     static int joe = 200;
     public static final byte NAVX_UPDATE_RATE = (byte) joe;
-
-
-    //TEST
-    public static final int TEST_ANGLE_MOTOR  = 20;
-    public static final int TEST_DRIVE_MOTOR = 21;
     
 }

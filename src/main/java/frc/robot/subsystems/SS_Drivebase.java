@@ -34,9 +34,6 @@ import org.frcteam2910.common.robot.UpdateManager;
  * Add your docs here.
  */
 public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
-
-  //private static final SS_Drivebase instance;
-
   private final CPRSwerveModule frontLeftModule = new CPRSwerveModule(new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0), 
   RobotMap.FRONT_LEFT_MODULE_OFFSET, new CANSparkMax(RobotMap.FRONT_LEFT_ANGLE_MOTOR, MotorType.kBrushless),
   new CANSparkMax(RobotMap.FRONT_LEFT_DRIVE_MOTOR, MotorType.kBrushless));
@@ -81,18 +78,13 @@ public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
   private NetworkTableEntry poseAngleEntry;
 
   private NetworkTableEntry[] moduleAngleEntries = new NetworkTableEntry[modules.length];
-
-  /*
-  static {
-    instance = new SS_Drivebase();
-}*/
     
   public SS_Drivebase() {
     synchronized (sensorLock) {
       navX.setInverted(true);
     }
 
-  /*ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+  ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
   poseXEntry = tab.add("Pose X", 0.0)
           .withPosition(0, 0)
           .withSize(1, 1)
@@ -124,13 +116,9 @@ public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
   ShuffleboardLayout backRightModuleContainer = tab.getLayout("Back Right Module", BuiltInLayouts.kList)
           .withPosition(7, 0)
           .withSize(2, 3);
-  moduleAngleEntries[3] = backRightModuleContainer.add("Angle", 0.0).getEntry();*/
+  moduleAngleEntries[3] = backRightModuleContainer.add("Angle", 0.0).getEntry();
   }
-/*
-  public static SS_Drivebase getInstance() {
-    return instance;
-  }
-*/
+
   public RigidTransform2 getPose() {
     synchronized (kinematicsLock) {
         return pose;

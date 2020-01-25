@@ -28,13 +28,13 @@ public class OI {
 
         controller.getRightXAxis().setScale(0.45);
     }
-/*
+
     public void bindButtons() {
         getResetGyroButton().whenPressed(new InstantCommand(() ->
-                SS_Drivebase.getInstance().resetGyroAngle(Rotation2.ZERO)
+                Robot.getDrivebase().resetGyroAngle(Rotation2.ZERO)
         ));
     }
-*/
+
     public Axis getDriveForwardAxis() {
         return controller.getLeftYAxis();
     }
