@@ -19,6 +19,7 @@ public class SS_Intake extends SubsystemBase {
     public SS_Intake() { 
         intakeArm = new DoubleSolenoid(RobotMap.INTAKEARM_SOLENOID_FORWARD, RobotMap.INTAKEARM_SOLENOID_REVERSE);
         pickupMotor = new CANSparkMax(RobotMap.powerCellPickUpMotor, CANSparkMaxLowLevel.MotorType.kBrushless);
+        
         intakeSwitch = new DigitalInput(RobotMap.INTAKE_SWITCH);
 
         pickupMotor.setIdleMode(IdleMode.kBrake);

@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+//import frc.robot.commands.C_SetArmPosition;
 import frc.robot.commands.C_SetArmPosition;
 
 
@@ -32,6 +33,7 @@ public class OI {
     public Button b_button = new JoystickButton(driveController, BUTTON_B);
     public Button x_button = new JoystickButton(driveController, BUTTON_X);
     public Button y_button = new JoystickButton(driveController, BUTTON_Y);
+    public Button r_bumper = new JoystickButton(driveController, R_BUMPER);
 
     public OI() {
         a_button.whenPressed(new C_SetArmPosition(true));
