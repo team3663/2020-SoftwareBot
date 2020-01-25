@@ -3,17 +3,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-//import frc.robot.commands.C_SetArmPosition;
 import frc.robot.commands.C_SetArmPosition;
-
+import frc.robot.commands.C_SetPickUpMotorSpeed;
 
 public class OI {
     public static final int GAMEPAD_1 = 0;
 
     public static final int L_STICK_X_AXIS = 0;
     public static final int L_STICK_Y_AXIS = 1;
-    public static final int L_TRIGGER = 2;
-    public static final int R_TRIGGER = 3;
+    public static final int L_TRIGGER_AXIS = 2;
+    public static final int R_TRIGGER_AXIS = 3;
     public static final int R_STICK_X_AXIS = 4;
     public static final int R_STICK_Y_AXIS = 5;
   
@@ -33,12 +32,11 @@ public class OI {
     public Button b_button = new JoystickButton(driveController, BUTTON_B);
     public Button x_button = new JoystickButton(driveController, BUTTON_X);
     public Button y_button = new JoystickButton(driveController, BUTTON_Y);
-    public Button r_bumper = new JoystickButton(driveController, R_BUMPER);
-
+    
     public OI() {
         a_button.whenPressed(new C_SetArmPosition(true));
         b_button.whenPressed(new C_SetArmPosition(false));
-        x_button.whenPressed(new C_SetArmPosition(0.5));
-        y_button.whenPressed(new C_SetArmPosition(-0.5));
+        x_button.whileHeld(new C_SetPickUpMotorSpeed(0.5));
+        y_button.whileHeld(new C_SetPickUpMotorSpeed(-0.5));
     }
 }

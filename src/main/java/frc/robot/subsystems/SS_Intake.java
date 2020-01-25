@@ -6,21 +6,17 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.RobotMap;
 
 public class SS_Intake extends SubsystemBase {
     private DoubleSolenoid intakeArm;
     private CANSparkMax pickupMotor;
-    private DigitalInput intakeSwitch;
     private boolean closed = true;
     
     public SS_Intake() { 
         intakeArm = new DoubleSolenoid(RobotMap.INTAKEARM_SOLENOID_FORWARD, RobotMap.INTAKEARM_SOLENOID_REVERSE);
         pickupMotor = new CANSparkMax(RobotMap.powerCellPickUpMotor, CANSparkMaxLowLevel.MotorType.kBrushless);
-        
-        intakeSwitch = new DigitalInput(RobotMap.INTAKE_SWITCH);
 
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
@@ -59,12 +55,4 @@ public class SS_Intake extends SubsystemBase {
     public void setBrakeMode() {
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
-
-    public DigitalInput getIntakeSwitch() {
-        return intakeSwitch;
-    }
-
-    public boolean isPhysicalPresent() {
-        return !intakeSwitch.get();
-    } 
 }

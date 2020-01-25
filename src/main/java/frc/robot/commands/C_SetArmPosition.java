@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
 public class C_SetArmPosition extends CommandBase {
-    private double pickUpSpeed;
     private boolean extended;
 
     public C_SetArmPosition() {
@@ -16,15 +15,8 @@ public class C_SetArmPosition extends CommandBase {
         this.extended = extended;
     }
 
-    public C_SetArmPosition(double pickUpSpeed) {
-        addRequirements(Robot.ss_Intake);
-        this.pickUpSpeed = pickUpSpeed;
-        Robot.getIntake().setBrakeMode();
-    }
-
     public void execute() {
         Robot.getIntake().setArmPosition(extended);
-        Robot.getIntake().setPickupMotorSpeed(pickUpSpeed);
     }
     
     public boolean isFinished() {
