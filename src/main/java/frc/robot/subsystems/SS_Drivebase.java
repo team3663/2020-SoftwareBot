@@ -34,29 +34,42 @@ import org.frcteam2910.common.robot.UpdateManager;
  * Add your docs here.
  */
 public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
-  private final CPRSwerveModule frontLeftModule = new CPRSwerveModule(new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0), 
-  RobotMap.FRONT_LEFT_MODULE_OFFSET, new CANSparkMax(RobotMap.FRONT_LEFT_ANGLE_MOTOR, MotorType.kBrushless),
+
+    //SWERVE MODULE ANGLE ENCODER OFFSETS (in radians, obviously)
+    public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(60); //111
+    public static final double FRONT_RIGHT_MODULE_OFFSET = Math.toRadians(-20); //12
+    public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(-90); //-83
+    public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-10); //4
+
+    private final Vector2 frontLeftModulePosition = new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0);
+    private final Vector2 frontRightModulePosition = new Vector2(RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0);
+    private final Vector2 backLeftModulePosition = new Vector2(-RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0);
+    private final Vector2 backRightModulePosition = new Vector2(-RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0);
+
+
+  private final CPRSwerveModule frontLeftModule = new CPRSwerveModule(frontLeftModulePosition, 
+  FRONT_LEFT_MODULE_OFFSET, new CANSparkMax(RobotMap.FRONT_LEFT_ANGLE_MOTOR, MotorType.kBrushless),
   new CANSparkMax(RobotMap.FRONT_LEFT_DRIVE_MOTOR, MotorType.kBrushless));
 
-  private final CPRSwerveModule frontRightModule = new CPRSwerveModule(new Vector2(RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), 
-  RobotMap.FRONT_RIGHT_MODULE_OFFSET, new CANSparkMax(RobotMap.FRONT_RIGHT_ANGLE_MOTOR, MotorType.kBrushless), 
+  private final CPRSwerveModule frontRightModule = new CPRSwerveModule(frontRightModulePosition, 
+  FRONT_RIGHT_MODULE_OFFSET, new CANSparkMax(RobotMap.FRONT_RIGHT_ANGLE_MOTOR, MotorType.kBrushless), 
   new CANSparkMax(RobotMap.FRONT_RIGHT_DRIVE_MOTOR, MotorType.kBrushless));
 
-  private final CPRSwerveModule backLeftModule = new CPRSwerveModule(new Vector2(-RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0), 
-  RobotMap.BACK_LEFT_MODULE_OFFSET, new CANSparkMax(RobotMap.BACK_LEFT_ANGLE_MOTOR, MotorType.kBrushless), 
+  private final CPRSwerveModule backLeftModule = new CPRSwerveModule(backLeftModulePosition,
+  BACK_LEFT_MODULE_OFFSET, new CANSparkMax(RobotMap.BACK_LEFT_ANGLE_MOTOR, MotorType.kBrushless), 
   new CANSparkMax(RobotMap.BACK_LEFT_DRIVE_MOTOR, MotorType.kBrushless));
 
-  private final CPRSwerveModule backRightModule = new CPRSwerveModule(new Vector2(-RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), 
-  RobotMap.BACK_RIGHT_MODULE_OFFSET, new CANSparkMax(RobotMap.BACK_RIGHT_ANGLE_MOTOR, MotorType.kBrushless),
+  private final CPRSwerveModule backRightModule = new CPRSwerveModule(backRightModulePosition, 
+  BACK_RIGHT_MODULE_OFFSET, new CANSparkMax(RobotMap.BACK_RIGHT_ANGLE_MOTOR, MotorType.kBrushless),
   new CANSparkMax(RobotMap.BACK_RIGHT_DRIVE_MOTOR, MotorType.kBrushless));
 
-  private final SwerveModule[] modules = {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
+  private final CPRSwerveModule[] modules = {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
   private final SwerveKinematics kinematics = new SwerveKinematics(
-            new Vector2(RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), // Front Left
-            new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0), // Front Right
-            new Vector2(-RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0), // Back Left
-            new Vector2(-RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0) // Back Right
+            frontLeftModulePosition, // Front Left
+            frontRightModulePosition, // Front Right
+            backLeftModulePosition, // Back Left
+            backRightModulePosition // Back Right
     );
   
   private final SwerveOdometry odometry = new SwerveOdometry(kinematics, RigidTransform2.ZERO);
@@ -78,6 +91,7 @@ public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
   private NetworkTableEntry poseAngleEntry;
 
   private NetworkTableEntry[] moduleAngleEntries = new NetworkTableEntry[modules.length];
+  private NetworkTableEntry[] moduleEncoderVoltageEntries = new NetworkTableEntry[modules.length];
     
   public SS_Drivebase() {
     synchronized (sensorLock) {
@@ -102,21 +116,25 @@ public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
           .withPosition(1, 0)
           .withSize(2, 3);
   moduleAngleEntries[0] = frontLeftModuleContainer.add("Angle", 0.0).getEntry();
+  moduleEncoderVoltageEntries[0] = frontLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
   ShuffleboardLayout frontRightModuleContainer = tab.getLayout("Front Right Module", BuiltInLayouts.kList)
           .withPosition(3, 0)
           .withSize(2, 3);
   moduleAngleEntries[1] = frontRightModuleContainer.add("Angle", 0.0).getEntry();
+  moduleEncoderVoltageEntries[1] = frontRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
   ShuffleboardLayout backLeftModuleContainer = tab.getLayout("Back Left Module", BuiltInLayouts.kList)
           .withPosition(5, 0)
           .withSize(2, 3);
   moduleAngleEntries[2] = backLeftModuleContainer.add("Angle", 0.0).getEntry();
+  moduleEncoderVoltageEntries[2] = backLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
   ShuffleboardLayout backRightModuleContainer = tab.getLayout("Back Right Module", BuiltInLayouts.kList)
           .withPosition(7, 0)
           .withSize(2, 3);
   moduleAngleEntries[3] = backRightModuleContainer.add("Angle", 0.0).getEntry();
+  moduleEncoderVoltageEntries[3] = backRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
   }
 
   public RigidTransform2 getPose() {
@@ -211,7 +229,8 @@ public void resetGyroAngle(Rotation2 angle) {
 
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];
-            moduleAngleEntries[i].setDouble(Math.toDegrees(module.getCurrentAngle()));
+            moduleAngleEntries[i].setDouble(Math.toDegrees(module.readAngle()));
+            moduleEncoderVoltageEntries[i].setDouble(module.getEncoderVoltage());
         }
     }
 }

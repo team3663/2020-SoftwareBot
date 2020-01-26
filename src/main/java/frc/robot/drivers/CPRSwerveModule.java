@@ -1,9 +1,5 @@
 package frc.robot.drivers;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANAnalog;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -32,15 +28,7 @@ import static org.frcteam2910.common.robot.Constants.CAN_TIMEOUT_MS;
  * {@link CPRSwerveModule#setDriveTicksPerUnit(double)}
  */
 public final class CPRSwerveModule extends SwerveModule {
-    /**
-     * How many angle encoder ticks occur for one radian travel.
-     * <p>
-     * The angle encoder travels 1 to 1 with the module so one rotation of the angle encoder is one rotation of the
-     * module. A Talon SRX gives us 1024 ticks per rotation for an analog encoder so we can divide that by 2&pi; to get
-     * the ticks per radian.
-     */
-    private static final double ANGLE_TICKS_PER_RADIAN = (1024.0 / (2.0 * Math.PI));
-
+    
     private static final double ANGLE_VERSA_GEAR_RATIO = 21.0; // MOTOR REVOLUTIONS TO MODULE REVOLUTIONS
     private static final double ANGLE_TOTAL_GEAR_RATIO = 63.0;
 

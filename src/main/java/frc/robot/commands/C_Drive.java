@@ -8,12 +8,17 @@
 package frc.robot.commands;
 
 import org.frcteam2910.common.math.Vector2;
+import org.frcteam2910.common.robot.input.Axis;
+import org.frcteam2910.common.robot.input.DPadButton.Direction;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.SS_Drivebase;
 
 public class C_Drive extends Command {
+  OI oi = Robot.getOI();
+  SS_Drivebase ss_DriveBase = Robot.getDrivebase();
   public C_Drive() {
     requires(Robot.getDrivebase());
   }
@@ -21,10 +26,10 @@ public class C_Drive extends Command {
   @Override
   protected void execute() {
     double forward = Robot.getOI().getDriveForwardAxis().get(true);
-    double strafe = Robot.getOI().getDriveStrafeAxis().get(true);
+    double strafe = -Robot.getOI().getDriveStrafeAxis().get(true);
     double rotation = Robot.getOI().getDriveRotationAxis().get(true);
-
-    Robot.getDrivebase().drive(new Vector2(forward, strafe), rotation, true);
+    
+    ss_DriveBase.drive(new Vector2(forward, strafe), rotation, true);
   }
 
   @Override
