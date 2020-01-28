@@ -1,25 +1,27 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class C_SetArmPosition extends CommandBase {
+public class C_SetArmPosition extends Command {
     private boolean extended;
 
     public C_SetArmPosition() {
-        addRequirements(Robot.ss_Intake);
+        requires(Robot.getIntake());
     }
 
     public C_SetArmPosition(boolean extended) {
-        addRequirements(Robot.ss_Intake);
+        requires(Robot.ss_Intake);
         this.extended = extended;
     }
 
-    public void execute() {
+    @Override
+    protected void execute() {
         Robot.getIntake().setArmPosition(extended);
     }
     
-    public boolean isFinished() {
+    @Override
+    protected boolean isFinished() {
         return true;
     }
 }

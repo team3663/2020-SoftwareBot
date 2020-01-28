@@ -1,30 +1,38 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class C_SetPickUpMotorSpeed extends CommandBase {
+public class C_SetPickUpMotorSpeed extends Command {
     private double pickUpSpeed;
 
     public C_SetPickUpMotorSpeed() {
-        addRequirements(Robot.ss_Intake);
+        requires(Robot.getIntake());
     }
 
     public C_SetPickUpMotorSpeed(double pickUpSpeed) {
-        addRequirements(Robot.ss_Intake);
+        requires(Robot.getIntake());
         this.pickUpSpeed = pickUpSpeed;
         Robot.getIntake().setBrakeMode();
     }
 
-    public void execute() {
+    @Override
+    protected void execute() {
         Robot.getIntake().setPickupMotorSpeed(pickUpSpeed);
     }
     
-    public void end() {
+    @Override
+    protected boolean isFinished() {
+        return true;
+    }
+
+    @Override
+    protected void end() {
         Robot.getIntake().setPickupMotorSpeed(0.0);
     }
 
-    public void interrupted() {
+    @Override
+    protected void interrupted() {
         end();
     }
 }

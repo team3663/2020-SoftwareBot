@@ -33,11 +33,13 @@ public static RobotMap robotMap;
     ss_Intake = new SS_Intake(); 
     robotMap = new RobotMap();
     oi = new OI();
+
+    oi.registerControls();
   }
 
 
   public static SS_Intake getIntake() {
-      return ss_Intake;
+    return ss_Intake;
   }
 
   /**

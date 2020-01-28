@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -9,7 +9,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.RobotMap;
 
-public class SS_Intake extends SubsystemBase {
+public class SS_Intake extends Subsystem {
     private DoubleSolenoid intakeArm;
     private CANSparkMax pickupMotor;
     private boolean closed = true;
@@ -25,9 +25,6 @@ public class SS_Intake extends SubsystemBase {
         if(extended){
           intakeArm.set(DoubleSolenoid.Value.kReverse);
           setClosed(true);
-        }else{
-          intakeArm.set(DoubleSolenoid.Value.kForward);
-          setClosed(false);
         }
     }
 
@@ -55,4 +52,6 @@ public class SS_Intake extends SubsystemBase {
     public void setBrakeMode() {
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
+
+    public void initDefaultCommand() {}
 }
