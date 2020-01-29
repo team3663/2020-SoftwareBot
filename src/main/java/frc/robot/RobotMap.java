@@ -9,5 +9,5 @@ package frc.robot;
 
 public class RobotMap 
 {
-    
+    public static final int rollMotor = 1;
 }

@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.robot.subsystems.SS_Climber;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
  */
 public class Robot extends TimedRobot {
   
+  public static SS_Climber ss_Climber;
 
   /**
    * This function is run when the robot is first started up and should be
