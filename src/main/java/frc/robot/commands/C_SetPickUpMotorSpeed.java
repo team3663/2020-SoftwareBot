@@ -22,9 +22,9 @@ public class C_SetPickUpMotorSpeed extends CommandBase {
     }
     
     //@Override
-    public boolean isFinished() {
+    /*public boolean isFinished() {
         return true;
-    }
+    }*/
 
     //@Override
     public void end() {

@@ -11,7 +11,6 @@ import frc.robot.commands.commandgroups.CG_Roomba;
 
 public class OI {
     //private XboxController driveController = new XboxController(0);
-    //private Robot mRobot;
     public static final int GAMEPAD_1 = 0;
     public static final int L_STICK_X_AXIS = 0;
     public static final int L_STICK_Y_AXIS = 1;
@@ -38,8 +37,10 @@ public class OI {
     public Button y_button = new JoystickButton(driveController, BUTTON_Y);
     public Button r_bumper = new JoystickButton(driveController, R_BUMPER);
 
-    public OI() {
-        //mRobot = Robot;
+    private Robot mRobot;
+
+    public OI(Robot robot) {
+        mRobot = robot;
     }
 
     public void registerControls() {
@@ -54,5 +55,9 @@ public class OI {
         x_button.whileHeld(new C_SetPickUpMotorSpeed(0.5));
         y_button.whileHeld(new C_SetPickUpMotorSpeed(-0.5));
         r_bumper.whileHeld(new CG_Roomba());
+    }
+
+    public Robot getRobot() {
+        return mRobot;
     }
 }
