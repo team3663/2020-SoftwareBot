@@ -20,20 +20,22 @@ public class C_Drive extends Command {
   OI oi = Robot.getOI();
   SS_Drivebase ss_DriveBase = Robot.getDrivebase();
   private double defaultDeadbandRange = .16;
+  private double rotationDeadbandRange = .9;
+  private boolean squareInputs = true;
   public C_Drive() {
     requires(Robot.getDrivebase());
   }
 
   @Override
   protected void execute() {
-    double forward = Robot.getOI().getDriveForwardAxis().get(true);
-    Robot.controllerLeftYAxisEntry.setDouble(deadband(Robot.getOI().getDriveForwardAxis().getRaw(), defaultDeadbandRange));
+    double forward = deadband(Robot.getOI().getDriveForwardAxis().get(), defaultDeadbandRange, squareInputs);
+    Robot.controllerLeftYAxisEntry.setDouble(Robot.getOI().getDriveForwardAxis().getRaw());
 
-    double strafe = -Robot.getOI().getDriveStrafeAxis().get(true);
-    Robot.controllerLeftXAxisEntry.setDouble(deadband(Robot.getOI().getDriveStrafeAxis().getRaw(), defaultDeadbandRange));
+    double strafe = deadband(Robot.getOI().getDriveStrafeAxis().get(), defaultDeadbandRange, squareInputs);
+    Robot.controllerLeftXAxisEntry.setDouble(Robot.getOI().getDriveStrafeAxis().getRaw());
 
     double rotation = Robot.getOI().getDriveRotationAxis().get(true);
-    Robot.controllerRightXAxisEntry.setDouble(deadband(Robot.getOI().getDriveRotationAxis().getRaw(), defaultDeadbandRange));
+    Robot.controllerRightXAxisEntry.setDouble(Robot.getOI().getDriveRotationAxis().getRaw());
     
     ss_DriveBase.drive(new Vector2(forward, strafe), rotation, true);
   }
@@ -63,5 +65,12 @@ public class C_Drive extends Command {
       return 0;
     } 
     return input;
+  }
+
+  private double deadband(double input, double range, boolean squared) {
+    if(Math.abs(input) < Math.abs(range)) {
+      return 0;
+    }
+    return Math.pow(input, 2) * Math.signum(input);
   }
 }

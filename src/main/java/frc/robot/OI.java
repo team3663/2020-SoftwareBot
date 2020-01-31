@@ -23,10 +23,7 @@ public class OI {
     private XboxController controller = new XboxController(RobotMap.DRIVE_CONTROLLER_ID);
 
     public OI() {
-        controller.getLeftXAxis().setInverted(true);
-        controller.getRightXAxis().setInverted(true);
-
-        controller.getRightXAxis().setScale(0.45);
+        controller.getRightXAxis().setScale(0.25);
     }
 
     public void bindButtons() {
