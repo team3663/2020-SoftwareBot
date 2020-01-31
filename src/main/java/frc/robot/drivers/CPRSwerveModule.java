@@ -49,9 +49,9 @@ public final class CPRSwerveModule extends SwerveModule {
     private final PIDController anglePIDController;
     private final CANPIDController drivePIDController;
 
-    private final double ANGLE_P = .8;
+    private final double ANGLE_P = .7;
     private final double ANGLE_I = 0.0;
-    private final double ANGLE_D = 0.01;
+    private final double ANGLE_D = 0.04;
 
 
 
@@ -152,7 +152,7 @@ public final class CPRSwerveModule extends SwerveModule {
      */
     @Override
 	public void setTargetAngle(double angle) {
-        System.out.println(anglePIDController.getPositionError());
+        //System.out.println(anglePIDController.getPositionError());
         angleMotor.set(anglePIDController.calculate(readAngle(), angle));
     }
 

@@ -19,6 +19,7 @@ import frc.robot.subsystems.SS_Drivebase;
 public class C_Drive extends Command {
   OI oi = Robot.getOI();
   SS_Drivebase ss_DriveBase = Robot.getDrivebase();
+  private double defaultDeadbandRange = .16;
   public C_Drive() {
     requires(Robot.getDrivebase());
   }
@@ -26,8 +27,13 @@ public class C_Drive extends Command {
   @Override
   protected void execute() {
     double forward = Robot.getOI().getDriveForwardAxis().get(true);
+    Robot.controllerLeftYAxisEntry.setDouble(deadband(Robot.getOI().getDriveForwardAxis().getRaw(), defaultDeadbandRange));
+
     double strafe = -Robot.getOI().getDriveStrafeAxis().get(true);
+    Robot.controllerLeftXAxisEntry.setDouble(deadband(Robot.getOI().getDriveStrafeAxis().getRaw(), defaultDeadbandRange));
+
     double rotation = Robot.getOI().getDriveRotationAxis().get(true);
+    Robot.controllerRightXAxisEntry.setDouble(deadband(Robot.getOI().getDriveRotationAxis().getRaw(), defaultDeadbandRange));
     
     ss_DriveBase.drive(new Vector2(forward, strafe), rotation, true);
   }
@@ -45,5 +51,17 @@ public class C_Drive extends Command {
   @Override
   protected void interrupted() {
     end();
+  }
+
+  /**
+   * @param input controller axis input, from -1 to 1
+   * @param range absolute range to deadband, usually around .05 to .20
+   * @return deadbanded input
+   */
+  private double deadband(double input, double range) {
+    if(Math.abs(input) < Math.abs(range)) {
+      return 0;
+    } 
+    return input;
   }
 }
