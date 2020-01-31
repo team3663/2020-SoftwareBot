@@ -17,7 +17,7 @@ import frc.robot.commands.C_Roll;
 
 public class OI {
     //// CREATING BUTTONS
-    public static final int GAMEPAD_1 = 0;
+    public static final int GAMEPAD_0 = 0;
 
     public static final int L_STICK_X_AXIS = 0;
     public static final int L_STICK_Y_AXIS = 1;
@@ -41,14 +41,14 @@ public class OI {
     public static final int L_JOYCLICK = 9;
     public static final int R_JOYCLICK = 10;
 
-    public Joystick driveController = new Joystick(GAMEPAD_1);
+    public Joystick driveController = new Joystick(GAMEPAD_0);
     public JoystickButton r_Bumper = new JoystickButton(driveController, R_BUMPER);
     public JoystickButton l_Bumper = new JoystickButton(driveController, L_BUMPER);
     public JoystickButton back_Button = new JoystickButton(driveController, BUTTON_BACK);
     
     public OI() {
         l_Bumper.whenPressed(new C_Roll());
-        r_Bumper.whenPressed(new C_Roll());
+        //r_Bumper.whenPressed(new C_Roll(0.5));
         //back_Button.whenPressed(new C_Roll(stop));
     }
 }

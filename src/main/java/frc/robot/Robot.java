@@ -20,14 +20,15 @@ import frc.robot.subsystems.SS_Climber;
 public class Robot extends TimedRobot {
   
   public static SS_Climber ss_Climber;
-
+  public static OI oi;
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
-    
+    ss_Climber = new SS_Climber();
+    oi = new OI();
   }
 
   /**
@@ -71,6 +72,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    
   }
 
   /**
