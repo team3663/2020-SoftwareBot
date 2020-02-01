@@ -4,9 +4,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
 public class C_Roll extends CommandBase {
-  private double speed = 0.5;
+  private double speed;
 
-  public C_Roll() {
+  public C_Roll(double speed) {
     addRequirements(Robot.ss_Climber);
   }
 
@@ -24,9 +24,11 @@ public class C_Roll extends CommandBase {
 
   //@Override
   public void end() {
+    Robot.ss_Climber.setRoll(0.0);
   }
 
   //@Override 
   public void interrupted() {
+    this.end();
   }
 }

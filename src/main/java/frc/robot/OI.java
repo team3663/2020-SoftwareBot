@@ -47,8 +47,8 @@ public class OI {
     public JoystickButton back_Button = new JoystickButton(driveController, BUTTON_BACK);
     
     public OI() {
-        l_Bumper.whenPressed(new C_Roll());
-        //r_Bumper.whenPressed(new C_Roll(0.5));
+        l_Bumper.whenPressed(new C_Roll(-0.5));
+        r_Bumper.whenPressed(new C_Roll(0.5));
         //back_Button.whenPressed(new C_Roll(stop));
     }
 }
