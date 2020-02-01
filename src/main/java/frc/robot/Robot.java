@@ -32,9 +32,12 @@ public static RobotMap robotMap;
   public void robotInit() {
     ss_Intake = new SS_Intake(); 
     robotMap = new RobotMap();
-    oi = new OI(this);
+    
+    oi = new OI(this); //<-- comment this out if needed
 
-    oi.registerControls();
+    oi.registerControls(); //<-- comment this out if you commented out the "this" one
+
+    //oi = new OI(); //<-- bring this back if needed
   }
 
 
