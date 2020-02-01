@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.C_SetArmPosition;
 import frc.robot.commands.C_SetPickUpMotorSpeed;
 import frc.robot.commands.commandgroups.CG_Roomba;
+import frc.robot.util.IntakePosition;
 
 public class OI {
     //private XboxController driveController = new XboxController(0);
@@ -41,6 +42,12 @@ public class OI {
 
     public OI(Robot robot) {
         mRobot = robot;
+
+        /*a_button.whenPressed(new C_SetArmPosition(true));
+        b_button.whenPressed(new C_SetArmPosition(false));
+        x_button.whileHeld(new C_SetPickUpMotorSpeed(0.5));
+        y_button.whileHeld(new C_SetPickUpMotorSpeed(-0.5));
+        r_bumper.whileHeld(new CG_Roomba());*/
     }
 
     public void registerControls() {
@@ -50,10 +57,10 @@ public class OI {
         driveController.getYButton().whileHeld(new C_SetPickUpMotorSpeed(-0.5));
         driveController.getRightBumperButton().whileHeld(new CG_Roomba());*/
 
-        a_button.whenPressed(new C_SetArmPosition(true));
-        b_button.whenPressed(new C_SetArmPosition(false));
-        x_button.whileHeld(new C_SetPickUpMotorSpeed(0.5));
-        y_button.whileHeld(new C_SetPickUpMotorSpeed(-0.5));
+        a_button.whenPressed(new C_SetArmPosition(IntakePosition.EXTENDED));
+        b_button.whenPressed(new C_SetArmPosition(IntakePosition.RETRACTED));
+        x_button.whileHeld(new C_SetArmPosition(IntakePosition.HALF_RETRACT));
+        y_button.whileHeld(new C_SetPickUpMotorSpeed(0.5));
         r_bumper.whileHeld(new CG_Roomba());
     }
 

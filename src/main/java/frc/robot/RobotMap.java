@@ -8,11 +8,14 @@
 package frc.robot;
 
 public class RobotMap {
-    public static final int INTAKEARM_SOLENOID_FORWARD = 0;
-    public static final int INTAKEARM_SOLENOID_REVERSE = 1;
+    /*public static final int INTAKEARM_SOLENOID_FORWARD = 0;
+    public static final int INTAKEARM_SOLENOID_REVERSE = 1;*/
 
-    public static final int ELEVATOR_BOTTOM_LIMIT_SWITCH = 3;
-    public static final int ELEVATOR_TOP_LIMIT_SWITCH = 4;
+    public static final int FRONT_SOLENOID_FORWARD = 0;
+    public static final int FRONT_SOLENOID_REVERSE = 1;
+
+    public static final int BACK_SOLENOID_FORWARD = 2;
+    public static final int BACK_SOLENOID_REVERSE = 3;
     
     public static final int powerCellPickUpMotor = 10;
 

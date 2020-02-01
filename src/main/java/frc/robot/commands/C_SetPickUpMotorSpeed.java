@@ -7,11 +7,11 @@ public class C_SetPickUpMotorSpeed extends CommandBase {
     private double pickUpSpeed;
 
     public C_SetPickUpMotorSpeed() {
-        addRequirements(Robot.getIntake());
+        addRequirements(Robot.ss_Intake);
     }
 
     public C_SetPickUpMotorSpeed(double pickUpSpeed) {
-        addRequirements(Robot.getIntake());
+        addRequirements(Robot.ss_Intake);
         this.pickUpSpeed = pickUpSpeed;
         Robot.getIntake().setBrakeMode();
     }
