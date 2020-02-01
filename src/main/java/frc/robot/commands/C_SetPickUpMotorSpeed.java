@@ -4,16 +4,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
 public class C_SetPickUpMotorSpeed extends CommandBase {
-    private double pickUpSpeed;
+    private double pickUpSpeed = 0.5;
 
     public C_SetPickUpMotorSpeed() {
         addRequirements(Robot.ss_Intake);
-    }
-
-    public C_SetPickUpMotorSpeed(double pickUpSpeed) {
-        addRequirements(Robot.ss_Intake);
-        this.pickUpSpeed = pickUpSpeed;
-        Robot.getIntake().setBrakeMode();
     }
 
     //@Override
@@ -22,9 +16,9 @@ public class C_SetPickUpMotorSpeed extends CommandBase {
     }
     
     //@Override
-    /*public boolean isFinished() {
-        return true;
-    }*/
+    public boolean isFinished() {
+        return false;
+    }
 
     //@Override
     public void end() {

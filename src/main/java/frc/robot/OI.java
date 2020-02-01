@@ -38,6 +38,7 @@ public class OI {
     public Button x_button = new JoystickButton(driveController, BUTTON_X);
     public Button y_button = new JoystickButton(driveController, BUTTON_Y);
     public Button r_bumper = new JoystickButton(driveController, R_BUMPER);
+    public Button l_bumper = new JoystickButton(driveController, L_BUMPER);
     
     private Robot mRobot;
 
@@ -46,19 +47,21 @@ public class OI {
     }
 
     public OI() {
-        a_button.whenPressed(new C_SetArmPosition(IntakePosition.EXTENDED));
-        b_button.whenPressed(new C_SetArmPosition(IntakePosition.RETRACTED));
-        x_button.whenPressed(new C_SetArmPosition(IntakePosition.HALF_RETRACT));
-        y_button.whileHeld(new C_SetPickUpMotorSpeed(0.5));
+        a_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_EXTENDED));
+        b_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_RETRACTED));
+        x_button.whenPressed(new C_SetArmPosition(IntakePosition.SHORT_RETRACT));
+        y_button.whenPressed(new C_SetArmPosition(IntakePosition.LONG_RETRACT));
         r_bumper.whileHeld(new CG_Roomba());
+        l_bumper.whileHeld(new C_SetPickUpMotorSpeed());
     }
 
     public void registerControls() {
-        a_button.whenPressed(new C_SetArmPosition(IntakePosition.EXTENDED));
-        b_button.whenPressed(new C_SetArmPosition(IntakePosition.RETRACTED));
-        x_button.whenPressed(new C_SetArmPosition(IntakePosition.HALF_RETRACT));
-        y_button.whileHeld(new C_SetPickUpMotorSpeed(0.5));
+        a_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_EXTENDED));
+        b_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_RETRACTED));
+        x_button.whenPressed(new C_SetArmPosition(IntakePosition.SHORT_RETRACT));
+        y_button.whenPressed(new C_SetArmPosition(IntakePosition.LONG_RETRACT));
         r_bumper.whileHeld(new CG_Roomba());
+        l_bumper.whileHeld(new C_SetPickUpMotorSpeed());
     }
 
     public Robot getRobot() {

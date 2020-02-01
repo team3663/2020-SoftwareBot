@@ -11,15 +11,15 @@ import frc.robot.RobotMap;
 import frc.robot.util.IntakePosition;
 
 public class SS_Intake extends SubsystemBase {
-    private DoubleSolenoid frontSolenoid;
-    private DoubleSolenoid backSolenoid;
+    private DoubleSolenoid shortSolenoid;
+    private DoubleSolenoid longSolenoid;
 
     private CANSparkMax pickupMotor;
     private boolean closed = true;
     
     public SS_Intake() { 
-        frontSolenoid = new DoubleSolenoid(RobotMap.FRONT_SOLENOID_FORWARD, RobotMap.FRONT_SOLENOID_REVERSE);
-        backSolenoid = new DoubleSolenoid(RobotMap.BACK_SOLENOID_FORWARD, RobotMap.BACK_SOLENOID_REVERSE);
+        shortSolenoid = new DoubleSolenoid(RobotMap.SHORT_SOLENOID_FORWARD, RobotMap.SHORT_SOLENOID_REVERSE);
+        longSolenoid = new DoubleSolenoid(RobotMap.LONG_SOLENOID_FORWARD, RobotMap.LONG_SOLENOID_REVERSE);
 
         pickupMotor = new CANSparkMax(RobotMap.powerCellPickUpMotor, CANSparkMaxLowLevel.MotorType.kBrushless);
 
@@ -28,25 +28,33 @@ public class SS_Intake extends SubsystemBase {
 
     public void retractIntakeArm(boolean extended) {
         if(extended){
-          frontSolenoid.set(DoubleSolenoid.Value.kReverse);
-          backSolenoid.set(DoubleSolenoid.Value.kReverse);
+          shortSolenoid.set(DoubleSolenoid.Value.kReverse);
+          longSolenoid.set(DoubleSolenoid.Value.kReverse);
           setClosed(true);
         }
     }
 
     public void setArmPosition(IntakePosition position){
         switch(position){
-            case EXTENDED:
-                frontSolenoid.set(DoubleSolenoid.Value.kForward);
-                backSolenoid.set(DoubleSolenoid.Value.kForward);   
-             
-            case RETRACTED:
-                frontSolenoid.set(DoubleSolenoid.Value.kReverse);
-                backSolenoid.set(DoubleSolenoid.Value.kReverse);
+            case FULLY_RETRACTED:
+                shortSolenoid.set(DoubleSolenoid.Value.kReverse);
+                longSolenoid.set(DoubleSolenoid.Value.kReverse);
+                break;
+
+            case SHORT_RETRACT:
+                shortSolenoid.set(DoubleSolenoid.Value.kReverse);
+                longSolenoid.set(DoubleSolenoid.Value.kForward);
+                break;
             
-            case HALF_RETRACT:
-                frontSolenoid.set(DoubleSolenoid.Value.kReverse);
-                backSolenoid.set(DoubleSolenoid.Value.kForward);
+            case LONG_RETRACT:
+                shortSolenoid.set(DoubleSolenoid.Value.kForward);
+                longSolenoid.set(DoubleSolenoid.Value.kReverse);
+                break;
+
+            case FULLY_EXTENDED:
+                shortSolenoid.set(DoubleSolenoid.Value.kForward);
+                longSolenoid.set(DoubleSolenoid.Value.kForward);   
+                break;
         }
     }
 

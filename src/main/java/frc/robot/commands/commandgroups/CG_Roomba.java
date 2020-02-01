@@ -7,12 +7,9 @@ import frc.robot.util.IntakePosition;
 
 public class CG_Roomba extends ParallelCommandGroup {
     public CG_Roomba() {
-        /*addSequential(new C_SetArmPosition(true));
-        addSequential(new C_SetPickUpMotorSpeed(0.5));*/
-
         addCommands(
-            new C_SetArmPosition(IntakePosition.EXTENDED),
-            new C_SetPickUpMotorSpeed(0.5)
+            new C_SetArmPosition(IntakePosition.FULLY_EXTENDED),
+            new C_SetPickUpMotorSpeed()
         );
     }
 }
