@@ -7,7 +7,9 @@
 
 package frc.robot;
 
-public class RobotMap 
-{
-    
+/**
+ * All constants for robot control are found here.
+ */
+public class Constants {
+    public static final int DRIVE_CONTROLLER_ID = 0;
 }
