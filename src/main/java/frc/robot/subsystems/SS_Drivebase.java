@@ -9,14 +9,12 @@ package frc.robot.subsystems;
 
 import javax.annotation.concurrent.GuardedBy;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import frc.robot.commands.*;
 import frc.robot.drivers.*;
@@ -24,16 +22,12 @@ import frc.robot.RobotMap;
 
 import org.frcteam2910.common.math.*;
 import org.frcteam2910.common.util.HolonomicDriveSignal;
-import org.frcteam2910.common.drivers.*;
 import org.frcteam2910.common.kinematics.ChassisVelocity;
 import org.frcteam2910.common.kinematics.SwerveKinematics;
 import org.frcteam2910.common.kinematics.SwerveOdometry;
 import org.frcteam2910.common.robot.UpdateManager;
 
-/**
- * Add your docs here.
- */
-public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
+public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatable{
 
     //SWERVE MODULE ANGLE ENCODER OFFSETS (in radians, obviously)
     public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(60); //111
@@ -41,10 +35,10 @@ public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
     public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(-90); //-83
     public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-10); //4
 
-    private final Vector2 frontLeftModulePosition = new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0);
+    private final Vector2 frontLeftModulePosition = new Vector2(-RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0);//maybe switch signs
     private final Vector2 frontRightModulePosition = new Vector2(RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0);
     private final Vector2 backLeftModulePosition = new Vector2(-RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0);
-    private final Vector2 backRightModulePosition = new Vector2(-RobotMap.TRACKWIDTH / 2.0, RobotMap.WHEELBASE / 2.0);
+    private final Vector2 backRightModulePosition = new Vector2(RobotMap.TRACKWIDTH / 2.0, -RobotMap.WHEELBASE / 2.0);//maybe switch signs
 
 
   private final CPRSwerveModule frontLeftModule = new CPRSwerveModule(frontLeftModulePosition, 
@@ -92,49 +86,54 @@ public class SS_Drivebase extends Subsystem implements UpdateManager.Updatable{
 
   private NetworkTableEntry[] moduleAngleEntries = new NetworkTableEntry[modules.length];
   private NetworkTableEntry[] moduleEncoderVoltageEntries = new NetworkTableEntry[modules.length];
+
+  private NetworkTableEntry gyroAngleEntry;
     
   public SS_Drivebase() {
     synchronized (sensorLock) {
       navX.setInverted(true);
     }
 
-  ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-  poseXEntry = tab.add("Pose X", 0.0)
-          .withPosition(0, 0)
-          .withSize(1, 1)
-          .getEntry();
-  poseYEntry = tab.add("Pose Y", 0.0)
-          .withPosition(0, 1)
-          .withSize(1, 1)
-          .getEntry();
-  poseAngleEntry = tab.add("Pose Angle", 0.0)
-          .withPosition(0, 2)
-          .withSize(1, 1)
-          .getEntry();
+    ShuffleboardTab drivebaseTab = Shuffleboard.getTab("Drivebase");
+    poseXEntry = drivebaseTab.add("Pose X", 0.0)
+            .withPosition(0, 0)
+            .withSize(1, 1)
+            .getEntry();
+    poseYEntry = drivebaseTab.add("Pose Y", 0.0)
+            .withPosition(0, 1)
+            .withSize(1, 1)
+            .getEntry();
+    poseAngleEntry = drivebaseTab.add("Pose Angle", 0.0)
+            .withPosition(0, 2)
+            .withSize(1, 1)
+            .getEntry();
 
-  ShuffleboardLayout frontLeftModuleContainer = tab.getLayout("Front Left Module", BuiltInLayouts.kList)
-          .withPosition(1, 0)
-          .withSize(2, 3);
-  moduleAngleEntries[0] = frontLeftModuleContainer.add("Angle", 0.0).getEntry();
-  moduleEncoderVoltageEntries[0] = frontLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    ShuffleboardLayout frontLeftModuleContainer = drivebaseTab.getLayout("Front Left Module", BuiltInLayouts.kList)
+            .withPosition(1, 0)
+            .withSize(2, 3);
+    moduleAngleEntries[0] = frontLeftModuleContainer.add("Angle", 0.0).getEntry();
+    moduleEncoderVoltageEntries[0] = frontLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
-  ShuffleboardLayout frontRightModuleContainer = tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-          .withPosition(3, 0)
-          .withSize(2, 3);
-  moduleAngleEntries[1] = frontRightModuleContainer.add("Angle", 0.0).getEntry();
-  moduleEncoderVoltageEntries[1] = frontRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    ShuffleboardLayout frontRightModuleContainer = drivebaseTab.getLayout("Front Right Module", BuiltInLayouts.kList)
+            .withPosition(3, 0)
+            .withSize(2, 3);
+    moduleAngleEntries[1] = frontRightModuleContainer.add("Angle", 0.0).getEntry();
+    moduleEncoderVoltageEntries[1] = frontRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
-  ShuffleboardLayout backLeftModuleContainer = tab.getLayout("Back Left Module", BuiltInLayouts.kList)
-          .withPosition(5, 0)
-          .withSize(2, 3);
-  moduleAngleEntries[2] = backLeftModuleContainer.add("Angle", 0.0).getEntry();
-  moduleEncoderVoltageEntries[2] = backLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    ShuffleboardLayout backLeftModuleContainer = drivebaseTab.getLayout("Back Left Module", BuiltInLayouts.kList)
+            .withPosition(5, 0)
+            .withSize(2, 3);
+    moduleAngleEntries[2] = backLeftModuleContainer.add("Angle", 0.0).getEntry();
+    moduleEncoderVoltageEntries[2] = backLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
-  ShuffleboardLayout backRightModuleContainer = tab.getLayout("Back Right Module", BuiltInLayouts.kList)
-          .withPosition(7, 0)
-          .withSize(2, 3);
-  moduleAngleEntries[3] = backRightModuleContainer.add("Angle", 0.0).getEntry();
-  moduleEncoderVoltageEntries[3] = backRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    ShuffleboardLayout backRightModuleContainer = drivebaseTab.getLayout("Back Right Module", BuiltInLayouts.kList)
+            .withPosition(7, 0)
+            .withSize(2, 3);
+    moduleAngleEntries[3] = backRightModuleContainer.add("Angle", 0.0).getEntry();
+    moduleEncoderVoltageEntries[3] = backRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+
+    ShuffleboardLayout gyroContainer = drivebaseTab.getLayout("Gyro", BuiltInLayouts.kList).withPosition(9, 0).withSize(2, 1);
+    gyroAngleEntry = gyroContainer.add("Gyro Angle", 0.0).getEntry();
   }
 
   public RigidTransform2 getPose() {
@@ -215,8 +214,8 @@ public void resetGyroAngle(Rotation2 angle) {
 
 
 
-  @Override
-  public void initDefaultCommand() {
+  
+  public void initSendable() {
     setDefaultCommand(new C_Drive());
   }
 
@@ -226,6 +225,7 @@ public void resetGyroAngle(Rotation2 angle) {
         poseXEntry.setDouble(pose.translation.x);
         poseYEntry.setDouble(pose.translation.y);
         poseAngleEntry.setDouble(pose.rotation.toDegrees());
+        gyroAngleEntry.setDouble(navX.getAngle().toDegrees());
 
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];

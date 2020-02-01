@@ -12,9 +12,8 @@ import org.frcteam2910.common.robot.input.Axis;
 import org.frcteam2910.common.robot.input.Controller;
 import org.frcteam2910.common.robot.input.XboxController;
 
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.subsystems.SS_Drivebase;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /**
  * Add your docs here.
@@ -24,6 +23,7 @@ public class OI {
 
     public OI() {
         controller.getRightXAxis().setScale(0.25);
+        controller.getRightXAxis().setInverted(true);
     }
 
     public void bindButtons() {

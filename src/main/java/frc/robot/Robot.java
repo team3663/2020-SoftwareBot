@@ -11,10 +11,10 @@ import org.frcteam2910.common.robot.UpdateManager;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SS_Drivebase;
 import frc.robot.OI;
 
@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
   public static NetworkTableEntry controllerLeftXAxisEntry;
   public static NetworkTableEntry controllerLeftYAxisEntry;
   public static NetworkTableEntry controllerRightXAxisEntry;
- 
+
   @Override
   public void robotInit() {
     LiveWindow.disableAllTelemetry();
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    Scheduler.getInstance().run();
+    CommandScheduler.getInstance().run();
   }
 
   @Override

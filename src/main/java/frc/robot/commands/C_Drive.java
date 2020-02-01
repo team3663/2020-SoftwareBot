@@ -8,26 +8,23 @@
 package frc.robot.commands;
 
 import org.frcteam2910.common.math.Vector2;
-import org.frcteam2910.common.robot.input.Axis;
-import org.frcteam2910.common.robot.input.DPadButton.Direction;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.SS_Drivebase;
 
-public class C_Drive extends Command {
+public class C_Drive extends CommandBase {
   OI oi = Robot.getOI();
   SS_Drivebase ss_DriveBase = Robot.getDrivebase();
   private double defaultDeadbandRange = .16;
-  private double rotationDeadbandRange = .9;
   private boolean squareInputs = true;
   public C_Drive() {
-    requires(Robot.getDrivebase());
+    addRequirements(Robot.getDrivebase());
   }
 
   @Override
-  protected void execute() {
+  public void execute() {
     double forward = deadband(Robot.getOI().getDriveForwardAxis().get(), defaultDeadbandRange, squareInputs);
     Robot.controllerLeftYAxisEntry.setDouble(Robot.getOI().getDriveForwardAxis().getRaw());
 
@@ -36,23 +33,18 @@ public class C_Drive extends Command {
 
     double rotation = Robot.getOI().getDriveRotationAxis().get(true);
     Robot.controllerRightXAxisEntry.setDouble(Robot.getOI().getDriveRotationAxis().getRaw());
-    
+
     ss_DriveBase.drive(new Vector2(forward, strafe), rotation, true);
   }
 
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     return false;
   }
 
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
     Robot.getDrivebase().drive(Vector2.ZERO, 0.0, false);
-  }
-
-  @Override
-  protected void interrupted() {
-    end();
   }
 
   /**
