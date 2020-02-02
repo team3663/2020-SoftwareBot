@@ -4,14 +4,13 @@ import com.revrobotics.CANAnalog;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANAnalog.AnalogMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import org.frcteam2910.common.math.Vector2;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import frc.robot.RobotMap;
+import frc.robot.Constants;
 
 import org.frcteam2910.common.drivers.SwerveModule;
 
@@ -102,7 +101,7 @@ public final class CPRSwerveModule extends SwerveModule {
         this.driveMotor.setIdleMode(IdleMode.kBrake);
 
         // Setup current limiting
-        this.driveMotor.setSmartCurrentLimit(RobotMap.DRIVE_MOTOR_AMP_LIMIT);
+        this.driveMotor.setSmartCurrentLimit(Constants.DRIVE_MOTOR_AMP_LIMIT);
     }
 
     /**

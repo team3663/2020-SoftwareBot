@@ -7,34 +7,33 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import org.frcteam2910.common.math.Vector2;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.OI;
-import frc.robot.Robot;
 import frc.robot.subsystems.SS_Drivebase;
 
 public class C_Drive extends CommandBase {
-  OI oi = Robot.getOI();
-  SS_Drivebase ss_DriveBase = Robot.getDrivebase();
+  private SS_Drivebase drivebase;
   private double defaultDeadbandRange = .16;
-  private boolean squareInputs = true;
-  public C_Drive() {
-    addRequirements(Robot.getDrivebase());
+
+  private DoubleSupplier forward;
+  private DoubleSupplier strafe;
+  private DoubleSupplier rotation;
+
+  public C_Drive(SS_Drivebase drivebase, DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation) {
+    this.drivebase = drivebase;
+    this.forward = forward;
+    this.strafe = strafe;
+    this.rotation = rotation;
+    
+    addRequirements(drivebase);
   }
 
   @Override
   public void execute() {
-    double forward = deadband(Robot.getOI().getDriveForwardAxis().get(), defaultDeadbandRange, squareInputs);
-    Robot.controllerLeftYAxisEntry.setDouble(Robot.getOI().getDriveForwardAxis().getRaw());
-
-    double strafe = deadband(Robot.getOI().getDriveStrafeAxis().get(), defaultDeadbandRange, squareInputs);
-    Robot.controllerLeftXAxisEntry.setDouble(Robot.getOI().getDriveStrafeAxis().getRaw());
-
-    double rotation = Robot.getOI().getDriveRotationAxis().get(true);
-    Robot.controllerRightXAxisEntry.setDouble(Robot.getOI().getDriveRotationAxis().getRaw());
-
-    ss_DriveBase.drive(new Vector2(forward, strafe), rotation, true);
+    drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), rotation.getAsDouble(), true);
   }
 
   @Override
@@ -44,7 +43,7 @@ public class C_Drive extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    Robot.getDrivebase().drive(Vector2.ZERO, 0.0, false);
+    drivebase.drive(Vector2.ZERO, 0.0, false);
   }
 
   /**

@@ -7,8 +7,10 @@
 
 package frc.robot;
 
-public class RobotMap 
-{
+/**
+ * All constants for robot control are found here.
+ */
+public class Constants {
     //ROBOT DIMENSIONS
     public static final double TRACKWIDTH = 23.5;
     public static final double WHEELBASE = 23.63;
@@ -33,5 +35,5 @@ public class RobotMap
     //MISC
     static int joe = 200;
     public static final byte NAVX_UPDATE_RATE = (byte) joe;
-    
 }
+
