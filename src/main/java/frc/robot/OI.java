@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.commands.C_SetArmPosition;
-import frc.robot.commands.C_SetPickUpMotorSpeed;
-import frc.robot.commands.commandgroups.CG_Roomba;
+//import frc.robot.commands.C_SetPickUpMotorSpeed;
+//import frc.robot.commands.commandgroups.CG_Roomba;
 
 import frc.robot.util.IntakePosition;
 
@@ -51,8 +51,6 @@ public class OI {
         b_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_RETRACTED));
         x_button.whenPressed(new C_SetArmPosition(IntakePosition.SHORT_RETRACT));
         y_button.whenPressed(new C_SetArmPosition(IntakePosition.LONG_RETRACT));
-        r_bumper.whileHeld(new CG_Roomba());
-        l_bumper.whileHeld(new C_SetPickUpMotorSpeed());
     }
 
     public void registerControls() {
@@ -60,8 +58,6 @@ public class OI {
         b_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_RETRACTED));
         x_button.whenPressed(new C_SetArmPosition(IntakePosition.SHORT_RETRACT));
         y_button.whenPressed(new C_SetArmPosition(IntakePosition.LONG_RETRACT));
-        r_bumper.whileHeld(new CG_Roomba());
-        l_bumper.whileHeld(new C_SetPickUpMotorSpeed());
     }
 
     public Robot getRobot() {
