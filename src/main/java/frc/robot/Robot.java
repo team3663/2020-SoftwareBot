@@ -38,7 +38,7 @@ public static RobotMap robotMap;
 
     oi.registerControls(); //<-- comment this out if you commented out the "this" one
 
-    //oi = new OI(); //<-- bring this back if needed
+    //oi = new OI(); //<-- bring this back if commented out the first two lines of code before this one
   }
 
 
