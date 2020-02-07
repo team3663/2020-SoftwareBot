@@ -23,7 +23,7 @@ public class Robot extends TimedRobot {
 
   public static OI oi;
 
-public static RobotMap robotMap;
+  public static RobotMap robotMap;
 
   /**
    * This function is run when the robot is first started up and should be

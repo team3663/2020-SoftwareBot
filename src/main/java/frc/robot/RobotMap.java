@@ -15,6 +15,4 @@ public class RobotMap {
     public static final int LONG_SOLENOID_REVERSE = 3;
     
     public static final int powerCellPickUpMotor = 10;
-
-    public static final int INTAKE_SWITCH = 13;
 }
