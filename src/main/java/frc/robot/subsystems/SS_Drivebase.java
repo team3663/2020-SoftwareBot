@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SerialPort.Port;
-import frc.robot.commands.*;
 import frc.robot.drivers.*;
 import frc.robot.Constants;
 
@@ -29,16 +28,18 @@ import org.frcteam2910.common.robot.UpdateManager;
 
 public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatable{
 
-    //SWERVE MODULE ANGLE ENCODER OFFSETS (in radians, obviously)
-    public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(60); //111
-    public static final double FRONT_RIGHT_MODULE_OFFSET = Math.toRadians(-20); //12
-    public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(-90); //-83
-    public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-10); //4
+    private static final double ROTATION_VELOCITY_MULTIPLIER = 2.0;
 
-    private final Vector2 frontLeftModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, Constants.WHEELBASE / 2.0);//maybe switch signs
-    private final Vector2 frontRightModulePosition = new Vector2(Constants.TRACKWIDTH / 2.0, Constants.WHEELBASE / 2.0);
-    private final Vector2 backLeftModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, -Constants.WHEELBASE / 2.0);
-    private final Vector2 backRightModulePosition = new Vector2(Constants.TRACKWIDTH / 2.0, -Constants.WHEELBASE / 2.0);//maybe switch signs
+    //SWERVE MODULE ANGLE ENCODER OFFSETS (in radians, obviously)
+    public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(67);
+    public static final double FRONT_RIGHT_MODULE_OFFSET = Math.toRadians(-12);
+    public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(-97);
+    public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-8);
+
+    private final Vector2 frontLeftModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, Constants.WHEELBASE / 2.0);
+    private final Vector2 frontRightModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, -Constants.WHEELBASE / 2.0);
+    private final Vector2 backLeftModulePosition = new Vector2(Constants.TRACKWIDTH / 2.0, Constants.WHEELBASE / 2.0);
+    private final Vector2 backRightModulePosition = new Vector2(Constants.TRACKWIDTH / 2.0, -Constants.WHEELBASE / 2.0);
 
 
   private final CPRSwerveModule frontLeftModule = new CPRSwerveModule(frontLeftModulePosition, 
@@ -91,7 +92,7 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
     
   public SS_Drivebase() {
     synchronized (sensorLock) {
-      navX.setInverted(true);
+      navX.setInverted(true);      
     }
 
     ShuffleboardTab drivebaseTab = Shuffleboard.getTab("Drivebase");
@@ -179,6 +180,7 @@ public void resetGyroAngle(Rotation2 angle) {
 
         Rotation2 angle;
         synchronized (sensorLock) {
+            System.out.println("angle: " + navX.getAngle());
             angle = navX.getAngle();
         }
 
@@ -187,6 +189,7 @@ public void resetGyroAngle(Rotation2 angle) {
         synchronized (kinematicsLock) {
             this.pose = pose;
         }
+        System.out.println(pose);
     }
 
     private void updateModules(HolonomicDriveSignal signal, double dt) {
@@ -194,8 +197,11 @@ public void resetGyroAngle(Rotation2 angle) {
       if (signal == null) {
           velocity = new ChassisVelocity(Vector2.ZERO, 0.0);
       } else if (signal.isFieldOriented()) {
+          Rotation2 inverse = getPose().rotation.inverse();
+          double inverseAngle = inverse.toRadians();
+          Rotation2 inverseCorrection = new Rotation2(Math.cos(inverseAngle), Math.sin(inverseAngle), true);
           velocity = new ChassisVelocity(
-                  signal.getTranslation().rotateBy(getPose().rotation.inverse()),
+                  signal.getTranslation().rotateBy(inverse.rotateBy(inverseCorrection)),
                   signal.getRotation()
           );
       } else {
@@ -219,6 +225,7 @@ public void resetGyroAngle(Rotation2 angle) {
         poseYEntry.setDouble(pose.translation.y);
         poseAngleEntry.setDouble(pose.rotation.toDegrees());
         gyroAngleEntry.setDouble(navX.getAngle().toDegrees());
+        // System.out.println("Gyro Angle: " + Math.toDegrees(navX.getAxis(Axis.YAW)) + " : " + navX.getAngle());
 
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];

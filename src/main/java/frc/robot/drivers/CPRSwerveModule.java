@@ -17,11 +17,10 @@ import org.frcteam2910.common.drivers.SwerveModule;
 import static org.frcteam2910.common.robot.Constants.CAN_TIMEOUT_MS;
 
 /**
- * Driver for the 2017 revision of the 2910 swerve module.
+ * Driver for Team 3663's 2020 revision of the 2910 swerve module.
  * <p>
- * This implementation matches what hardware was used on both the robot we made during the 2017 off-season and what was
- * used on the 2018 competition robot. It assumes that two Talon SRXs are used to control each module over CAN and that
- * the drive Talon SRX is connected to a CIMcoder and the angle Talon SRX is connected to an analog encoder.
+ * This implementation assumes that two Spark MAXs are used to control each module over CAN and that
+ * the angle Spark MAX is connected to an analog encoder.
  * <p>
  * The drive distance units default to inches. This can be changed using
  * {@link CPRSwerveModule#setDriveTicksPerUnit(double)}
@@ -31,11 +30,6 @@ public final class CPRSwerveModule extends SwerveModule {
     private static final double ANGLE_VERSA_GEAR_RATIO = 21.0; // MOTOR REVOLUTIONS TO MODULE REVOLUTIONS
     private static final double ANGLE_TOTAL_GEAR_RATIO = 63.0;
 
-    /**
-     * The default amount of drive encoder ticks for one unit of travel.
-     * <p>
-     * This value was taken from our 2018 robot.
-     */
     private static final double DEFAULT_DRIVE_TICKS_PER_UNIT = 36.65; //TODO: find drive ticks per inch with a NEO drive motor
 
     private final double offsetAngle;
@@ -48,9 +42,9 @@ public final class CPRSwerveModule extends SwerveModule {
     private final PIDController anglePIDController;
     private final CANPIDController drivePIDController;
 
-    private final double ANGLE_P = .7;
+    private final double ANGLE_P = .5;
     private final double ANGLE_I = 0.0;
-    private final double ANGLE_D = 0.04;
+    private final double ANGLE_D = 0.0;
 
 
 
