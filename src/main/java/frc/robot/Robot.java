@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
     ss_Intake = new SS_Intake(); 
     robotMap = new RobotMap();
     
-    oi = new OI(this); //<-- comment this out if needed
+    oi = new OI(); //<-- comment this out if needed
 
     oi.registerControls(); //<-- comment this out if you commented out the "this" one
 

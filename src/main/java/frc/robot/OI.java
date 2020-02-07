@@ -35,21 +35,11 @@ public class OI {
     public Button b_button = new JoystickButton(driveController, BUTTON_B);
     public Button x_button = new JoystickButton(driveController, BUTTON_X);
     public Button y_button = new JoystickButton(driveController, BUTTON_Y);
-    
-    private Robot mRobot;
-
-    public OI(Robot robot) {
-        mRobot = robot;
-    }
 
     public void registerControls() {
         a_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_EXTENDED));
         b_button.whenPressed(new C_SetArmPosition(IntakePosition.FULLY_RETRACTED));
         x_button.whenPressed(new C_SetArmPosition(IntakePosition.SHORT_RETRACT));
         y_button.whenPressed(new C_SetArmPosition(IntakePosition.LONG_RETRACT));
-    }
-
-    public Robot getRobot() {
-        return mRobot;
     }
 }
