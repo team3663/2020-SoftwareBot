@@ -39,10 +39,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    //ensure that the autonomus command is stopped for teleop
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
 
+    //schedule the teleop command
     teleopCommand = container.getTeleopCommand();
     if(teleopCommand != null) {
       teleopCommand.schedule();
