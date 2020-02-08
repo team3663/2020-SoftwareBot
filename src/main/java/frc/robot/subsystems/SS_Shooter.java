@@ -83,6 +83,7 @@ public class SS_Shooter extends SubsystemBase {
   private double correctionMultiplier = 1;
 
   private HoodPosition targetHoodPosition = HoodPosition.NEAR;
+  private FeederState feederState = FeederState.IDLE;
 
   public SS_Shooter() {
     wheel = new CANSparkMax(Constants.FLY_WEEL_MOTOR, MotorType.kBrushless);
@@ -124,21 +125,44 @@ public class SS_Shooter extends SubsystemBase {
       setRPM(0);
     }
 
-    if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD) {
-      feederTargetRPM = FEEDER_SHOOT_RPM;
-      if(feederBelt.getEncoder().getPosition() >= REV_PER_FULL_FEED){
-        isInShootingMode = false;
-        feederTargetRPM = 0;
-      }
-    } else {
-      if(entryIsValidTarget() && !exitIsValidTarget()) {
-        feederTargetRPM = FEEDER_LOAD_RPM;
-      } else {
-        feederTargetRPM = 0;
-      }
-    }
-    setFeederRPM(feederTargetRPM);
+    switch (feederState) {
+      case IDLE:
+        
+        break;
     
+      case SHOOT_PREP:
+
+        break;
+      
+      case SHOOT_ONE:
+        break;
+
+      case SHOOT_CONTINOUS:
+        break;
+      
+      case INTAKE_PREP:
+        break;
+
+      case INTAKE:
+        break;
+      default:
+        break;
+    }
+    // if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD) {
+    //   feederTargetRPM = FEEDER_SHOOT_RPM;
+    //   if(feederBelt.getEncoder().getPosition() >= REV_PER_FULL_FEED){
+    //     isInShootingMode = false;
+    //     feederTargetRPM = 0;
+    //   }
+    // } else {
+    //   if(entryIsValidTarget() && !exitIsValidTarget()) {
+    //     feederTargetRPM = FEEDER_LOAD_RPM;
+    //   } else {
+    //     feederTargetRPM = 0;
+    //   }
+    // }
+    // setFeederRPM(feederTargetRPM);
+
     //push telemetry to the smart dashboard
     SmartDashboard.putNumber("target RPM", targetRPM);
     SmartDashboard.putNumber("Current shooter RPM", getCurrentRPM());
@@ -342,6 +366,13 @@ public class SS_Shooter extends SubsystemBase {
     }
   }
 
+  public FeederState getFeederState(){
+    return feederState;
+  }
+
+  private void setFeederState(FeederState state){
+    feederState = state;
+  }
   /**
    * Set the hood position
    * @param hoodPosition the angle position of the hood
@@ -361,7 +392,24 @@ public class SS_Shooter extends SubsystemBase {
     NEAR,
     FAR
   }
+
+  public enum FeederState{
+    IDLE,
+    SHOOT_PREP,
+    INTAKE,
+    INTAKE_PREP,
+    SHOOT_CONTINOUS,
+    SHOOT_ONE
+  }
   
+  public void setIdle(){
+    setFeederRPM(0);
+    setFeederState(FeederState.IDLE);
+  }
+  public void shootPrep(){
+    
+    setFeederState(FeederState.IDLE);
+  }
   public double getEntryRange(){
     return entrySensor.getRange();
   }
