@@ -17,6 +17,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANEncoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -58,8 +59,8 @@ public class SS_Shooter extends SubsystemBase {
   private final double CONFIDENCE_THRESHOLD = 97; //the threshold or the percent wanted to shoot at
   private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shooting
 
-  private final double FEEDER_RUN_SPEED = 0.1; //how fast the feeder should be running when we are shooting
-  private final double FEEDER_INDEX_SPEED = 0.2;
+  private final double FEEDER_SHOOT_RPM = 100; //how fast the feeder should be running when we are shooting
+  private final double FEEDER_LOAD_RPM = 100;
   private CANSparkMax wheel;
   private CANEncoder wheelEncoder;
   private CANPIDController wheelPID;
@@ -73,6 +74,7 @@ public class SS_Shooter extends SubsystemBase {
   private final double EXIT_VALID_RANGE = 300;
 
   private Timer confidenceTimer;
+  private Timer feederBeltTimer;
 
   private double targetRPM = 0;
   private boolean wheelSpinning = false;
@@ -110,6 +112,8 @@ public class SS_Shooter extends SubsystemBase {
 
     confidenceTimer = new Timer();
     confidenceTimer.start();
+    feederBeltTimer = new Timer();
+    feederBeltTimer.start();
   }
 
   @Override
@@ -122,12 +126,12 @@ public class SS_Shooter extends SubsystemBase {
     }
 
     if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD) {
-      feederBelt.set(FEEDER_RUN_SPEED);
+      setFeederRPM(FEEDER_SHOOT_RPM);
     } else {
       if(entryIsValidTarget() && !exitIsValidTarget()) {
-        feederBelt.set(FEEDER_INDEX_SPEED);
+        setFeederRPM(FEEDER_LOAD_RPM);
       } else {
-        feederBelt.set(0);
+        setFeederRPM(0);
       }
     }
 
@@ -201,7 +205,7 @@ public class SS_Shooter extends SubsystemBase {
    * shoot one ball
    */
   public void shoot() { //MOVE BELLT HERE
-    //TODO
+    isInShootingMode = true;
   }
 
   /**
