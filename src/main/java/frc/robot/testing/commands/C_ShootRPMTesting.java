@@ -5,23 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.testing.commands;
 
+import org.frcteam2910.common.robot.input.Controller;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Shooter;
 
 /**
- * A simple shoot method for testing. It passes the calculated distance from the limelight directly into the shooter subsystem.
+ * A test class for setting the shooter wheel RPM using the controller. It is designed for finding the RPM needed to shoot the ball
+ * into the target at a certain distance in order to tune the shooting feet/RPM constants in SS_Shooter.
  */
-public class C_SimpleShoot extends CommandBase {
+public class C_ShootRPMTesting extends CommandBase {
 
-  private SS_Shooter shooter;
+  private final int RPMS_PER_PRESS = 100;
+
+  private Controller controller;
   private Vision vision;
+  private SS_Shooter shooter;
 
-  public C_SimpleShoot(Vision vision, SS_Shooter shooter) {
+  private int RPM = 500;
+  private boolean pressed = false;
+
+  public C_ShootRPMTesting(Controller controller, Vision vision, SS_Shooter shooter) {
+    //Shuffleboard
+    this.controller = controller;
     this.shooter = shooter;
     this.vision = vision;
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
   }
 
@@ -34,7 +47,22 @@ public class C_SimpleShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setTargetDistance(vision.getDistance());
+    if(controller.getAButton().get()) {
+      if(!pressed) {
+        RPM += RPMS_PER_PRESS;
+      }
+      pressed = true;
+    } else if(controller.getBButton().get()) {
+      if(!pressed) {
+        RPM -= RPMS_PER_PRESS;
+      }
+      pressed = false;
+    } else {
+      pressed = false;
+    }
+    shooter.setTargetRPM(RPM);
+
+    SmartDashboard.putNumber("Set Target RPM", RPM);
     vision.updateTelemetry();
   }
 
