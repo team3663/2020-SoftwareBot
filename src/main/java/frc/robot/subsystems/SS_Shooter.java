@@ -58,15 +58,9 @@ public class SS_Shooter extends SubsystemBase {
   private final double CONFIDENCE_THRESHOLD = 97; //the threshold or the percent wanted to shoot at
   private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shooting
 
-<<<<<<< HEAD
-  public static final double FEEDER_SHOOT_RPM = 100; //how fast the feeder should be running when we are shooting
-  public static final double FEEDER_LOAD_RPM = 100; //how fast the feeder should be running when indexing the balls
-  public static final double REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
-=======
   public final double FEEDER_SHOOT_RPM = 100; //how fast the feeder should be running when we are shooting
   public final double FEEDER_LOAD_RPM = 100; //how fast the feeder should be running when indexing the balls
   public final double REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
->>>>>>> f2ec675ff4d010909c4e7e401ef1e068eb380079
 
   private CANSparkMax wheel;
   private CANEncoder wheelEncoder;
@@ -356,7 +350,7 @@ public class SS_Shooter extends SubsystemBase {
     return feederState;
   }
 
-  private void setFeederState(FeederState state){
+  public void setFeederState(FeederState state){
     feederState = state;
   }
   /**
