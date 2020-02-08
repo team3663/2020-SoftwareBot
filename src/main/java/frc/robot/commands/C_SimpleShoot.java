@@ -8,11 +8,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Shooter;
 
+/**
+ * A simple shoot method for testing. It passes the calculated distance from the limelight directly into the shooter subsystem.
+ */
 public class C_SimpleShoot extends CommandBase {
 
   private SS_Shooter shooter;

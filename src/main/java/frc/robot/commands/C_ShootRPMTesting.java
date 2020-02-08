@@ -9,15 +9,15 @@ package frc.robot.commands;
 
 import org.frcteam2910.common.robot.input.Controller;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Shooter;
-//import jdk.internal.jshell.tool.resources.version;
 
+/**
+ * A test class for setting the shooter wheel RPM using the controller. It is designed for finding the RPM needed to shoot the ball
+ * into the target at a certain distance in order to tune the shooting feet/RPM constants in SS_Shooter.
+ */
 public class C_ShootRPMTesting extends CommandBase {
 
   private final int RPMS_PER_PRESS = 100;
