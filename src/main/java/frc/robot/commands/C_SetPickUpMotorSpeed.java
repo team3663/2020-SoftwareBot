@@ -5,7 +5,7 @@ import frc.robot.OI;
 import frc.robot.Robot;
 
 public class C_SetPickUpMotorSpeed extends CommandBase {
-    private double pickUpSpeed = 0;
+    private double pickUpSpeed;
 
     public C_SetPickUpMotorSpeed() {
         addRequirements(Robot.ss_Intake);
@@ -13,13 +13,13 @@ public class C_SetPickUpMotorSpeed extends CommandBase {
 
     //@Override
     public void execute() {
-        if(Robot.oi.driveController.getRawButton(OI.L_BUMPER)) {
+        if(Robot.oi.driveController.getRawButtonPressed(OI.L_BUMPER)) {
             pickUpSpeed = 0.5;
         }
-        else if(Robot.oi.driveController.getRawButton(OI.R_BUMPER)) {
+        else if(Robot.oi.driveController.getRawButtonPressed(OI.R_BUMPER)) {
             pickUpSpeed = -0.5;
         }
-        else if(Robot.oi.driveController.getRawButton(OI.BUTTON_START)) {
+        else if(Robot.oi.driveController.getRawButtonPressed(OI.BUTTON_START)) {
             pickUpSpeed = 0;
         }
 
