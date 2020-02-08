@@ -1,45 +1,52 @@
 package frc.robot.drivers;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANAnalog;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANAnalog.AnalogMode;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import org.frcteam2910.common.math.Vector2;
+
+import edu.wpi.first.wpilibj.controller.PIDController;
+import frc.robot.Constants;
+
 import org.frcteam2910.common.drivers.SwerveModule;
 
 import static org.frcteam2910.common.robot.Constants.CAN_TIMEOUT_MS;
 
 /**
- * Driver for the 2017 revision of the 2910 swerve module.
+ * Driver for Team 3663's 2020 revision of the 2910 swerve module.
  * <p>
- * This implementation matches what hardware was used on both the robot we made during the 2017 off-season and what was
- * used on the 2018 competition robot. It assumes that two Talon SRXs are used to control each module over CAN and that
- * the drive Talon SRX is connected to a CIMcoder and the angle Talon SRX is connected to an analog encoder.
+ * This implementation assumes that two Spark MAXs are used to control each module over CAN and that
+ * the angle Spark MAX is connected to an analog encoder.
  * <p>
  * The drive distance units default to inches. This can be changed using
  * {@link CPRSwerveModule#setDriveTicksPerUnit(double)}
  */
 public final class CPRSwerveModule extends SwerveModule {
-    /**
-     * How many angle encoder ticks occur for one radian travel.
-     * <p>
-     * The angle encoder travels 1 to 1 with the module so one rotation of the angle encoder is one rotation of the
-     * module. A Talon SRX gives us 1024 ticks per rotation for an analog encoder so we can divide that by 2&pi; to get
-     * the ticks per radian.
-     */
-    private static final double ANGLE_TICKS_PER_RADIAN = (1024.0 / (2.0 * Math.PI));
+    
+    private static final double ANGLE_VERSA_GEAR_RATIO = 21.0; // MOTOR REVOLUTIONS TO MODULE REVOLUTIONS
+    private static final double ANGLE_TOTAL_GEAR_RATIO = 63.0;
 
-    /**
-     * The default amount of drive encoder ticks for one unit of travel.
-     * <p>
-     * This value was taken from our 2018 robot.
-     */
-    private static final double DEFAULT_DRIVE_TICKS_PER_UNIT = 36.65;
+    private static final double DEFAULT_DRIVE_TICKS_PER_UNIT = 36.65; //TODO: find drive ticks per inch with a NEO drive motor
 
     private final double offsetAngle;
 
-    private final TalonSRX angleMotor;
-    private final TalonSRX driveMotor;
+    private final CANSparkMax angleMotor;
+    private final CANSparkMax driveMotor;
+
+    private final CANAnalog angleAbsoluteEncoder;
+    private final CANEncoder angleMotorEncoder;
+    private final PIDController anglePIDController;
+    private final CANPIDController drivePIDController;
+
+    private final double ANGLE_P = .5;
+    private final double ANGLE_I = 0.0;
+    private final double ANGLE_D = 0.0;
+
+
 
     /**
      * The amount of drive encoder ticks that occur for one unit of travel.
@@ -54,38 +61,41 @@ public final class CPRSwerveModule extends SwerveModule {
      * @param angleMotor     the motor controller that controls the angle motor
      * @param driveMotor     the motor controller that controls the drive motor
      */
-    public CPRSwerveModule(Vector2 modulePosition,
-                           double offsetAngle,
-                           TalonSRX angleMotor,
-                           TalonSRX driveMotor) {
+    public CPRSwerveModule(final Vector2 modulePosition, final double offsetAngle, final CANSparkMax angleMotor, final CANSparkMax driveMotor) {
         super(modulePosition);
         this.offsetAngle = offsetAngle;
         this.angleMotor = angleMotor;
         this.driveMotor = driveMotor;
 
-        // Configure angle motor
-        this.angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, CAN_TIMEOUT_MS);
-        this.angleMotor.configFeedbackNotContinuous(true, CAN_TIMEOUT_MS);
-        this.angleMotor.setSensorPhase(true);
-        this.angleMotor.config_kP(0, 30, CAN_TIMEOUT_MS);
-        this.angleMotor.config_kI(0, 0.001, CAN_TIMEOUT_MS);
-        this.angleMotor.config_kD(0, 200, CAN_TIMEOUT_MS);
-        this.angleMotor.config_kF(0, 0, CAN_TIMEOUT_MS);
-        this.angleMotor.setNeutralMode(NeutralMode.Brake);
+        //Configure absolute encoder
+        this.angleAbsoluteEncoder = new CANAnalog(this.angleMotor, AnalogMode.kAbsolute);
+        this.angleAbsoluteEncoder.setInverted(false);
 
+        //Configure angle motor encoder
+        angleMotorEncoder = angleMotor.getEncoder();
+        angleMotorEncoder.setPositionConversionFactor(2 * Math.PI / ANGLE_TOTAL_GEAR_RATIO);
+        angleMotorEncoder.setPosition(readAngle());
+
+        //Configure PID controllers
+        anglePIDController = new PIDController(ANGLE_P, ANGLE_I, ANGLE_D);
+        anglePIDController.enableContinuousInput(0, 2 * Math.PI);
+
+        drivePIDController = this.driveMotor.getPIDController();
+        drivePIDController.setOutputRange(-1.0, 1.0);
+
+
+        //Config angle motor
+        this.angleMotor.setIdleMode(IdleMode.kBrake);
         // Configure drive motor
-        this.driveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, CAN_TIMEOUT_MS);
-        this.driveMotor.setSensorPhase(true);
-        this.driveMotor.config_kP(0, 15, CAN_TIMEOUT_MS);
-        this.driveMotor.config_kI(0, 0.01, CAN_TIMEOUT_MS);
-        this.driveMotor.config_kD(0, 0.1, CAN_TIMEOUT_MS);
-        this.driveMotor.config_kF(0, 0.2, CAN_TIMEOUT_MS);
+        drivePIDController.setP(15);
+        drivePIDController.setI(.01);
+        drivePIDController.setD(.1);
+        drivePIDController.setFF(.2);
+
+        this.driveMotor.setIdleMode(IdleMode.kBrake);
 
         // Setup current limiting
-        this.driveMotor.configContinuousCurrentLimit(30, CAN_TIMEOUT_MS);
-        this.driveMotor.configPeakCurrentLimit(30, CAN_TIMEOUT_MS);
-        this.driveMotor.configPeakCurrentDuration(100, CAN_TIMEOUT_MS);
-        this.driveMotor.enableCurrentLimit(true);
+        this.driveMotor.setSmartCurrentLimit(Constants.DRIVE_MOTOR_AMP_LIMIT);
     }
 
     /**
@@ -103,8 +113,9 @@ public final class CPRSwerveModule extends SwerveModule {
     }
 
     @Override
-    protected double readAngle() {
-        double angle = angleMotor.getSelectedSensorPosition() / ANGLE_TICKS_PER_RADIAN + offsetAngle;
+    public double readAngle() {
+        double voltage = angleAbsoluteEncoder.getVoltage() - .03; //account for dead encoder spot
+        double angle = (voltage / 3.22) * 2.0 * Math.PI + offsetAngle; 
         angle %= 2.0 * Math.PI;
         if (angle < 0.0) {
             angle += 2.0 * Math.PI;
@@ -113,18 +124,33 @@ public final class CPRSwerveModule extends SwerveModule {
         return angle;
     }
 
-    @Override
-    public double readDistance() {
-        return driveMotor.getSelectedSensorPosition() / driveTicksPerUnit;
+    public double getEncoderVoltage() {
+        return angleAbsoluteEncoder.getPosition();
+    }
+
+    public double getIntegratedEncoderAngle() {
+        return Math.toDegrees(angleMotorEncoder.getPosition());
+    }
+
+    public void resetIntegratedEncoder() {
+        angleMotorEncoder.setPosition(readAngle());
     }
 
     @Override
-    protected void setTargetAngle(double angle) {
-        angleMotor.set(ControlMode.Position, angle * ANGLE_TICKS_PER_RADIAN);
+    public double readDistance() {
+        return driveMotor.getEncoder().getPosition() / driveTicksPerUnit;
+    }
+    /**
+     * @param angle IN RADIANS
+     */
+    @Override
+	public void setTargetAngle(double angle) {
+        //System.out.println(anglePIDController.getPositionError());
+        angleMotor.set(anglePIDController.calculate(readAngle(), angle));
     }
 
     @Override
     public void setDriveOutput(double output) {
-        driveMotor.set(ControlMode.PercentOutput, output);
+        driveMotor.set(output);
     }
 }
