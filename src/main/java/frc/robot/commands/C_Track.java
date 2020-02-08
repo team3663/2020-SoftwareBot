@@ -12,10 +12,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.drivers.NavX;
 import frc.robot.drivers.Vision;
-import frc.robot.drivers.NavX.Axis;
 import frc.robot.subsystems.SS_Drivebase;
 
 
@@ -23,17 +20,18 @@ import frc.robot.subsystems.SS_Drivebase;
 public class C_Track extends CommandBase {
 
   private Vision vision;
-  private NavX navx;
+
+  private static final double p = 1000;
 
   private DoubleSupplier forward;
   private DoubleSupplier strafe;
 
   private SS_Drivebase drivebase;
 
-  private double robotRotationWithOffset;
 
   public C_Track(Vision vision, SS_Drivebase drivebase, DoubleSupplier forward, DoubleSupplier strafe) {
 
+    
     this.forward = forward;
     this.strafe = strafe;
     this.drivebase = drivebase;
@@ -50,7 +48,13 @@ public class C_Track extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), vision.getXOffset(), false);
+
+      SmartDashboard.putNumber("vision X with P",vision.getXOffset()/p);
+      if(vision.getValidTarget()){
+        drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), vision.getXOffset()/p, false);
+      }
+
+    
   }
 
   // Called once the command ends or is interrupted.

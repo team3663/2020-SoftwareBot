@@ -62,7 +62,9 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         driveController.getBackButton().whenPressed(new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase));
-        driveController.getLeftBumperButton().whenPressed(new C_Track());
+        driveController.getLeftBumperButton().whenHeld(new C_Track(vision,drivebase,
+            () -> driveController.getLeftYAxis().get(true),
+            () -> driveController.getLeftXAxis().get(true)), true);
     }
 
     public Command getAutonomousCommand() {
