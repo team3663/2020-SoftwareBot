@@ -31,4 +31,8 @@ public class Constants {
     
         //feeder constants
         public static final int FEEDER_BELT_MOTOR = 6; //TODO
+
+        //Optical sensors for feeder
+        public static final int ENTRY_SENSOR = 10;
+        public static final int EXIT_SENSOR = 11;
 }

@@ -28,7 +28,7 @@ public class RobotContainer {
 
     //instantiate commands
     private final C_Shoot shoot = new C_Shoot(vision, shooter);
-
+    
     //All updatable subsystems should be passed as parameters into the UpdateManager constructor
     private final UpdateManager updateManager = new UpdateManager();
 
@@ -38,7 +38,9 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
-    private void configureButtonBindings() {}
+    private void configureButtonBindings() {
+
+    }
 
     public Command getAutonomousCommand() {
         return shoot;

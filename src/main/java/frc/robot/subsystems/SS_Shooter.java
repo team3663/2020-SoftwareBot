@@ -10,7 +10,11 @@ package frc.robot.subsystems;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.playingwithfusion.CANVenom;
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANEncoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,6 +38,7 @@ public class SS_Shooter extends SubsystemBase {
   private final int DISTANCE_COLUMN = 0; //column index for distance values
   private final int RPM_COLUMN = 1; //column index for RPM values
   private final double HOOD_FAR_DISTANCE = 10; //The distance at which the hood switches to the far angle
+  private final double SHOOTING_CONFIDENCE_THRESHOLD = .80;
 
   //the correction multiplier in the code that is fixed (the other one, correctionMultiplier, can be changed during a match)
   private final double WHEEL_GEAR_RATIO_MULTIPLIER = 1;
@@ -52,8 +57,10 @@ public class SS_Shooter extends SubsystemBase {
   private final double DEFAULT_FEED_SPEED = 500; //default speed of the belt feeder
 
   private final double CONFIDENCE_THRESHOLD = 97; //the threshold or the percent wanted to shoot at
-  private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shoothing
+  private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shooting
 
+  private final double FEEDER_RUN_SPEED = 0.1; //how fast the feeder should be running when we are shooting
+  private final double FEEDER_INDEX_SPEED = 0.2;
   private CANSparkMax wheel;
   private CANEncoder wheelEncoder;
   private CANPIDController wheelPID;
@@ -61,10 +68,16 @@ public class SS_Shooter extends SubsystemBase {
   private CANPIDController feederBeltPID;
   private DoubleSolenoid hoodAngle;
 
+  private TimeOfFlight entrySensor;
+  private TimeOfFlight exitSensor;
+  private final double ENTRY_VALID_RANGE = 300;
+  private final double EXIT_VALID_RANGE = 300;
+
   private Timer confidenceTimer;
 
   private double targetRPM = 0;
   private boolean wheelSpinning = false;
+  private boolean isInShootingMode = false;
   private double correctionMultiplier = 1;
 
   private HoodPosition targetHoodPosition = HoodPosition.NEAR;
@@ -83,11 +96,18 @@ public class SS_Shooter extends SubsystemBase {
     //hoodAngle = new DoubleSolenoid(1, 2); //TODO
 
     feederBelt = new CANSparkMax(Constants.FEEDER_BELT_MOTOR, MotorType.kBrushless);
+    feederBelt.setIdleMode(IdleMode.kBrake);
     feederBeltPID = feederBelt.getPIDController();
     feederBeltPID.setP(FEEDER_BELT_KP);
     feederBeltPID.setI(FEEDER_BELT_KI);
     feederBeltPID.setD(FEEDER_BELT_KD);
     feederBelt.getEncoder().setVelocityConversionFactor(FEEDER_BELT_GEAR_RATIO_MULTIPLIER); //set feeder gear ratio
+
+    //Sensors for Feeder
+    entrySensor = new TimeOfFlight(Constants.ENTRY_SENSOR);
+    exitSensor = new TimeOfFlight(Constants.EXIT_SENSOR);
+    entrySensor.setRangingMode(RangingMode.Short, 100);
+    exitSensor.setRangingMode(RangingMode.Short, 100);
 
     confidenceTimer = new Timer();
     confidenceTimer.start();
@@ -102,11 +122,26 @@ public class SS_Shooter extends SubsystemBase {
       setRPM(0);
     }
 
+    if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD){
+      feederBelt.set(FEEDER_RUN_SPEED);
+    }else{
+      if(entryIsValidTarget() && !exitIsValidTarget()){
+        feederBelt.set(FEEDER_INDEX_SPEED);
+      }else{
+        feederBelt.set(0);
+      }
+    }
+
     //push telemetry to the smart dashboard
     SmartDashboard.putNumber("target RPM", targetRPM);
     SmartDashboard.putNumber("Current shooter RPM", getCurrentRPM());
     SmartDashboard.putNumber("shooting confidence", getShotConfidence());
     SmartDashboard.putBoolean("wheel spinning", wheelSpinning);
+
+    SmartDashboard.putNumber("Entry Range", getEntryRange());
+    SmartDashboard.putBoolean("Entry Is Valid Target", entryIsValidTarget());
+    SmartDashboard.putNumber("Exit Range", getExitRange());
+    SmartDashboard.putBoolean("Exit is Valid Target", exitIsValidTarget());
   }
 
   /**
@@ -166,7 +201,7 @@ public class SS_Shooter extends SubsystemBase {
   /**
    * shoot one ball
    */
-  public void shoot() {
+  public void shoot() { //MOVE BELLT HERE
     //TODO
   }
 
@@ -309,5 +344,19 @@ public class SS_Shooter extends SubsystemBase {
   public enum HoodPosition {
     NEAR,
     FAR
+  }
+  
+  public double getEntryRange(){
+    return entrySensor.getRange();
+  }
+  public double getExitRange(){
+    return exitSensor.getRange();
+  }
+  public boolean entryIsValidTarget(){
+    return entrySensor.getRange() <= ENTRY_VALID_RANGE;
+  }
+
+  public boolean exitIsValidTarget(){
+    return exitSensor.getRange() <= EXIT_VALID_RANGE;
   }
 }
