@@ -20,13 +20,13 @@ public class C_IntakePrep extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.resetFeederEncoder();
+    //shooter.resetFeederEncoder();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setFeederRPM(-shooter.FEEDER_LOAD_RPM);
+    //shooter.setFeederRPM(-shooter.FEEDER_LOAD_RPM);
   }
 
   // Called once the command ends or is interrupted.

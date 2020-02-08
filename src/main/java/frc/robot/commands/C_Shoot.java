@@ -111,7 +111,7 @@ public class C_Shoot extends CommandBase {
 //          IF THE A BUTTON IS PREST THEN IT WILL RUN THE SHOOT METHED
   public void fire(){
     if(joystick.getRawButton(4)){
-      shooter.shoot();
+      //shooter.shoot();
     }
   }
 //=================================================================================//

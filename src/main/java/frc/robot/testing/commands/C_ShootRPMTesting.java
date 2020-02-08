@@ -60,7 +60,7 @@ public class C_ShootRPMTesting extends CommandBase {
     } else {
       pressed = false;
     }
-    shooter.setTargetRPM(RPM);
+    //shooter.setTargetRPM(RPM);
 
     SmartDashboard.putNumber("Set Target RPM", RPM);
     vision.updateTelemetry();
