@@ -13,8 +13,8 @@ import frc.robot.subsystems.SS_Feeder.FeedRate;
 import frc.robot.subsystems.SS_Feeder.State;
 
 public class C_IntakePrep extends CommandBase {
-  private final SS_Feeder feeder;
-  public C_IntakePrep(final SS_Feeder feeder) {
+  private SS_Feeder feeder;
+  public C_IntakePrep(SS_Feeder feeder) {
     this.feeder = feeder;
     addRequirements(feeder);
   }
@@ -23,7 +23,7 @@ public class C_IntakePrep extends CommandBase {
   @Override
   public void initialize() {
     feeder.resetEncoder();
-    feeder.setState(State.IDLE);
+    feeder.setState(State.INTAKE_PREP);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,7 +34,7 @@ public class C_IntakePrep extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(final boolean interrupted) {
+  public void end(boolean interrupted) {
     feeder.setRPM(FeedRate.IDLE);
   }
 
