@@ -12,8 +12,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -59,6 +62,12 @@ public class SS_Shooter extends SubsystemBase {
   private boolean wheelSpinning = false;
   private double correctionMultiplier = 1;
 
+  //Network tables for telemetry
+  private NetworkTableEntry targetRPMEntry;
+  private NetworkTableEntry currentRPMEntry;
+  private NetworkTableEntry wheelSpinningEntry;
+  private NetworkTableEntry shootingConfidenceEntry;
+
   public SS_Shooter() {
     wheel = new CANSparkMax(Constants.FLY_WEEL_MOTOR, MotorType.kBrushless);
     wheel.setInverted(true);
@@ -73,24 +82,54 @@ public class SS_Shooter extends SubsystemBase {
     PID.setD(KD);
     //hoodAngle = new DoubleSolenoid(1, 2); //TODO
 
+    initTelemetry();
+
     confidenceTimer = new Timer();
     confidenceTimer.start();
   }
 
+  private void initTelemetry() {
+    ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
+    targetRPMEntry = shooterTab.add("Target RPM", 0)
+      .withPosition(0, 0)
+      .withSize(1, 1)
+      .getEntry();
+    currentRPMEntry = shooterTab.add("Current RPM", 0)
+      .withPosition(0, 1)
+      .withSize(1, 1)
+      .getEntry();
+    shootingConfidenceEntry = shooterTab.add("RPM Confidence", 0)
+      .withPosition(1, 0)
+      .withSize(1, 1)
+      .getEntry();
+    wheelSpinningEntry = shooterTab.add("Spinning", false)
+      .withWidget("Boolean Box")
+      .withPosition(1, 1)
+      .withSize(1, 1)
+      .getEntry();
+  }
+
   @Override
   public void periodic() {
-    //continually update the targetRPM
+    updateShooter();
+    updateTelemetry();
+  }
+
+  //continually update the targetRPM
+  private void updateShooter() {
     if(wheelSpinning) {
       setRPM(targetRPM);
     } else {
       setRPM(0);
     }
+  }
 
-    //push telemetry to the smart dashboard
-    SmartDashboard.putNumber("target RPM", targetRPM);
-    SmartDashboard.putNumber("Current shooter RPM", getCurrentRPM());
-    SmartDashboard.putNumber("shooting confidence", getShotConfidence());
-    SmartDashboard.putBoolean("wheel spinning", wheelSpinning);
+   //push telemetry to the smart dashboard
+  private void updateTelemetry() {
+    targetRPMEntry.setNumber(targetRPM);
+    currentRPMEntry.setNumber(getCurrentRPM());
+    shootingConfidenceEntry.setNumber(getShotConfidence());
+    wheelSpinningEntry.setBoolean(wheelSpinning);
   }
 
   /**
@@ -127,7 +166,7 @@ public class SS_Shooter extends SubsystemBase {
   /**
    * @return the percentage of confidence for the shot based on wheel velocity (from 0-100)
    */
-  public double getShotConfidence() {
+  public int getShotConfidence() {
     //if the wheel is not spinning, we have no confidence in making a shot
     if(!wheelSpinning) {
       return 0;
@@ -147,7 +186,7 @@ public class SS_Shooter extends SubsystemBase {
     //calculate the percent of the amount of time we want to be in the confidence range to how long we actually are in it
     double confidenceTimePercent = (confidenceTimer.get() / CONFIDENCE_TIME) * 100;
     //prevents from returning confidences over 100
-    return Math.min(100, confidenceTimePercent);
+    return (int)Math.min(100, confidenceTimePercent);
   }
 
   /**
