@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -115,7 +114,7 @@ public class SS_Shooter extends SubsystemBase {
     updateTelemetry();
   }
 
-  //continually update the targetRPM
+  //update the targetRPM
   private void updateShooter() {
     if(wheelSpinning) {
       setRPM(targetRPM);
@@ -124,7 +123,7 @@ public class SS_Shooter extends SubsystemBase {
     }
   }
 
-   //push telemetry to the smart dashboard
+   //push telemetry to Shuffleboard
   private void updateTelemetry() {
     targetRPMEntry.setNumber(targetRPM);
     currentRPMEntry.setNumber(getCurrentRPM());
