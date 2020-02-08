@@ -9,8 +9,11 @@ import org.frcteam2910.common.robot.input.Controller;
 import org.frcteam2910.common.robot.input.XboxController;
 
 public class OI {
-    private Controller controller = new XboxController(0);
-
+   
+    public static final int GAMEPAD_1 = 0;
+    private Controller controller = new XboxController(GAMEPAD_1);
+    public static final int R_STICK_Y_AXIS = 1;
+    
     public OI() {
         controller.getLeftXAxis().setInverted(true);
         controller.getRightXAxis().setInverted(true);
