@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
+import frc.robot.subsystems.SS_Feeder.FeedRate;
 
 public class C_ShootPrep extends CommandBase {
   
@@ -29,7 +30,7 @@ public class C_ShootPrep extends CommandBase {
   @Override
   public void initialize() {
     shooter.startSpinning();
-    //feeder.setFeederRPM(feeder.FEEDER_LOAD_RPM);
+    feeder.setRPM(FeedRate.LOAD);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,7 +42,7 @@ public class C_ShootPrep extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //shooter.setFeederRPM(0);
+    feeder.setRPM(FeedRate.IDLE);
   }
 
   // Returns true when the command should end.
