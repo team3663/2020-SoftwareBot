@@ -17,7 +17,6 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANEncoder;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -60,7 +59,9 @@ public class SS_Shooter extends SubsystemBase {
   private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shooting
 
   private final double FEEDER_SHOOT_RPM = 100; //how fast the feeder should be running when we are shooting
-  private final double FEEDER_LOAD_RPM = 100;
+  private final double FEEDER_LOAD_RPM = 100; //how fast the feeder should be running when indexing the balls
+  private final double REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
+
   private CANSparkMax wheel;
   private CANEncoder wheelEncoder;
   private CANPIDController wheelPID;
@@ -74,9 +75,9 @@ public class SS_Shooter extends SubsystemBase {
   private final double EXIT_VALID_RANGE = 300;
 
   private Timer confidenceTimer;
-  private Timer feederBeltTimer;
 
   private double targetRPM = 0;
+  private double feederTargetRPM = 0;
   private boolean wheelSpinning = false;
   private boolean isInShootingMode = false;
   private double correctionMultiplier = 1;
@@ -112,8 +113,6 @@ public class SS_Shooter extends SubsystemBase {
 
     confidenceTimer = new Timer();
     confidenceTimer.start();
-    feederBeltTimer = new Timer();
-    feederBeltTimer.start();
   }
 
   @Override
@@ -126,21 +125,28 @@ public class SS_Shooter extends SubsystemBase {
     }
 
     if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD) {
-      setFeederRPM(FEEDER_SHOOT_RPM);
+      feederTargetRPM = FEEDER_SHOOT_RPM;
+      if(feederBelt.getEncoder().getPosition() >= REV_PER_FULL_FEED){
+        isInShootingMode = false;
+        feederTargetRPM = 0;
+      }
     } else {
       if(entryIsValidTarget() && !exitIsValidTarget()) {
-        setFeederRPM(FEEDER_LOAD_RPM);
+        feederTargetRPM = FEEDER_LOAD_RPM;
       } else {
-        setFeederRPM(0);
+        feederTargetRPM = 0;
       }
     }
-
+    setFeederRPM(feederTargetRPM);
+    
     //push telemetry to the smart dashboard
     SmartDashboard.putNumber("target RPM", targetRPM);
     SmartDashboard.putNumber("Current shooter RPM", getCurrentRPM());
     SmartDashboard.putNumber("shooting confidence", getShotConfidence());
     SmartDashboard.putBoolean("wheel spinning", wheelSpinning);
 
+    SmartDashboard.putNumber("Feeder RPM", getFeederRPM());
+    SmartDashboard.putNumber("Feeder Target RPM", feederTargetRPM);
     SmartDashboard.putNumber("Entry Range", getEntryRange());
     SmartDashboard.putBoolean("Entry Is Valid Target", entryIsValidTarget());
     SmartDashboard.putNumber("Exit Range", getExitRange());
@@ -216,6 +222,13 @@ public class SS_Shooter extends SubsystemBase {
     feederBeltPID.setReference(RPM, ControlType.kVelocity);
   }
 
+  public double getFeederRPM() {
+    return feederBelt.getEncoder().getVelocity();
+  }
+
+  public void resetFeederEncoder(){
+    feederBelt.getEncoder().setPosition(0);
+  }
   /**
    * @return the percentage of confidence for the shot based on wheel velocity (from 0-100)
    */
