@@ -48,31 +48,29 @@ public class SS_Shooter extends SubsystemBase {
   private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shooting
 
   private CANSparkMax wheel;
-  private CANEncoder wheelEncoder;
-  private CANPIDController wheelPID;
-  private DoubleSolenoid hoodAngle;
+  private CANEncoder encoder;
+  private CANPIDController PID;
+  private DoubleSolenoid hood;
 
   private Timer confidenceTimer;
 
   private int targetRPM = 0;
-  private boolean wheelSpinning = false;
-  private boolean isInShootingMode = false;
-  private double correctionMultiplier = 1;
 
-  private HoodPosition targetHoodPosition = HoodPosition.NEAR;
+  private boolean wheelSpinning = false;
+  private double correctionMultiplier = 1;
 
   public SS_Shooter() {
     wheel = new CANSparkMax(Constants.FLY_WEEL_MOTOR, MotorType.kBrushless);
     wheel.setInverted(true);
-    wheelEncoder = wheel.getEncoder();
-    wheelEncoder.setVelocityConversionFactor(WHEEL_GEAR_RATIO_MULTIPLIER);
-    wheelPID = wheel.getPIDController();
-    wheelPID.setOutputRange(0, 1);
+    encoder = wheel.getEncoder();
+    encoder.setVelocityConversionFactor(WHEEL_GEAR_RATIO_MULTIPLIER);
+    PID = wheel.getPIDController();
+    PID.setOutputRange(0, 1);
 
     //set Wheel PID constants
-    wheelPID.setP(KP);
-    wheelPID.setI(KI);
-    wheelPID.setD(KD);
+    PID.setP(KP);
+    PID.setI(KI);
+    PID.setD(KD);
     //hoodAngle = new DoubleSolenoid(1, 2); //TODO
 
     confidenceTimer = new Timer();
@@ -96,16 +94,6 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   /**
-   * Sets the distance to shoot for
-   * @param targetDistance distance to shoot (in feet)
-   */
-  public void setTargetDistance(double targetDistance) {
-    targetRPM = calculateRPM(targetDistance);
-    targetHoodPosition = calculateHoodPosition(targetDistance);
-    setHoodPosition(targetHoodPosition);
-  }
-
-  /**
    * start spinning the flywheel
    */
   public void startSpinning() {
@@ -117,6 +105,23 @@ public class SS_Shooter extends SubsystemBase {
    */
   public void stopSpinning() {
     wheelSpinning = false;
+  }
+
+  /**
+   * Sets the distance to shoot for
+   * @param targetDistance distance to shoot (in feet)
+   */
+  public void setTargetDistance(double targetDistance) {
+    targetRPM = calculateRPM(targetDistance);
+    updateHood(targetDistance);
+  }
+
+  /**
+   * Sets the multiplier for correcting shooting distance
+   * @param correctionMultiplier the new correction multiplier
+   */
+  public void setCorrectionMultiplier(double correctionMultiplier) {
+    this.correctionMultiplier = correctionMultiplier;
   }
 
   /**
@@ -146,14 +151,6 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   /**
-   * Sets the multiplier for correcting shooting distance
-   * @param correctionMultiplier the new correction multiplier
-   */
-  public void setCorrectionMultiplier(double correctionMultiplier) {
-    this.correctionMultiplier = correctionMultiplier;
-  }
-
-  /**
    * Returns the non-fixed correction multiplier
    * @return the correction multiplier
    */
@@ -170,7 +167,7 @@ public class SS_Shooter extends SubsystemBase {
    * @param RPM target RPM for the wheel
    */
   private void setRPM(double RPM) {
-    wheelPID.setReference(RPM * correctionMultiplier, ControlType.kVelocity);
+    PID.setReference(RPM * correctionMultiplier, ControlType.kVelocity);
   }
 
   /**
@@ -178,7 +175,7 @@ public class SS_Shooter extends SubsystemBase {
    * @return the RPM of the wheel
    */
   private double getCurrentRPM() {
-    return wheelEncoder.getVelocity();
+    return encoder.getVelocity();
   }
 
   /**
@@ -220,35 +217,11 @@ public class SS_Shooter extends SubsystemBase {
     return (int)((distance - KNOWN_RPM[index - 1][DISTANCE_COLUMN]) / distanceRange * RPMRange) + KNOWN_RPM[index - 1][RPM_COLUMN];
   }
 
-  /**
-   * set the target angle psotion of the hood based on a distance and updates the target hood position
-   * @param targetDistance The distance used in calculating the hood angle position
-   */
-  private HoodPosition calculateHoodPosition(double distance) {
-    if(distance >= HOOD_FAR_DISTANCE) {
-      return HoodPosition.FAR;
+  private void updateHood(double targetDistance) {
+    if(targetDistance >= HOOD_FAR_DISTANCE) {
+      //hood.set(RobotMap.SHOOTER_FAR_ANGLE);
     } else {
-      return HoodPosition.NEAR;
+      //hood.set(RobotMap.SHOOTER_NEAR_ANGLE);
     }
-  }
-
-  /**
-   * Set the hood position
-   * @param hoodPosition the angle position of the hood
-   */
-  private void setHoodPosition(HoodPosition hoodPosition) {
-    switch(hoodPosition) {
-      case NEAR:
-        //hoodAngle.set(RobotMap.SHOOTER_FAR_ANGLE);
-        break;
-      case FAR:
-        //hoodAngle.set(RobotMap.SHOOTER_NEAR_ANGLE);
-        break;
-    }
-  }
-
-  public enum HoodPosition {
-    NEAR,
-    FAR
   }
 }
