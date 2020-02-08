@@ -58,12 +58,13 @@ public class SS_Shooter extends SubsystemBase {
   private final double CONFIDENCE_THRESHOLD = 97; //the threshold or the percent wanted to shoot at
   private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shooting
 
-  private final double FEEDER_SHOOT_RPM = 100; //how fast the feeder should be running when we are shooting
-  private final double FEEDER_LOAD_RPM = 100; //how fast the feeder should be running when indexing the balls
-  private final double REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
+  public static final double FEEDER_SHOOT_RPM = 100; //how fast the feeder should be running when we are shooting
+  public static final double FEEDER_LOAD_RPM = 100; //how fast the feeder should be running when indexing the balls
+  public static final double REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
 
   private CANSparkMax wheel;
   private CANEncoder wheelEncoder;
+  private CANEncoder feederBeltEncoder;
   private CANPIDController wheelPID;
   private CANSparkMax feederBelt;
   private CANPIDController feederBeltPID;
@@ -104,7 +105,8 @@ public class SS_Shooter extends SubsystemBase {
     feederBeltPID.setP(FEEDER_BELT_KP);
     feederBeltPID.setI(FEEDER_BELT_KI);
     feederBeltPID.setD(FEEDER_BELT_KD);
-    feederBelt.getEncoder().setVelocityConversionFactor(FEEDER_BELT_GEAR_RATIO_MULTIPLIER); //set feeder gear ratio
+    feederBeltEncoder = feederBelt.getEncoder();
+    feederBeltEncoder.setVelocityConversionFactor(FEEDER_BELT_GEAR_RATIO_MULTIPLIER); //set feeder gear ratio
 
     //Sensors for Feeder
     entrySensor = new TimeOfFlight(Constants.ENTRY_SENSOR);
@@ -125,29 +127,7 @@ public class SS_Shooter extends SubsystemBase {
       setRPM(0);
     }
 
-    switch (feederState) {
-      case IDLE:
-        
-        break;
-    
-      case SHOOT_PREP:
 
-        break;
-      
-      case SHOOT_ONE:
-        break;
-
-      case SHOOT_CONTINOUS:
-        break;
-      
-      case INTAKE_PREP:
-        break;
-
-      case INTAKE:
-        break;
-      default:
-        break;
-    }
     // if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD) {
     //   feederTargetRPM = FEEDER_SHOOT_RPM;
     //   if(feederBelt.getEncoder().getPosition() >= REV_PER_FULL_FEED){
@@ -401,13 +381,15 @@ public class SS_Shooter extends SubsystemBase {
     SHOOT_CONTINOUS,
     SHOOT_ONE
   }
-  
+  public double getBeltDistance(){
+    return feederBeltEncoder.getPosition();
+  }
   public void setIdle(){
     setFeederRPM(0);
     setFeederState(FeederState.IDLE);
   }
   public void shootPrep(){
-    
+
     setFeederState(FeederState.IDLE);
   }
   public double getEntryRange(){

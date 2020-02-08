@@ -8,28 +8,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.SS_Shooter;
 
 public class C_IntakePrep extends CommandBase {
-  /**
-   * Creates a new C_IntakePrep.
-   */
-  public C_IntakePrep() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  private SS_Shooter shooter;
+  public C_IntakePrep(SS_Shooter shooter) {
+    this.shooter = shooter;
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooter.resetFeederEncoder();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    shooter.setFeederRPM(-shooter.FEEDER_LOAD_RPM);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+
   }
 
   // Returns true when the command should end.
