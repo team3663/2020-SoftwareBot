@@ -161,7 +161,7 @@ public class SS_Shooter extends SubsystemBase {
     return correctionMultiplier;
   }
 
-  public boolean isWheelSpinning() {
+  public boolean isSpinning() {
     return wheelSpinning;
   }
 
