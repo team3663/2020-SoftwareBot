@@ -8,38 +8,39 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SS_Shooter;
-import frc.robot.subsystems.SS_Shooter.FeederState;
+import frc.robot.subsystems.SS_Feeder;
+import frc.robot.subsystems.SS_Feeder.FeedRate;
+import frc.robot.subsystems.SS_Feeder.State;
 
 public class C_IntakePrep extends CommandBase {
-  private SS_Shooter shooter;
-  public C_IntakePrep(SS_Shooter shooter) {
-    this.shooter = shooter;
-    addRequirements(shooter);
+  private final SS_Feeder feeder;
+  public C_IntakePrep(final SS_Feeder feeder) {
+    this.feeder = feeder;
+    addRequirements(feeder);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.resetFeederEncoder();
-    shooter.setFeederState(FeederState.INTAKE_PREP);
+    feeder.resetEncoder();
+    feeder.setState(State.IDLE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //shooter.setFeederRPM(-shooter.FEEDER_LOAD_RPM);
+    feeder.setRPM(FeedRate.RETURN);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    shooter.setFeederRPM(0);
+  public void end(final boolean interrupted) {
+    feeder.setRPM(FeedRate.IDLE);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return shooter.entryIsValidTarget() || Math.abs(shooter.getBeltDistance()) >= shooter.REV_PER_FULL_FEED;
+    return feeder.entryIsValidTarget() || Math.abs(feeder.getBeltDistance()) >= feeder.REV_PER_FULL_FEED;
   }
 }
