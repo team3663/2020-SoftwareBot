@@ -8,11 +8,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 
 public class Robot extends TimedRobot {
   private final RobotContainer container = new RobotContainer();
+  
+  private Command autonomousCommand;
+  private Command teleopCommand;
 
   @Override
   public void robotInit() {
@@ -26,11 +30,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    container.getAutonomousCommand().schedule();
+    autonomousCommand = container.getAutonomousCommand();
+    // schedule the autonomous command
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
+    }
   }
 
   @Override
   public void teleopInit() {
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
+    }
+
+    teleopCommand = container.getTeleopCommand();
+    if(teleopCommand != null) {
+      teleopCommand.schedule();
+    }
+
     container.getTeleopCommand().schedule();
   }
 }
