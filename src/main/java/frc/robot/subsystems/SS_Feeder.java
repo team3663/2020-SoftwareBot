@@ -68,7 +68,7 @@ public class SS_Feeder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Feeder RPM", getFeederRPM());
+    SmartDashboard.putNumber("Feeder RPM", getRPM());
     SmartDashboard.putNumber("Entry Range", getEntryRange());
     SmartDashboard.putBoolean("Entry Is Valid Target", entryIsValidTarget());
     SmartDashboard.putNumber("Exit Range", getExitRange());
@@ -95,7 +95,7 @@ public class SS_Feeder extends SubsystemBase {
    * Set the RPM of the feeder belt based on the FeedRate enum
    * @param rate the rate for the belt
    */
-  public void setFeederRPM(FeedRate rate) {
+  public void setRPM(FeedRate rate) {
     int speed = 0;
     switch(rate) {
       case LOAD:
@@ -111,19 +111,19 @@ public class SS_Feeder extends SubsystemBase {
     beltPID.setReference(speed, ControlType.kVelocity);
   }
 
-  public int getFeederRPM() {
+  public int getRPM() {
     return (int)belt.getEncoder().getVelocity();
   }
 
-  public void resetFeederEncoder() {
+  public void resetEncoder() {
     belt.getEncoder().setPosition(0);
   }
 
-  public State getFeederState() {
+  public State getState() {
     return state;
   }
 
-  public void setFeederState(State state) {
+  public void setState(State state) {
     this.state = state;
   }
 
