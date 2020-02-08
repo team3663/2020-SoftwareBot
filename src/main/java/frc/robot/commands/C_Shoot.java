@@ -99,7 +99,7 @@ public class C_Shoot extends CommandBase {
 
 
 
-//================================ISFINISHED=======================================//
+//================================IS=FINISHED=======================================//
   @Override
   public boolean isFinished() {
     return false;
