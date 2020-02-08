@@ -12,9 +12,12 @@ import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Feeder.FeedRate;
 import frc.robot.subsystems.SS_Feeder.State;
 
-public class C_IntakePrep extends CommandBase {
+public class C_Intake extends CommandBase {
+  /**
+   * Creates a new C_Intake.
+   */
   private SS_Feeder feeder;
-  public C_IntakePrep(SS_Feeder feeder) {
+  public C_Intake(SS_Feeder feeder) {
     this.feeder = feeder;
     addRequirements(feeder);
   }
@@ -22,14 +25,17 @@ public class C_IntakePrep extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.resetEncoder();
-    feeder.setState(State.INTAKE_PREP);
+    feeder.setState(State.INTAKE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    feeder.setRPM(FeedRate.RETURN);
+    if(feeder.entryIsValidTarget() && !feeder.exitIsValidTarget()){
+      feeder.setRPM(FeedRate.LOAD);
+    }else{
+      feeder.setRPM(FeedRate.IDLE);
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -42,6 +48,6 @@ public class C_IntakePrep extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return feeder.entryIsValidTarget() || Math.abs(feeder.getBeltDistance()) >= feeder.REV_PER_FULL_FEED;
+    return feeder.exitIsValidTarget();
   }
 }
