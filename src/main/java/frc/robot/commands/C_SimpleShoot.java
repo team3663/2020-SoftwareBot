@@ -18,7 +18,7 @@ public class C_SimpleShoot extends CommandBase {
   private SS_Shooter shooter;
   private Vision vision;
 
-  public C_SimpleShoot(SS_Shooter shooter, Vision vision) {
+  public C_SimpleShoot(Vision vision, SS_Shooter shooter) {
     this.shooter = shooter;
     this.vision = vision;
     addRequirements(shooter);

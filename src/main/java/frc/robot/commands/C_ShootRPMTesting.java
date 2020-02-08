@@ -29,7 +29,7 @@ public class C_ShootRPMTesting extends CommandBase {
   private int RPM = 500;
   private boolean pressed = false;
 
-  public C_ShootRPMTesting(SS_Shooter shooter, Vision vision, Controller controller) {
+  public C_ShootRPMTesting(Controller controller, Vision vision, SS_Shooter shooter) {
     //Shuffleboard
     this.controller = controller;
     this.shooter = shooter;

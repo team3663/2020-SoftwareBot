@@ -27,7 +27,7 @@ public class RobotContainer {
     private final SS_Shooter shooter = new SS_Shooter();
 
     //instantiate commands
-    private final C_Shoot shoot = new C_Shoot(shooter, vision);
+    private final C_Shoot shoot = new C_Shoot(vision, shooter);
 
     //All updatable subsystems should be passed as parameters into the UpdateManager constructor
     private final UpdateManager updateManager = new UpdateManager();

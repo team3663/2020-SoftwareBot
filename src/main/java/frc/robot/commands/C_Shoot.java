@@ -44,7 +44,7 @@ public class C_Shoot extends CommandBase {
 
   private double gitTargetDistance = 0;
 
-  public C_Shoot(SS_Shooter shooter, Vision vision) {
+  public C_Shoot(Vision vision, SS_Shooter shooter) {
     joystick = new Joystick(0);
     this.shooter = shooter;
     this.vision = vision;
