@@ -85,11 +85,13 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
   private NetworkTableEntry poseYEntry;
   private NetworkTableEntry poseAngleEntry;
 
+  private NetworkTableEntry fieldOrientedEntry;  
+  private NetworkTableEntry gyroAngleEntry;
+  private NetworkTableEntry correctionAngleEntry;
+
   private NetworkTableEntry[] moduleAngleEntries = new NetworkTableEntry[modules.length];
   private NetworkTableEntry[] moduleEncoderVoltageEntries = new NetworkTableEntry[modules.length];
 
-  private NetworkTableEntry gyroAngleEntry;
-    
   public SS_Drivebase() {
     synchronized (sensorLock) {
       navX.setInverted(true);      
@@ -110,31 +112,37 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
             .getEntry();
 
     ShuffleboardLayout frontLeftModuleContainer = drivebaseTab.getLayout("Front Left Module", BuiltInLayouts.kList)
-            .withPosition(1, 0)
-            .withSize(2, 3);
+            .withPosition(5, 0)
+            .withSize(2, 2);
     moduleAngleEntries[0] = frontLeftModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[0] = frontLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
     ShuffleboardLayout frontRightModuleContainer = drivebaseTab.getLayout("Front Right Module", BuiltInLayouts.kList)
-            .withPosition(3, 0)
-            .withSize(2, 3);
+            .withPosition(7, 0)
+            .withSize(2, 2);
     moduleAngleEntries[1] = frontRightModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[1] = frontRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
     ShuffleboardLayout backLeftModuleContainer = drivebaseTab.getLayout("Back Left Module", BuiltInLayouts.kList)
-            .withPosition(5, 0)
-            .withSize(2, 3);
+            .withPosition(5, 2)
+            .withSize(2, 2);
     moduleAngleEntries[2] = backLeftModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[2] = backLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
     ShuffleboardLayout backRightModuleContainer = drivebaseTab.getLayout("Back Right Module", BuiltInLayouts.kList)
-            .withPosition(7, 0)
-            .withSize(2, 3);
+            .withPosition(7, 2)
+            .withSize(2, 2);
     moduleAngleEntries[3] = backRightModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[3] = backRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
 
-    ShuffleboardLayout gyroContainer = drivebaseTab.getLayout("Gyro", BuiltInLayouts.kList).withPosition(9, 0).withSize(2, 1);
+    ShuffleboardLayout fieldOrientedContainer = drivebaseTab.getLayout("Field Oriented", BuiltInLayouts.kList).withPosition(1, 0).withSize(1, 1);
+    fieldOrientedEntry = fieldOrientedContainer.add("Field Oriented", 0.0).getEntry();
+
+    ShuffleboardLayout gyroContainer = drivebaseTab.getLayout("Gyro", BuiltInLayouts.kList).withPosition(1, 1).withSize(1, 1);
     gyroAngleEntry = gyroContainer.add("Gyro Angle", 0.0).getEntry();
+
+    ShuffleboardLayout correctionContainer = drivebaseTab.getLayout("Correction", BuiltInLayouts.kList).withPosition(1, 2).withSize(1, 1);
+    correctionAngleEntry = correctionContainer.add("Correction", 0.0).getEntry();
   }
 
   public RigidTransform2 getPose() {
@@ -193,17 +201,21 @@ public void resetGyroAngle(Rotation2 angle) {
     }
 
     private void updateModules(HolonomicDriveSignal signal, double dt) {
+      RigidTransform2 pose = getPose();
       ChassisVelocity velocity;
+      
       if (signal == null) {
           velocity = new ChassisVelocity(Vector2.ZERO, 0.0);
       } else if (signal.isFieldOriented()) {
-          Rotation2 inverse = getPose().rotation.inverse();
-          double inverseAngle = inverse.toRadians();
-          Rotation2 inverseCorrection = new Rotation2(Math.cos(inverseAngle), Math.sin(inverseAngle), true);
+
+          Rotation2 correction = pose.rotation;
           velocity = new ChassisVelocity(
-                  signal.getTranslation().rotateBy(inverse.rotateBy(inverseCorrection)),
+                  signal.getTranslation().rotateBy(correction),
                   signal.getRotation()
           );
+
+          correctionAngleEntry.setDouble(correction.toRadians());
+
       } else {
           velocity = new ChassisVelocity(signal.getTranslation(), signal.getRotation());
       }
@@ -216,16 +228,21 @@ public void resetGyroAngle(Rotation2 angle) {
           module.setTargetVelocity(moduleOutputs[i]);
           module.updateState(dt);
       }
+
+//        var pose = getPose();
+        poseXEntry.setDouble(pose.translation.x);
+        poseYEntry.setDouble(pose.translation.y);
+        poseAngleEntry.setDouble(pose.rotation.toDegrees());
+
+        fieldOrientedEntry.setDouble( signal == null ? 0 : (signal.isFieldOriented() ? 1 : 0));        
+        gyroAngleEntry.setDouble(navX.getAngle().toDegrees());
+
+
+
   }
 
   @Override
     public void periodic() {
-        var pose = getPose();
-        poseXEntry.setDouble(pose.translation.x);
-        poseYEntry.setDouble(pose.translation.y);
-        poseAngleEntry.setDouble(pose.rotation.toDegrees());
-        gyroAngleEntry.setDouble(navX.getAngle().toDegrees());
-        // System.out.println("Gyro Angle: " + Math.toDegrees(navX.getAxis(Axis.YAW)) + " : " + navX.getAngle());
 
         for (int i = 0; i < modules.length; i++) {
             var module = modules[i];
