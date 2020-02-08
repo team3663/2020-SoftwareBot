@@ -87,6 +87,7 @@ public class SS_Feeder extends SubsystemBase {
 
   public enum FeedRate {
     LOAD,
+    RETURN,
     SHOOT,
     IDLE
   }
@@ -100,6 +101,9 @@ public class SS_Feeder extends SubsystemBase {
     switch(rate) {
       case LOAD:
         speed = FEEDER_LOAD_RPM;
+        break;
+      case RETURN:
+        speed = -FEEDER_LOAD_RPM;
         break;
       case SHOOT:
         speed = FEEDER_SHOOT_RPM;

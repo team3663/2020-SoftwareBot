@@ -9,24 +9,27 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.drivers.Vision;
+import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
 
 public class C_ShootPrep extends CommandBase {
   
   private Vision vision;
   private SS_Shooter shooter;
+  private SS_Feeder feeder;
 
-  public C_ShootPrep(Vision vision, SS_Shooter shooter) {
+  public C_ShootPrep(Vision vision, SS_Shooter shooter, SS_Feeder feeder) {
     this.vision = vision;
     this.shooter = shooter;
-    addRequirements(shooter);
+    this.feeder = feeder;
+    addRequirements(shooter, feeder);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     shooter.startSpinning();
-    //shooter.setFeederRPM(shooter.FEEDER_LOAD_RPM);
+    //feeder.setFeederRPM(feeder.FEEDER_LOAD_RPM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
