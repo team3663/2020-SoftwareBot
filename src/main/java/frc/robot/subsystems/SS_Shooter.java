@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.playingwithfusion.CANVenom;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANEncoder;
@@ -38,7 +37,7 @@ public class SS_Shooter extends SubsystemBase {
   private final int DISTANCE_COLUMN = 0; //column index for distance values
   private final int RPM_COLUMN = 1; //column index for RPM values
   private final double HOOD_FAR_DISTANCE = 10; //The distance at which the hood switches to the far angle
-  private final double SHOOTING_CONFIDENCE_THRESHOLD = .80;
+  private final double SHOOTING_CONFIDENCE_THRESHOLD = 80;
 
   //the correction multiplier in the code that is fixed (the other one, correctionMultiplier, can be changed during a match)
   private final double WHEEL_GEAR_RATIO_MULTIPLIER = 1;
@@ -122,12 +121,12 @@ public class SS_Shooter extends SubsystemBase {
       setRPM(0);
     }
 
-    if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD){
+    if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD) {
       feederBelt.set(FEEDER_RUN_SPEED);
-    }else{
-      if(entryIsValidTarget() && !exitIsValidTarget()){
+    } else {
+      if(entryIsValidTarget() && !exitIsValidTarget()) {
         feederBelt.set(FEEDER_INDEX_SPEED);
-      }else{
+      } else {
         feederBelt.set(0);
       }
     }
