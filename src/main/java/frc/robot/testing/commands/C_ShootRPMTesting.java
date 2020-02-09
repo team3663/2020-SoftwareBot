@@ -41,7 +41,7 @@ public class C_ShootRPMTesting extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.startSpinning();
+    shooter.setSpinning(true, 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -60,7 +60,7 @@ public class C_ShootRPMTesting extends CommandBase {
     } else {
       pressed = false;
     }
-    shooter.setTargetRPM(RPM);
+    shooter.testSetTargetRPM(RPM);
 
     SmartDashboard.putNumber("Set Target RPM", RPM);
     vision.updateTelemetry();
@@ -69,7 +69,7 @@ public class C_ShootRPMTesting extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stopSpinning();
+    shooter.setSpinning(false);
   }
 
   // Returns true when the command should end.

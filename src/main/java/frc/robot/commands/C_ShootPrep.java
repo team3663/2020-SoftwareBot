@@ -5,35 +5,44 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.testing.commands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
+import frc.robot.subsystems.SS_Feeder.FeedRate;
 
-/**
- * A simple shoot method for testing. It passes the calculated distance from the limelight directly into the shooter subsystem.
- */
-public class C_SimpleShoot extends CommandBase {
-
+public class C_ShootPrep extends CommandBase {
+  
   private SS_Shooter shooter;
+  private SS_Feeder feeder;
 
-  public C_SimpleShoot(SS_Shooter shooter) {
+  public C_ShootPrep(SS_Shooter shooter, SS_Feeder feeder) {
     this.shooter = shooter;
-    addRequirements(shooter);
+    this.feeder = feeder;
+    addRequirements(shooter, feeder);
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     shooter.setSpinning(true);
+    feeder.setRPM(FeedRate.LOAD);
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {}
+
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.setSpinning(false);
+    feeder.setRPM(FeedRate.IDLE);
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return feeder.exitIsValidTarget();
   }
 }

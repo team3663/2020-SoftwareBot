@@ -20,6 +20,7 @@ import frc.robot.commands.C_Shoot;
 import frc.robot.commands.C_Track;
 import frc.robot.commands.C_Drive;
 import frc.robot.subsystems.SS_Drivebase;
+import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
 import frc.robot.drivers.Vision;
 
@@ -30,11 +31,12 @@ public class RobotContainer {
     private final Vision vision = new Vision();
     
     //Instantiate subsystems here
-    private final SS_Shooter shooter = new SS_Shooter();
+    private final SS_Shooter shooter = new SS_Shooter(vision);
+    private final SS_Feeder feeder = new SS_Feeder();
     private final SS_Drivebase drivebase = new SS_Drivebase();
 
     //instantiate commands
-    private final C_Shoot shoot = new C_Shoot(vision, shooter);
+    private final C_Shoot shoot = new C_Shoot(vision, shooter, feeder);
 
     // All updatable subsystems should be passed as parameters into the
     // UpdateManager constructor

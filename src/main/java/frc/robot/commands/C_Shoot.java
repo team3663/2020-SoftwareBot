@@ -12,7 +12,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
+import frc.robot.subsystems.SS_Feeder.FeedRate;
+import frc.robot.subsystems.SS_Feeder.State;
 import frc.robot.drivers.Vision;
 //=================================================================================//
 
@@ -37,26 +40,30 @@ public class C_Shoot extends CommandBase {
   private final double MAX_SHOOT_RANGE = 35;                // max shooting range in feet
   private final double SHOOTER_STOP_BLOCK_TIME = 500;       // in seconds
   private final double SHOOTER_STOP_OUT_OF_RANGE_TIME = 15; // in seconds
+  private final double SHOOTING_CONFIDENCE_THRESHOLD = 80;
   //DRIVERS
   private Vision vision;
   //JOYSTICKS
   private Joystick joystick;
   //SUBSYSTEM
   private SS_Shooter shooter;
+  private SS_Feeder feeder;
   //TIMERS
   private Timer bockedTimer;  //timerBlocked is the timer that starts when we are blocked or cant see the target.
   private Timer outOfRangeTimer;  //outOfRangeTimer is the timer that starts when the robot is out of rage of the target.
   //PRIVATE VAREBLES
   private double getTargetDistance = 0;
+  private boolean isButtonPressed;
 
 //=================================================================================//
 
 
 
 //===============================CONSTRUCTOR=======================================//
-  public C_Shoot(Vision vision, SS_Shooter shooter) {
+  public C_Shoot(Vision vision, SS_Shooter shooter, SS_Feeder feeder) {
     //SETTER
     this.shooter = shooter;
+    this.feeder = feeder;
     this.vision = vision;
     //CREATING NEW INSTNACES
     joystick = new Joystick(0);
@@ -64,6 +71,9 @@ public class C_Shoot extends CommandBase {
     outOfRangeTimer = new Timer();
     //REQUARMENTS
     addRequirements(shooter);
+    addRequirements(feeder);
+    
+    isButtonPressed = false;
   }
 //=================================================================================//
 
@@ -80,12 +90,23 @@ public class C_Shoot extends CommandBase {
 //==================================EXECUTE========================================//
   @Override
   public void execute() {
-
     preheatShooter();
     shooterHasTarget();
     vision.updateTelemetry();
-    
-
+    if(joystick.getRawButton(1)){
+      isButtonPressed = true;
+    }
+    if(shooter.hasFired()){
+      if(!joystick.getRawButton(1)){
+        isButtonPressed = false;
+        feeder.setState(State.SHOOT_ONE);
+      }else{
+        feeder.setState(State.SHOOT_CONTINOUS);
+      }
+    }
+    if(isButtonPressed){
+      fire();
+    }
   }
 //=================================================================================//
 
@@ -94,6 +115,8 @@ public class C_Shoot extends CommandBase {
 //====================================END==========================================//
   @Override
   public void end(final boolean interrupted) {
+    feeder.setRPM(FeedRate.IDLE);
+    feeder.setState(State.IDLE);
   }
 //=================================================================================//
 
@@ -110,8 +133,8 @@ public class C_Shoot extends CommandBase {
 //==================================FIRE===========================================//
 //          IF THE A BUTTON IS PREST THEN IT WILL RUN THE SHOOT METHED
   public void fire(){
-    if(joystick.getRawButton(4)){
-      shooter.shoot();
+    if(shooter.getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD){
+      feeder.setRPM(FeedRate.SHOOT);
     }
   }
 //=================================================================================//
