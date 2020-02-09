@@ -53,7 +53,7 @@ public class C_Shoot extends CommandBase {
   private Timer outOfRangeTimer;  //outOfRangeTimer is the timer that starts when the robot is out of rage of the target.
   //PRIVATE VAREBLES
   private double getTargetDistance = 0;
-  private boolean isButtonPressed = false;
+  private boolean isButtonPressed;
 
 //=================================================================================//
 
@@ -72,6 +72,8 @@ public class C_Shoot extends CommandBase {
     //REQUARMENTS
     addRequirements(shooter);
     addRequirements(feeder);
+    
+    isButtonPressed = false;
   }
 //=================================================================================//
 
@@ -80,7 +82,6 @@ public class C_Shoot extends CommandBase {
 //==================================INITIALIZE=====================================//
   @Override
   public void initialize() {
-    feeder.resetEncoder();
   }
 //=================================================================================//
 
