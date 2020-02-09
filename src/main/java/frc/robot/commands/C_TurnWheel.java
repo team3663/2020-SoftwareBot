@@ -7,7 +7,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
@@ -17,8 +19,8 @@ public class C_TurnWheel extends CommandBase {
   /**
    * Creates a new C_SpinWheel.
  * @param SS_ControlPanel 
-   */
-  public C_TurnWheel() {
+   */    
+  public C_TurnWheel(Subsystem ss_ControlPanel) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Robot.ss_ControlPanel); 
   }
@@ -32,11 +34,14 @@ public class C_TurnWheel extends CommandBase {
   @Override
   public void execute() {
     Robot.ss_ControlPanel.setSpeed(RobotContainer.controller.getRawAxis(Constants.R_STICK_Y_AXIS));
+    SmartDashboard.putNumber("getRawAxis", RobotContainer.controller.getRawAxis(Constants.R_STICK_Y_AXIS));
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Robot.ss_ControlPanel.setSpeed(0);
   }
  
   // Returns true when the command should end.

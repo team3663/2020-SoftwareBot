@@ -26,7 +26,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     new RobotContainer();
-    ss_ControlPanel = new SS_ControlPanel();
 
   }
   /**
