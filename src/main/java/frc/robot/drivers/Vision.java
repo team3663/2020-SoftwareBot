@@ -131,8 +131,10 @@ public class Vision {
     return distance / 12; //change distance to feet
   }
 
-  //returns yaw rotation of vision target
-  public double get3DRotation(Rotation rotation) {
+  /**  
+   * returns rotation of vision target for a specific axis
+  */
+  public double get3DRotation(Axis axis) {
     //it only continues if it is in the fine adjustment pipeline which has the higher resolution
     if(visionTable.getEntry("pipeline").getDouble(-1) != FINE_PIPELINE) {
       return 0;
@@ -141,7 +143,7 @@ public class Vision {
     double[] defaultValues = {-1, -1, -1, -1, -1, -1};
     double[] positionData = camtran.getDoubleArray(defaultValues);
     //5 is the index of the yaw axis
-    switch(rotation) {
+    switch(axis) {
       case PITCH:
         return positionData[4];
       case YAW:
@@ -150,10 +152,9 @@ public class Vision {
         return positionData[6];
     }
     return -1;
-    
   }
 
-  public enum Rotation {
+  public enum Axis {
     PITCH,
     ROLL,
     YAW
