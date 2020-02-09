@@ -41,6 +41,7 @@ public class SS_Shooter extends SubsystemBase {
   //the correction multiplier in the code that is fixed (the other one, correctionMultiplier, can be changed during a match)
   private final double WHEEL_GEAR_RATIO_MULTIPLIER = 1;
   
+  private final int SHOT_FINISHED_RPM_THRESHOLD = 100;
 
   //Wheel PID constants (These values are tuned correctly for the software robot)
   private final double KP = 0.0005;
@@ -59,7 +60,8 @@ public class SS_Shooter extends SubsystemBase {
 
   private Timer confidenceTimer;
 
-  private int targetRPM = 0;
+  private int targetRPM = 0; //the target RPM when not updating from vision
+  private int shotRPM = 0; //the RPM at the time of the shot
 
   private boolean wheelSpinning = false;
   private boolean updateFromVision = false;
@@ -163,6 +165,16 @@ public class SS_Shooter extends SubsystemBase {
     targetRPM = calculateRPM(targetDistance);
   }
 
+  public void shootPrep() {
+    setHoodFar(true);
+    shotRPM = (int)encoder.getVelocity();
+  }
+
+  public boolean shotFinished() {
+    //return shotRPM - encoder.getVelocity() < SHOT_FINISHED_RPM_THRESHOLD;
+    return true; //TODO
+  }
+
   /**
    * Sets the multiplier for correcting shooting distance
    * @param correctionMultiplier the new correction multiplier
@@ -181,7 +193,7 @@ public class SS_Shooter extends SubsystemBase {
     }
 
     //get percentage of current speed to target speed
-    double confidence = (getCurrentRPM() / targetRPM) * 100;
+    double confidence = (encoder.getVelocity() / targetRPM) * 100;
     //fix percentage values over 100
     if(confidence > 100) {
       confidence = 100 - (confidence - 100);
@@ -226,13 +238,6 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   /**
-   * returns the RPM of the wheel
-   */
-  private double getCurrentRPM() {
-    return encoder.getVelocity();
-  }
-
-  /**
    * Convert distance to correct RPM for shooting power cells
    * @param distance distance to convert to RPMs (in feet)
    * @return RPMs converted from distance
@@ -271,8 +276,12 @@ public class SS_Shooter extends SubsystemBase {
     return (int)((distance - KNOWN_RPM[index - 1][DISTANCE_COLUMN]) / distanceRange * RPMRange) + KNOWN_RPM[index - 1][RPM_COLUMN];
   }
 
-  private void updateHood(double targetDistance) {
-    if(targetDistance >= HOOD_FAR_DISTANCE) {
+  /**
+   * set the position of the hood
+   * @param far if true, set hood to position for far shooting, otherwise set it to the near position
+   */
+  private void setHoodFar(boolean far) {
+    if(far) {
       //hood.set(RobotMap.SHOOTER_FAR_ANGLE);
     } else {
       //hood.set(RobotMap.SHOOTER_NEAR_ANGLE);
