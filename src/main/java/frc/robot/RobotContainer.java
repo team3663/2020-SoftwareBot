@@ -36,7 +36,7 @@ public class RobotContainer {
     private final SS_Drivebase drivebase = new SS_Drivebase();
 
     //instantiate commands
-    private final C_Shoot shoot = new C_Shoot(vision, shooter);
+    private final C_Shoot shoot = new C_Shoot(vision, shooter, feeder);
 
     // All updatable subsystems should be passed as parameters into the
     // UpdateManager constructor
