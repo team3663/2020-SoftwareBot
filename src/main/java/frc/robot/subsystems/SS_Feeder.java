@@ -150,19 +150,4 @@ public class SS_Feeder extends SubsystemBase {
   public boolean exitIsValidTarget() {
     return exitSensor.getRange() <= EXIT_VALID_RANGE;
   }
-
-    // if(isInShootingMode &&  getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD) {
-    //   feederTargetRPM = FEEDER_SHOOT_RPM;
-    //   if(feederBelt.getEncoder().getPosition() >= REV_PER_FULL_FEED){
-    //     isInShootingMode = false;
-    //     feederTargetRPM = 0;
-    //   }
-    // } else {
-    //   if(entryIsValidTarget() && !exitIsValidTarget()) {
-    //     feederTargetRPM = FEEDER_LOAD_RPM;
-    //   } else {
-    //     feederTargetRPM = 0;
-    //   }
-    // }
-    // setFeederRPM(feederTargetRPM);
 }
