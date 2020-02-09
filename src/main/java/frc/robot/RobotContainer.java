@@ -31,7 +31,7 @@ public class RobotContainer {
     private final Vision vision = new Vision();
     
     //Instantiate subsystems here
-    private final SS_Shooter shooter = new SS_Shooter();
+    private final SS_Shooter shooter = new SS_Shooter(vision);
     private final SS_Feeder feeder = new SS_Feeder();
     private final SS_Drivebase drivebase = new SS_Drivebase();
 

@@ -8,19 +8,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
 import frc.robot.subsystems.SS_Feeder.FeedRate;
 
 public class C_ShootPrep extends CommandBase {
   
-  private Vision vision;
   private SS_Shooter shooter;
   private SS_Feeder feeder;
 
-  public C_ShootPrep(Vision vision, SS_Shooter shooter, SS_Feeder feeder) {
-    this.vision = vision;
+  public C_ShootPrep(SS_Shooter shooter, SS_Feeder feeder) {
     this.shooter = shooter;
     this.feeder = feeder;
     addRequirements(shooter, feeder);
@@ -29,15 +26,13 @@ public class C_ShootPrep extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.startSpinning();
+    shooter.setSpinning(true);
     feeder.setRPM(FeedRate.LOAD);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    shooter.setTargetDistance(vision.getDistance());
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -48,7 +43,6 @@ public class C_ShootPrep extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return shooter.exitIsValidTarget();
-    return false;
+    return feeder.exitIsValidTarget();
   }
 }

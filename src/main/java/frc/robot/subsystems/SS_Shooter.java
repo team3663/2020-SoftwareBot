@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.drivers.Vision;
 
 
 public class SS_Shooter extends SubsystemBase {
@@ -49,6 +50,8 @@ public class SS_Shooter extends SubsystemBase {
   private final double CONFIDENCE_THRESHOLD = 97; //the threshold or the percent wanted to shoot at
   private final double CONFIDENCE_TIME = 1; //time we want to be in the confidence band before shooting
 
+  private Vision vision;
+
   private CANSparkMax wheel;
   private CANEncoder encoder;
   private CANPIDController PID;
@@ -59,6 +62,7 @@ public class SS_Shooter extends SubsystemBase {
   private int targetRPM = 0;
 
   private boolean wheelSpinning = false;
+  private boolean updateFromVision = false;
   private double correctionMultiplier = 1;
 
   //Network tables for telemetry
@@ -67,7 +71,8 @@ public class SS_Shooter extends SubsystemBase {
   private NetworkTableEntry wheelSpinningEntry;
   private NetworkTableEntry shootingConfidenceEntry;
 
-  public SS_Shooter() {
+  public SS_Shooter(Vision vision) {
+    this.vision = vision;
     wheel = new CANSparkMax(Constants.FLY_WEEL_MOTOR, MotorType.kBrushless);
     wheel.setInverted(true);
     encoder = wheel.getEncoder();
@@ -117,7 +122,14 @@ public class SS_Shooter extends SubsystemBase {
   //update the targetRPM
   private void updateShooter() {
     if(wheelSpinning) {
-      setRPM(targetRPM);
+      if(updateFromVision) {
+        double distance = vision.getDistance();
+        if(distance > 0) {
+          setRPM(calculateRPM(distance));
+        }
+      } else {
+        setRPM(targetRPM);
+      }
     } else {
       setRPM(0);
     }
@@ -132,26 +144,23 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   /**
-   * start spinning the flywheel
+   * spins and updates the wheel from vision
+   * @param spinning true if wheel should spin
    */
-  public void startSpinning() {
-    wheelSpinning = true;
+  public void setSpinning(boolean spinning) {
+    updateFromVision = true;
+    wheelSpinning = spinning;
   }
 
   /**
-   * stop spinning the flywheel
+   * spins wheel based on target distance
+   * @param spinning true if wheel should spin
+   * @param targetDistance the distance from the target that RPM is based on
    */
-  public void stopSpinning() {
-    wheelSpinning = false;
-  }
-
-  /**
-   * Sets the distance to shoot for
-   * @param targetDistance distance to shoot (in feet)
-   */
-  public void setTargetDistance(double targetDistance) {
+  public void setSpinning(boolean spinning, double targetDistance) {
+    updateFromVision = false;
+    wheelSpinning = spinning;
     targetRPM = calculateRPM(targetDistance);
-    updateHood(targetDistance);
   }
 
   /**
@@ -204,13 +213,20 @@ public class SS_Shooter extends SubsystemBase {
    * Set target RPM for the wheel
    * @param RPM target RPM for the wheel
    */
-  private void setRPM(double RPM) {
+  private void setRPM(int RPM) {
     PID.setReference(RPM * correctionMultiplier, ControlType.kVelocity);
   }
 
   /**
+   * FOR TEST COMMANDS ONLY! Directly sets shooter target RPM
+   * Specifically meant for the C_ShootRPMTesting command which is used for finding the correct RPM for various distances
+   */
+  public void testSetTargetRPM(int RPM) {
+    targetRPM = RPM;
+  }
+
+  /**
    * returns the RPM of the wheel
-   * @return the RPM of the wheel
    */
   private double getCurrentRPM() {
     return encoder.getVelocity();
