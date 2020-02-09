@@ -140,7 +140,7 @@ public class SS_Shooter extends SubsystemBase {
    //push telemetry to Shuffleboard
   private void updateTelemetry() {
     targetRPMEntry.setNumber(targetRPM);
-    currentRPMEntry.setNumber(getCurrentRPM());
+    currentRPMEntry.setNumber(encoder.getVelocity());
     shootingConfidenceEntry.setNumber(getShotConfidence());
     wheelSpinningEntry.setBoolean(wheelSpinning);
   }
