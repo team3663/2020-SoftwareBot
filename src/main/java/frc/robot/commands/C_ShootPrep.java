@@ -16,7 +16,7 @@ public class C_ShootPrep extends CommandBase {
   
   private SS_Shooter shooter;
   private SS_Feeder feeder;
-  private double initialDistance = 0; //initial distance of the feeder belt\
+  private double initialDistance = 0; //initial distance of the feeder belt
 
   public C_ShootPrep(SS_Shooter shooter, SS_Feeder feeder) {
     this.shooter = shooter;
@@ -26,9 +26,9 @@ public class C_ShootPrep extends CommandBase {
   }
 
   @Override
-  public void initialize() {
-    shooter.setSpinning(true);
-    feeder.setRPM(FeedRate.LOAD);
+  public void initialize() { 
+    shooter.setSpinning(true); 
+    feeder.setRPM(FeedRate.LOAD); 
   }
 
   @Override
@@ -40,6 +40,6 @@ public class C_ShootPrep extends CommandBase {
   public boolean isFinished() {
     //check if there is a ball at the end of the feeder ready to go into the shooter or if the belt has already travelled far
     //enough to move a ball al the way across the belt (meaning no balls are on the belt)
-    return feeder.exitIsValidTarget() || feeder.getBeltDistance() >= feeder.REV_PER_FULL_FEED - initialDistance;
+    return feeder.exitIsValidTarget() || feeder.getBeltDistance() - initialDistance >= feeder.REV_PER_FULL_FEED;
   }
 }
