@@ -13,6 +13,7 @@ import frc.robot.commands.C_Track;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Drivebase;
 import frc.robot.subsystems.SS_Shooter;
+import frc.robot.subsystems.SS_Feeder;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -21,10 +22,10 @@ public class CG_AlignAndShoot extends ParallelCommandGroup {
 
 
 
-  public CG_AlignAndShoot(Vision vision, SS_Shooter shooter, SS_Drivebase drivebase) {
+  public CG_AlignAndShoot(Vision vision, SS_Shooter shooter, SS_Drivebase drivebase, SS_Feeder feeder) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());super();
-    addCommands(new C_Shoot(vision,shooter),new C_Track(vision, drivebase, () -> 0.0, () -> 0.0));
+    addCommands(new C_Shoot(vision,shooter,feeder),new C_Track(vision, drivebase, () -> 0.0, () -> 0.0));
 
     
   }

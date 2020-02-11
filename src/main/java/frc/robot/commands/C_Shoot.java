@@ -93,20 +93,20 @@ public class C_Shoot extends CommandBase {
     preheatShooter();
     shooterHasTarget();
     vision.updateTelemetry();
-    if(joystick.getRawButton(1)){
-      isButtonPressed = true;
-    }
-    if(shooter.hasFired()){
-      if(!joystick.getRawButton(1)){
-        isButtonPressed = false;
-        feeder.setState(State.SHOOT_ONE);
-      }else{
-        feeder.setState(State.SHOOT_CONTINOUS);
-      }
-    }
-    if(isButtonPressed){
-      fire();
-    }
+    // if(joystick.getRawButton(1)){
+    //   isButtonPressed = true;
+    // }
+    // if(shooter.hasFired()){
+    //   if(!joystick.getRawButton(1)){
+    //     isButtonPressed = false;
+    //     feeder.setState(State.SHOOT_ONE);
+    //   }else{
+    //     feeder.setState(State.SHOOT_CONTINOUS);
+    //   }
+    // }
+    // if(isButtonPressed){
+    //   fire();
+    // }
   }
 //=================================================================================//
 
@@ -147,11 +147,11 @@ public class C_Shoot extends CommandBase {
 
     if(bockedTimer.get() > SHOOTER_STOP_BLOCK_TIME || outOfRangeTimer.get() > SHOOTER_STOP_OUT_OF_RANGE_TIME){
 
-      shooter.stopSpinning();
+      shooter.setSpinning(true);
 
     }else{
 
-      shooter.stopSpinning();
+      shooter.setSpinning(false);
 
     }
 
