@@ -16,6 +16,9 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -45,9 +48,17 @@ public class SS_Feeder extends SubsystemBase {
   private TimeOfFlight entrySensor;
   private TimeOfFlight exitSensor;
 
-  private double targetRPM = 0;
   private State state = State.IDLE;
 
+  private FeedRate feedRate = FeedRate.IDLE;
+
+  //network table entries for telemetry
+  private NetworkTableEntry feedRateEntry;
+  private NetworkTableEntry ballInEntranceEntry;
+  private NetworkTableEntry ballInExitEntry;
+  private NetworkTableEntry feederRPMEntry;
+  private NetworkTableEntry exitRangeEntry;
+  private NetworkTableEntry entryRangeEntry;
 
   public SS_Feeder() {
     belt = new CANSparkMax(Constants.FEEDER_BELT_MOTOR, MotorType.kBrushless);
@@ -64,16 +75,53 @@ public class SS_Feeder extends SubsystemBase {
     exitSensor = new TimeOfFlight(Constants.EXIT_SENSOR);
     entrySensor.setRangingMode(RangingMode.Short, 100);
     exitSensor.setRangingMode(RangingMode.Short, 100);
+
+    initTelemetry();
+  }
+
+  private void initTelemetry() {
+    ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter"); //use the same tab as the shooter for displaying data
+
+    feedRateEntry = shooterTab.add("Feed Rate", "unassigned")
+      .withPosition(3, 0)
+      .withSize(1, 1)
+      .getEntry();
+      feederRPMEntry = shooterTab.add("Feeder RPM", 0)
+      .withPosition(3, 1)
+      .withSize(1, 1)
+      .getEntry();
+    ballInEntranceEntry = shooterTab.add("Ball in entrance", false)
+      .withWidget("Boolean Box")
+      .withPosition(4, 0)
+      .withSize(1, 1)
+      .getEntry();
+    ballInExitEntry = shooterTab.add("ball in exit", false)
+      .withWidget("Boolean Box")
+      .withPosition(4, 1)
+      .withSize(1, 1)
+      .getEntry();
+    entryRangeEntry = shooterTab.add("Entry range", 0)
+      .withPosition(5, 0)
+      .withSize(1, 1)
+      .getEntry();
+    exitRangeEntry = shooterTab.add("Exit range", 0)
+      .withPosition(5, 1)
+      .withSize(1, 1)
+      .getEntry();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Feeder RPM", getRPM());
-    SmartDashboard.putNumber("Entry Range", getEntryRange());
-    SmartDashboard.putBoolean("Entry Is Valid Target", entryIsValidTarget());
-    SmartDashboard.putNumber("Exit Range", getExitRange());
-    SmartDashboard.putBoolean("Exit is Valid Target", exitIsValidTarget());
-    SmartDashboard.putNumber("Feeder Target RPM", targetRPM);
+    updateTelemetry();
+  }
+
+  private void updateTelemetry() {
+    feedRateEntry.setString(feedRate.toString());
+    feederRPMEntry.setNumber(getRPM());
+    ballInEntranceEntry.setBoolean(entryIsValidTarget());
+    ballInExitEntry.setBoolean(exitIsValidTarget());
+    entryRangeEntry.setNumber(getEntryRange());
+    exitRangeEntry.setNumber(getExitRange());
   }
 
   public enum State {
@@ -97,6 +145,7 @@ public class SS_Feeder extends SubsystemBase {
    * @param rate the rate for the belt
    */
   public void setRPM(FeedRate rate) {
+    feedRate = rate;
     int speed = 0;
     switch(rate) {
       case LOAD:
