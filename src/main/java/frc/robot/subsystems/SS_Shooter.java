@@ -61,10 +61,12 @@ public class SS_Shooter extends SubsystemBase {
   private Timer confidenceTimer;
 
   private int targetRPM = 0; //the target RPM when not updating from vision
-  private int shotRPM = 0; //the RPM at the time of the shot
+  private int lastShotRPM = 0; //the RPM at the time of the shot
 
   private boolean wheelSpinning = false;
   private boolean updateFromVision = false;
+  private boolean shotFinished = true;
+
   private double correctionMultiplier = 1;
 
   //Network tables for telemetry
@@ -118,6 +120,7 @@ public class SS_Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     updateShooter();
+    checkShotFinished();
     updateTelemetry();
   }
 
@@ -137,7 +140,14 @@ public class SS_Shooter extends SubsystemBase {
     }
   }
 
-   //push telemetry to Shuffleboard
+  //check if the RPM has dipped below a certain threshold in order to know if the ball has passed through the wheel
+  private void checkShotFinished() {
+    if(lastShotRPM - encoder.getVelocity() <= SHOT_FINISHED_RPM_THRESHOLD) {
+      shotFinished = true;
+    }
+  }
+
+  //push telemetry to Shuffleboard
   private void updateTelemetry() {
     targetRPMEntry.setNumber(targetRPM);
     currentRPMEntry.setNumber(encoder.getVelocity());
@@ -146,7 +156,7 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   /**
-   * spins and updates the wheel from vision
+   * spins and updates the wheel from vision. can also stop wheel
    * @param spinning true if wheel should spin
    */
   public void setSpinning(boolean spinning) {
@@ -155,7 +165,7 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   /**
-   * spins wheel based on target distance
+   * spins wheel based on target distance. Can also stop wheel
    * @param spinning true if wheel should spin
    * @param targetDistance the distance from the target that RPM is based on
    */
@@ -166,13 +176,16 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   public void shootPrep() {
-    setHoodFar(true);
-    shotRPM = (int)encoder.getVelocity();
+    setHoodFar(true); //TODO need to figure out how to determine whether the robot is directly infront of the target
+    lastShotRPM = (int)encoder.getVelocity();
+    shotFinished = false;
   }
 
-  public boolean shotFinished() {
-    //return shotRPM - encoder.getVelocity() < SHOT_FINISHED_RPM_THRESHOLD;
-    return true; //TODO
+  /**
+   * Returns true if the ball has passed through the shooter wheel since shootPrep has been called
+   */
+  public boolean isShotFinished() {
+    return shotFinished;
   }
 
   /**
