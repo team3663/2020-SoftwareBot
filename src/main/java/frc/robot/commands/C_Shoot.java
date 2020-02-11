@@ -53,18 +53,18 @@ public class C_Shoot extends CommandBase {
   private Timer outOfRangeTimer;  //outOfRangeTimer is the timer that starts when the robot is out of rage of the target.
   //PRIVATE VAREBLES
   private double getTargetDistance = 0;
-  private boolean isButtonPressed;
 
 //=================================================================================//
 
 
 
 //===============================CONSTRUCTOR=======================================//
-  public C_Shoot(Vision vision, SS_Shooter shooter, SS_Feeder feeder) {
+  public C_Shoot(Vision vision, SS_Shooter shooter, SS_Feeder feeder, Joystick joystick) {
     //SETTER
     this.shooter = shooter;
     this.feeder = feeder;
     this.vision = vision;
+    this.joystick = joystick;
     //CREATING NEW INSTNACES
     joystick = new Joystick(0);
     bockedTimer = new Timer();
@@ -73,7 +73,6 @@ public class C_Shoot extends CommandBase {
     addRequirements(shooter);
     addRequirements(feeder);
     
-    isButtonPressed = false;
   }
 //=================================================================================//
 
@@ -93,20 +92,6 @@ public class C_Shoot extends CommandBase {
     preheatShooter();
     shooterHasTarget();
     vision.updateTelemetry();
-    // if(joystick.getRawButton(1)){
-    //   isButtonPressed = true;
-    // }
-    // if(shooter.hasFired()){
-    //   if(!joystick.getRawButton(1)){
-    //     isButtonPressed = false;
-    //     feeder.setState(State.SHOOT_ONE);
-    //   }else{
-    //     feeder.setState(State.SHOOT_CONTINOUS);
-    //   }
-    // }
-    // if(isButtonPressed){
-    //   fire();
-    // }
   }
 //=================================================================================//
 

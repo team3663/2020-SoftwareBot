@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
 import frc.robot.subsystems.SS_Feeder.FeedRate;
+import frc.robot.subsystems.SS_Feeder.State;
 
 public class C_ShootPrep extends CommandBase {
   
@@ -28,7 +29,7 @@ public class C_ShootPrep extends CommandBase {
   @Override
   public void initialize() { 
     shooter.setSpinning(true); 
-    feeder.setRPM(FeedRate.LOAD); 
+    feeder.setState(State.SHOOT_PREP); 
   }
 
   @Override
