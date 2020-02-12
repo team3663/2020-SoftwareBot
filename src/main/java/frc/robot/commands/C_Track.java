@@ -7,9 +7,11 @@
 
 package frc.robot.commands;
 
+import org.frcteam2910.common.control.PidConstants;
 import org.frcteam2910.common.math.Vector2;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.drivers.Vision;
@@ -21,12 +23,14 @@ public class C_Track extends CommandBase {
 
   private Vision vision;
 
-  private static final double p = 1000;
+  private final double p = 0.00095;
+  private final double i = 0.00016;
 
   private DoubleSupplier forward;
   private DoubleSupplier strafe;
 
   private SS_Drivebase drivebase;
+  private PIDController rotationPID;
 
 
   public C_Track(Vision vision, SS_Drivebase drivebase, DoubleSupplier forward, DoubleSupplier strafe) {
@@ -36,7 +40,11 @@ public class C_Track extends CommandBase {
     this.strafe = strafe;
     this.drivebase = drivebase;
     this.vision = vision;
-    
+
+    rotationPID = new PIDController(p,i,0);
+
+    rotationPID.setSetpoint(0);
+    rotationPID.setTolerance(1);
     addRequirements(drivebase);
   }
 
@@ -48,10 +56,11 @@ public class C_Track extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+      
 
       SmartDashboard.putNumber("vision X with P",vision.getXOffset()/p);
       if(vision.getValidTarget()){
-        drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), vision.getXOffset()/p, false);
+        drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), -rotationPID.calculate(vision.getXOffset()), false);
       }
 
     
