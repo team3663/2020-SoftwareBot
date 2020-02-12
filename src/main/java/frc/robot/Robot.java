@@ -9,7 +9,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.SS_Intake;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,29 +18,19 @@ import frc.robot.subsystems.SS_Intake;
  * project.
  */
 public class Robot extends TimedRobot {
-  public static SS_Intake ss_Intake;
-
-  public static OI oi;
-
-  public static RobotMap robotMap;
-
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
+
+   private static RobotContainer m_robotContainer;
   @Override
   public void robotInit() {
-    ss_Intake = new SS_Intake(); 
-    robotMap = new RobotMap();
-    
-    oi = new OI(); 
-
-    oi.registerControls();
+    m_robotContainer = new RobotContainer();
   }
 
-
-  public static SS_Intake getIntake() {
-    return ss_Intake;
+  public static RobotContainer getRobotContainer() {
+    return m_robotContainer;
   }
 
   /**
@@ -86,6 +75,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    CommandScheduler.getInstance().run();
   }
 
   /**

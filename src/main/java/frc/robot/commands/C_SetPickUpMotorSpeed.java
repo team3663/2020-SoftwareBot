@@ -1,39 +1,45 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.SS_Intake;
 
 public class C_SetPickUpMotorSpeed extends CommandBase {
+    private final SS_Intake m_intakeSubsystem;
+    private final XboxController m_drivController;
     private double pickUpSpeed;
 
-    public C_SetPickUpMotorSpeed() {
-        addRequirements(Robot.ss_Intake);
+    public C_SetPickUpMotorSpeed(SS_Intake subsystem) {
+        m_intakeSubsystem = subsystem;
+        m_drivController = Robot.getRobotContainer().getDriveController();
+        addRequirements(m_intakeSubsystem);
     }
 
-    //@Override
+    @Override
     public void execute() {
-        if(Robot.oi.driveController.getRawButtonPressed(OI.L_BUMPER)) {
+        if(m_drivController.getRawButtonPressed(OIConstants.L_BUMPER)) {
             pickUpSpeed = 0.5;
         }
-        else if(Robot.oi.driveController.getRawButtonPressed(OI.R_BUMPER)) {
+        else if(m_drivController.getRawButtonPressed(OIConstants.R_BUMPER)) {
             pickUpSpeed = -0.5;
         }
-        else if(Robot.oi.driveController.getRawButtonPressed(OI.BUTTON_START)) {
+        else if(m_drivController.getRawButtonPressed(OIConstants.BUTTON_START)) {
             pickUpSpeed = 0;
         }
 
-        Robot.getIntake().setPickupMotorSpeed(pickUpSpeed);
+        m_intakeSubsystem.setPickupMotorSpeed(pickUpSpeed);
     }
     
-    //@Override
+    @Override
     public boolean isFinished() {
         return false;
     }
 
     //@Override
     public void end() {
-        Robot.getIntake().setPickupMotorSpeed(0.0);
+        m_intakeSubsystem.setPickupMotorSpeed(0.0);
     }
 
     //@Override

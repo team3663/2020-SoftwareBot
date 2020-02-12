@@ -7,7 +7,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import frc.robot.RobotMap;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.util.IntakePosition;
 
 public class SS_Intake extends SubsystemBase {
@@ -17,10 +17,10 @@ public class SS_Intake extends SubsystemBase {
     private CANSparkMax pickupMotor;
     
     public SS_Intake() { 
-        shortSolenoid = new DoubleSolenoid(RobotMap.SHORT_SOLENOID_FORWARD, RobotMap.SHORT_SOLENOID_REVERSE);
-        longSolenoid = new DoubleSolenoid(RobotMap.LONG_SOLENOID_FORWARD, RobotMap.LONG_SOLENOID_REVERSE);
+        shortSolenoid = new DoubleSolenoid(DriveConstants.SHORT_SOLENOID_FORWARD, DriveConstants.SHORT_SOLENOID_REVERSE);
+        longSolenoid = new DoubleSolenoid(DriveConstants.LONG_SOLENOID_FORWARD, DriveConstants.LONG_SOLENOID_REVERSE);
 
-        pickupMotor = new CANSparkMax(RobotMap.powerCellPickUpMotor, CANSparkMaxLowLevel.MotorType.kBrushless);
+        pickupMotor = new CANSparkMax(DriveConstants.powerCellPickUpMotor, CANSparkMaxLowLevel.MotorType.kBrushless);
 
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
