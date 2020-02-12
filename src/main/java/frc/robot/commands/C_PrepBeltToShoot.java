@@ -13,13 +13,13 @@ import frc.robot.subsystems.SS_Shooter;
 import frc.robot.subsystems.SS_Feeder.FeedRate;
 import frc.robot.subsystems.SS_Feeder.State;
 
-public class C_ShootPrep extends CommandBase {
+public class C_PrepBeltToShoot extends CommandBase {
   
   private SS_Shooter shooter;
   private SS_Feeder feeder;
   private double initialDistance = 0; //initial distance of the feeder belt
 
-  public C_ShootPrep(SS_Shooter shooter, SS_Feeder feeder) {
+  public C_PrepBeltToShoot(SS_Shooter shooter, SS_Feeder feeder) {
     this.shooter = shooter;
     this.feeder = feeder;
     initialDistance = feeder.getBeltDistance();
