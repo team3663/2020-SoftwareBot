@@ -12,12 +12,12 @@ import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Feeder.FeedRate;
 import frc.robot.subsystems.SS_Feeder.State;
 
-public class C_Intake extends CommandBase {
+public class C_IntakeBelt extends CommandBase {
   /**
    * Creates a new C_Intake.
    */
   private SS_Feeder feeder;
-  public C_Intake(SS_Feeder feeder) {
+  public C_IntakeBelt(SS_Feeder feeder) {
     this.feeder = feeder;
     addRequirements(feeder);
   }
