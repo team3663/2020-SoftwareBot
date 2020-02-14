@@ -30,7 +30,9 @@ public class C_Preheat extends CommandBase {
   public C_Preheat(SS_Shooter shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
-
+    this.vision = new Vision();
+    this.blockedTimer = new Timer();
+    this.outOfRangeTimer = new Timer();
     addRequirements(shooter);
   }
 

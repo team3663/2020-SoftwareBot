@@ -19,6 +19,7 @@ import frc.robot.Constants;
 import frc.robot.commands.C_Shoot;
 import frc.robot.commands.C_Track;
 import frc.robot.commands.C_Drive;
+import frc.robot.commands.C_Preheat;
 import frc.robot.subsystems.SS_Drivebase;
 import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
@@ -37,6 +38,7 @@ public class RobotContainer {
 
     //instantiate commands
     private final C_Shoot shoot = new C_Shoot(vision, feeder);
+    
 
     // All updatable subsystems should be passed as parameters into the
     // UpdateManager constructor
@@ -50,6 +52,8 @@ public class RobotContainer {
                 new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
                         () -> driveController.getLeftXAxis().get(true),
                         () -> driveController.getRightXAxis().get(true)));
+
+        CommandScheduler.getInstance().setDefaultCommand(shooter, new C_Preheat(shooter));
         
         /*
         CommandScheduler.getInstance().setDefaultCommand(drivebase,
@@ -67,6 +71,8 @@ public class RobotContainer {
         driveController.getLeftBumperButton().whenHeld(new C_Track(vision,drivebase,
             () -> driveController.getLeftYAxis().get(true),
             () -> driveController.getLeftXAxis().get(true)), true);
+        //driveController.getRightBumperButton().whenPressed(new C_Preheat(shooter));
+
     }
 
     public Command getAutonomousCommand() {
