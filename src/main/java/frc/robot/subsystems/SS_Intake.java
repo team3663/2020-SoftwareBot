@@ -15,6 +15,8 @@ public class SS_Intake extends SubsystemBase {
     private DoubleSolenoid longSolenoid;
 
     private CANSparkMax pickupMotor;
+
+    private IntakePosition currentPosition;
     
     public SS_Intake() { 
         shortSolenoid = new DoubleSolenoid(DriveConstants.SHORT_SOLENOID_FORWARD, DriveConstants.SHORT_SOLENOID_REVERSE);
@@ -26,6 +28,7 @@ public class SS_Intake extends SubsystemBase {
     }
 
     public void setArmPosition(IntakePosition position){
+        currentPosition = position;
         switch(position){
             case FULLY_RETRACTED:
                 shortSolenoid.set(DoubleSolenoid.Value.kReverse);
@@ -47,6 +50,10 @@ public class SS_Intake extends SubsystemBase {
                 longSolenoid.set(DoubleSolenoid.Value.kForward);   
                 break;
         }
+    }
+
+    public IntakePosition getIntakePosition() {
+        return currentPosition;
     }
 
     public void setPickupMotorSpeed(double pickUpSpeed){
