@@ -9,32 +9,33 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Feeder;
-import frc.robot.subsystems.SS_Shooter;
 import frc.robot.subsystems.SS_Feeder.FeedRate;
 import frc.robot.subsystems.SS_Feeder.State;
 
 public class C_PrepBeltToShoot extends CommandBase {
   
-  private SS_Shooter shooter;
   private SS_Feeder feeder;
   private double initialDistance = 0; //initial distance of the feeder belt
 
-  public C_PrepBeltToShoot(SS_Shooter shooter, SS_Feeder feeder) {
-    this.shooter = shooter;
+  public C_PrepBeltToShoot(SS_Feeder feeder) {
     this.feeder = feeder;
     initialDistance = feeder.getBeltDistance();
-    addRequirements(shooter, feeder);
+    addRequirements(feeder);
   }
 
   @Override
   public void initialize() { 
-    shooter.setSpinning(true); 
     feeder.setState(State.SHOOT_PREP); 
   }
 
   @Override
+  public void execute() {
+    feeder.setRPM(FeedRate.LOAD);
+  }
+  @Override
   public void end(boolean interrupted) {
     feeder.setRPM(FeedRate.IDLE);
+    feeder.setState(State.IDLE);
   }
 
   @Override
