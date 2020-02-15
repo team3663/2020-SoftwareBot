@@ -133,6 +133,14 @@ public class SS_Feeder extends SubsystemBase {
     SHOOT_ONE
   }
 
+  public State getState() {
+    return state;
+  }
+
+  public void setState(State state) {
+    this.state = state;
+  }
+
   public enum FeedRate {
     LOAD,
     RETURN,
@@ -144,7 +152,7 @@ public class SS_Feeder extends SubsystemBase {
    * Set the RPM of the feeder belt based on the FeedRate enum
    * @param rate the rate for the belt
    */
-  public void setRPM(FeedRate rate) {
+  public void setFeedRate(FeedRate rate) {
     feedRate = rate;
     int speed = 0;
     switch(rate) {
@@ -170,14 +178,6 @@ public class SS_Feeder extends SubsystemBase {
 
   public void resetEncoder() {
     belt.getEncoder().setPosition(0);
-  }
-
-  public State getState() {
-    return state;
-  }
-
-  public void setState(State state) {
-    this.state = state;
   }
 
   public double getBeltDistance() {

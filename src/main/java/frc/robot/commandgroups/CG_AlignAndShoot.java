@@ -29,4 +29,11 @@ public class CG_AlignAndShoot extends ParallelCommandGroup {
 
     
   }
+
+  @Override
+  public void execute() {
+
+  }
 }
+
+
