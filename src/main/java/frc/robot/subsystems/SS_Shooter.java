@@ -156,23 +156,28 @@ public class SS_Shooter extends SubsystemBase {
   }
 
   /**
-   * spins and updates the wheel from vision. can also stop wheel
    * @param spinning true if wheel should spin
    */
-  public void setSpinning(boolean spinning) {
-    updateFromVision = true;
+  public SS_Shooter setSpinning(boolean spinning) {
     wheelSpinning = spinning;
+    return this;
   }
 
   /**
-   * spins wheel based on target distance. Can also stop wheel
-   * @param spinning true if wheel should spin
-   * @param targetDistance the distance from the target that RPM is based on
+   * Set the target distance for the wheel to spin to.
    */
-  public void setSpinning(boolean spinning, double targetDistance) {
-    updateFromVision = false;
-    wheelSpinning = spinning;
+  public SS_Shooter setTargetDistance(double targetDistance) {
     targetRPM = calculateRPM(targetDistance);
+    updateFromVision = false;
+    return this;
+  }
+
+  /**
+   * have the shooter automatically update the target distance from vision, otherwise it will use the target distance
+   */
+  public SS_Shooter updateFromVision(boolean useVision) {
+    updateFromVision = useVision;
+    return this;
   }
 
   public void shootPrep() {
