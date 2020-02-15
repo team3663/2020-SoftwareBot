@@ -53,7 +53,7 @@ public class RobotContainer {
                         () -> driveController.getLeftXAxis().get(true),
                         () -> driveController.getRightXAxis().get(true)));
 
-        CommandScheduler.getInstance().setDefaultCommand(shooter, new C_Preheat(shooter));
+        //CommandScheduler.getInstance().setDefaultCommand(shooter, new C_Preheat(shooter));
         
         /*
         CommandScheduler.getInstance().setDefaultCommand(drivebase,
@@ -68,9 +68,10 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         driveController.getBackButton().whenPressed(new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase));
-        driveController.getLeftBumperButton().whenHeld(new C_Track(vision,drivebase,
+        driveController.getLeftBumperButton().whenHeld(new C_Track(vision,drivebase, shooter,
             () -> driveController.getLeftYAxis().get(true),
             () -> driveController.getLeftXAxis().get(true)), true);
+        driveController.getRightBumperButton().whenHeld(new C_Preheat(shooter));
         //driveController.getRightBumperButton().whenPressed(new C_Preheat(shooter));
 
     }
