@@ -8,6 +8,7 @@ import frc.robot.util.IntakePosition;
 public class C_SetIntakeSpeed extends CommandBase {
     private final SS_Intake m_intakeSubsystem;
     private double intakeSpeed;
+    private double speed;
 
     public C_SetIntakeSpeed(SS_Intake subsystem, double intakeSpeed) {
         m_intakeSubsystem = subsystem;
@@ -17,11 +18,13 @@ public class C_SetIntakeSpeed extends CommandBase {
 
     @Override
     public void execute() {
-        SmartDashboard.putNumber("Current Motor Speed", intakeSpeed);
+        speed = 0.0;
+        
         if(m_intakeSubsystem.getIntakePosition() == IntakePosition.FULLY_EXTENDED) {
-            m_intakeSubsystem.setPickupMotorSpeed(intakeSpeed);
+            speed = intakeSpeed;
         }
-        m_intakeSubsystem.setPickupMotorSpeed(0.0);
+        SmartDashboard.putNumber("Current Motor Speed", speed);
+        m_intakeSubsystem.setPickupMotorSpeed(speed);
     }
     
     @Override
