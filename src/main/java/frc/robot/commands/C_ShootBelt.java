@@ -10,8 +10,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
-import frc.robot.subsystems.SS_Feeder.FeedRate;
-import frc.robot.subsystems.SS_Feeder.State;
+//import frc.robot.subsystems.SS_Feeder.FeedRate;
+//import frc.robot.subsystems.SS_Feeder.State;
 
 public class C_ShootBelt extends CommandBase {
   /**
@@ -30,26 +30,26 @@ public class C_ShootBelt extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.resetEncoder();
-    feeder.setState(State.SHOOT_ONE);
+    //feeder.resetEncoder();
+    //feeder.setState(State.SHOOT_ONE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     if(shooter.getShotConfidence() >= SHOT_CONFIDENCE_THRESHOLD){
-      feeder.setFeedRate(FeedRate.SHOOT);
+      //feeder.setFeedRate(FeedRate.SHOOT);
     }
     if(shooter.isShotFinished()){
-      feeder.setState(State.SHOOT_CONTINOUS);
+      //feeder.setState(State.SHOOT_CONTINOUS);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.setState(State.IDLE);
-    feeder.setFeedRate(FeedRate.IDLE);
+   // feeder.setState(State.IDLE);
+    //feeder.setFeedRate(FeedRate.IDLE);
   }
 
   // Returns true when the command should end.
@@ -60,6 +60,6 @@ public class C_ShootBelt extends CommandBase {
     // }else if(shooter.isShotFinished() && controller.getAButton().get()){
     //   feeder.setState(State.SHOOT_CONTINOUS);
     // }
-    return (shooter.isShotFinished() && isFinished) || feeder.getBeltDistance() >= feeder.REV_PER_FULL_FEED;
+    return false;//(shooter.isShotFinished() && isFinished) || feeder.getBeltDistance() >= feeder.REV_PER_FULL_FEED;
   }
 }

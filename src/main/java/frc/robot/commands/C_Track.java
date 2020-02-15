@@ -24,8 +24,10 @@ public class C_Track extends CommandBase {
 
   private Vision vision;
 
-  private final double p = 0.00095;
-  private final double i = 0.0001;
+  private final double p = 0.0009;
+  private final double i = 0.001;
+  
+  private final double X_TRANSLASHION_OFFSET = 0.5f;
 
   private DoubleSupplier forward;
   private DoubleSupplier strafe;

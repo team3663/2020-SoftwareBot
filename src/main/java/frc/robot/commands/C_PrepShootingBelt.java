@@ -9,8 +9,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Feeder;
-import frc.robot.subsystems.SS_Feeder.FeedRate;
-import frc.robot.subsystems.SS_Feeder.State;
+//import frc.robot.subsystems.SS_Feeder.FeedRate;
+//import frc.robot.subsystems.SS_Feeder.State;
 
 public class C_PrepShootingBelt extends CommandBase {
   
@@ -25,23 +25,23 @@ public class C_PrepShootingBelt extends CommandBase {
 
   @Override
   public void initialize() { 
-    feeder.setState(State.SHOOT_PREP); 
+    //feeder.setState(State.SHOOT_PREP); 
   }
 
   @Override
   public void execute() {
-    feeder.setFeedRate(FeedRate.LOAD);
+  //  feeder.setFeedRate(FeedRate.LOAD);
   }
   @Override
   public void end(boolean interrupted) {
-    feeder.setFeedRate(FeedRate.IDLE);
-    feeder.setState(State.IDLE);
+    // feeder.setFeedRate(FeedRate.IDLE);
+    // feeder.setState(State.IDLE);
   }
 
   @Override
   public boolean isFinished() {
     //check if there is a ball at the end of the feeder ready to go into the shooter or if the belt has already travelled far
     //enough to move a ball al the way across the belt (meaning no balls are on the belt)
-    return feeder.exitIsValidTarget() || feeder.getBeltDistance() - initialDistance >= feeder.REV_PER_FULL_FEED;
+    return false;//feeder.exitIsValidTarget() || feeder.getBeltDistance() - initialDistance >= feeder.REV_PER_FULL_FEED;
   }
 }

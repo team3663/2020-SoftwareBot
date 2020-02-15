@@ -21,6 +21,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.drivers.TimeOfFlightSensor;
 
+enum FeedRate {
+  STOPPED,
+  INDEX_IN,
+  INDEX_OUT,
+  SHOOT
+}
+
 public class SS_Feeder extends SubsystemBase {
 
   private final double FEEDER_BELT_GEAR_RATIO_MULTIPLIER = 1;
@@ -30,13 +37,20 @@ public class SS_Feeder extends SubsystemBase {
   private final double KI = 0.0000005;
   private final double KD = 0;
 
-  public final int FEEDER_SHOOT_RPM = 100; //how fast the feeder should be running when we are shooting
-  public final int FEEDER_LOAD_RPM = 100; //how fast the feeder should be running when indexing the balls
+  private int FEEDER_POLY_RADIOUS = 1;
+  private int TICKS_PER_REVLUSHEN = 1;
+  // this is sets the inches per Revelushion.
+  private double INCHES_PER_REVOLUTION = 1;
+
+  private final int FEED_RPM_STOPPED = 0;
+  private final int FEED_RPM_SHOOT = 100; //how fast the feeder should be running when we are shooting
+  private final int FEED_RPM_INDEX_IN = 100; //how fast the feeder should be running when indexing the balls
+  private final int FEED_RPM_INDEX_OUT = 100;
+
 
   public final int REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
 
-  private final double ENTRY_VALID_RANGE = 30;
-  private final double EXIT_VALID_RANGE = 30;
+  private final double BALL_PRESENT_THRESHOLD = 30;
 
   private CANEncoder feederBeltEncoder;
 
@@ -46,9 +60,10 @@ public class SS_Feeder extends SubsystemBase {
   private TimeOfFlightSensor entrySensor;
   private TimeOfFlightSensor exitSensor;
 
-  private State state = State.IDLE;
+  private FeedRate curFeedRate;
 
-  private FeedRate feedRate = FeedRate.IDLE;
+  private int targetFeedRpm; 
+  
 
   //network table entries for telemetry
   private NetworkTableEntry feedRateEntry;
@@ -111,72 +126,45 @@ public class SS_Feeder extends SubsystemBase {
   }
 
   private void updateTelemetry() {
-    feedRateEntry.setString(feedRate.toString());
-    feederRPMEntry.setNumber(getRPM());
-    ballInEntranceEntry.setBoolean(entryIsValidTarget());
-    ballInExitEntry.setBoolean(exitIsValidTarget());
+    // feedRateEntry.setString(feedRate.toString());
+    feederRPMEntry.setNumber(belt.getEncoder().getVelocity());
+    ballInEntranceEntry.setBoolean(ballInExit());
+    ballInExitEntry.setBoolean(ballInEntry());
     entryRangeEntry.setNumber(getEntryRange());
     exitRangeEntry.setNumber(getExitRange());
   }
 
-  public enum State {
-    IDLE,
-    SHOOT_PREP,
-    INTAKE,
-    INTAKE_PREP,
-    SHOOT_CONTINOUS,
-    SHOOT_ONE
-  }
-
-  public State getState() {
-    return state;
-  }
-
-  public void setState(State state) {
-    this.state = state;
-  }
-
-  public enum FeedRate {
-    LOAD,
-    RETURN,
-    SHOOT,
-    IDLE
-  }
 
   /**
    * Set the RPM of the feeder belt based on the FeedRate enum
    * @param rate the rate for the belt
    */
   public void setFeedRate(FeedRate rate) {
-    feedRate = rate;
-    int speed = 0;
+    
     switch(rate) {
-      case LOAD:
-        speed = FEEDER_LOAD_RPM;
+      case STOPPED:
+        targetFeedRpm = FEED_RPM_STOPPED;
+      case INDEX_IN:
+        targetFeedRpm = FEED_RPM_INDEX_IN;
         break;
-      case RETURN:
-        speed = -FEEDER_LOAD_RPM;
+      case INDEX_OUT:
+        targetFeedRpm = -FEED_RPM_INDEX_OUT;
         break;
       case SHOOT:
-        speed = FEEDER_SHOOT_RPM;
+        targetFeedRpm = FEED_RPM_SHOOT;
         break;
-      case IDLE:
-        speed = 0;
-        break;
+      
     }
-    beltPID.setReference(speed, ControlType.kVelocity);
+    beltPID.setReference(targetFeedRpm, ControlType.kVelocity);
   }
 
-  public int getRPM() {
-    return (int)belt.getEncoder().getVelocity();
-  }
-
-  public void resetEncoder() {
+  public void resetBeltPosision() {
     belt.getEncoder().setPosition(0);
   }
 
   public double getBeltDistance() {
-    return feederBeltEncoder.getPosition();
+
+    return belt.getEncoder().getPosition() * INCHES_PER_REVOLUTION;
   }
 
   public double getEntryRange() {
@@ -187,11 +175,11 @@ public class SS_Feeder extends SubsystemBase {
     return exitSensor.getDistance();
   }
 
-  public boolean entryIsValidTarget() {
-    return entrySensor.getDistance() <= ENTRY_VALID_RANGE;
+  public boolean ballInEntry() {
+    return entrySensor.getDistance() <= BALL_PRESENT_THRESHOLD;
   }
 
-  public boolean exitIsValidTarget() {
-    return exitSensor.getDistance() <= EXIT_VALID_RANGE;
+  public boolean ballInExit() {
+    return exitSensor.getDistance() <= BALL_PRESENT_THRESHOLD;
   }
 }

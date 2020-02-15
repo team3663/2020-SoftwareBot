@@ -63,7 +63,7 @@ public class C_Preheat extends CommandBase {
    * @return Returs if the target is in range.
    */
   public boolean Range(){
-    return vision.getDistance() < MAX_SHOOTING_RANGE;
+    return true;//vision.getDistance() < MAX_SHOOTING_RANGE;
   }
   /**
    * @return Returns if the camera is blocked.

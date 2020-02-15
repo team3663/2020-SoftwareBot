@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
-import frc.robot.subsystems.SS_Feeder.FeedRate;
-import frc.robot.subsystems.SS_Feeder.State;
+//import frc.robot.subsystems.SS_Feeder.FeedRate;
+//import frc.robot.subsystems.SS_Feeder.State;
 import frc.robot.drivers.Vision;
 //=================================================================================//
 
@@ -97,8 +97,8 @@ public class C_Shoot extends CommandBase {
 //====================================END==========================================//
   @Override
   public void end(final boolean interrupted) {
-    feeder.setFeedRate(FeedRate.IDLE);
-    feeder.setState(State.IDLE);
+    //feeder.setFeedRate(FeedRate.IDLE);
+    //feeder.setState(State.IDLE);
   }
 //=================================================================================//
 
