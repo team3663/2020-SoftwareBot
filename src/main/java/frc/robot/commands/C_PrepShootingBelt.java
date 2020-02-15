@@ -30,11 +30,11 @@ public class C_PrepShootingBelt extends CommandBase {
 
   @Override
   public void execute() {
-    feeder.setRPM(FeedRate.LOAD);
+    feeder.setFeedRate(FeedRate.LOAD);
   }
   @Override
   public void end(boolean interrupted) {
-    feeder.setRPM(FeedRate.IDLE);
+    feeder.setFeedRate(FeedRate.IDLE);
     feeder.setState(State.IDLE);
   }
 

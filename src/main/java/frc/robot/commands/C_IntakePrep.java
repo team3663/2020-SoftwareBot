@@ -31,13 +31,13 @@ public class C_IntakePrep extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    feeder.setRPM(FeedRate.RETURN);
+    feeder.setFeedRate(FeedRate.RETURN);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.setRPM(FeedRate.IDLE);
+    feeder.setFeedRate(FeedRate.IDLE);
     feeder.setState(State.IDLE);
   }
 
