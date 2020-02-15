@@ -180,8 +180,10 @@ public class SS_Shooter extends SubsystemBase {
     return this;
   }
 
-  public void shootPrep() {
-    setHoodFar(true); //TODO need to figure out how to determine whether the robot is directly infront of the target
+  /**
+   * saves values that are later used to detect whether the robot has shot a ball
+   */
+  public void shotDetectPrep() {
     lastShotRPM = (int)encoder.getVelocity();
     shotFinished = false;
   }
