@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Drivebase;
+import frc.robot.subsystems.SS_Shooter;
 
 
 
@@ -24,16 +25,17 @@ public class C_Track extends CommandBase {
   private Vision vision;
 
   private final double p = 0.00095;
-  private final double i = 0.00016;
+  private final double i = 0.0001;
 
   private DoubleSupplier forward;
   private DoubleSupplier strafe;
-
+  
   private SS_Drivebase drivebase;
+  private SS_Shooter shooter;
   private PIDController rotationPID;
 
 
-  public C_Track(Vision vision, SS_Drivebase drivebase, DoubleSupplier forward, DoubleSupplier strafe) {
+  public C_Track(Vision vision, SS_Drivebase drivebase, SS_Shooter shooter, DoubleSupplier forward, DoubleSupplier strafe) {
 
     
     this.forward = forward;
@@ -58,10 +60,9 @@ public class C_Track extends CommandBase {
   public void execute() {
       
 
-      SmartDashboard.putNumber("vision X with P",vision.getXOffset()/p);
-      if(vision.getValidTarget()){
+      
         drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), -rotationPID.calculate(vision.getXOffset()), false);
-      }
+      
 
     
   }
@@ -75,6 +76,10 @@ public class C_Track extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  public double rotationOffset(){
+    return 0;
   }
 
 }

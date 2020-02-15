@@ -26,7 +26,7 @@ public class CG_AlignAndPrep extends ParallelCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());super();
     addCommands( 
-                new C_Track(vision, drivebase, () -> 0.0, () -> 0.0),
+                new C_Track(vision, drivebase,shooter, () -> 0.0, () -> 0.0),
                 new C_PrepShootingBelt(feeder));
   }
 
