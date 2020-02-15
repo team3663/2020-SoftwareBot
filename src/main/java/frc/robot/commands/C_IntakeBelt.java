@@ -12,12 +12,12 @@ import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Feeder.FeedRate;
 import frc.robot.subsystems.SS_Feeder.State;
 
-public class C_Intake extends CommandBase {
+public class C_IntakeBelt extends CommandBase {
   /**
    * Creates a new C_Intake.
    */
   private SS_Feeder feeder;
-  public C_Intake(SS_Feeder feeder) {
+  public C_IntakeBelt(SS_Feeder feeder) {
     this.feeder = feeder;
     addRequirements(feeder);
   }
@@ -32,16 +32,16 @@ public class C_Intake extends CommandBase {
   @Override
   public void execute() {
     if(feeder.entryIsValidTarget() && !feeder.exitIsValidTarget()){
-      feeder.setRPM(FeedRate.LOAD);
+      feeder.setFeedRate(FeedRate.LOAD);
     }else{
-      feeder.setRPM(FeedRate.IDLE);
+      feeder.setFeedRate(FeedRate.IDLE);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.setRPM(FeedRate.IDLE);
+    feeder.setFeedRate(FeedRate.IDLE);
     feeder.setState(State.IDLE);
   }
 

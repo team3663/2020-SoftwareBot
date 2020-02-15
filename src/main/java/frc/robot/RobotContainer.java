@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.commands.C_Shoot;
+import frc.robot.commands.C_ShootBelt;
 import frc.robot.commands.C_Track;
 import frc.robot.commands.C_Drive;
 import frc.robot.commands.C_Preheat;
@@ -73,8 +74,10 @@ public class RobotContainer {
             () -> driveController.getLeftXAxis().get(true)), true);
         driveController.getRightBumperButton().whenHeld(new C_Preheat(shooter));
         //driveController.getRightBumperButton().whenPressed(new C_Preheat(shooter));
-
+        driveController.getAButton().whenPressed(new C_ShootBelt(feeder, shooter, false));
+        driveController.getAButton().whenReleased(new C_ShootBelt(feeder, shooter, true));
     }
+    
 
     public Command getAutonomousCommand() {
         return shoot;

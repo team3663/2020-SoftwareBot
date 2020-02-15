@@ -7,8 +7,6 @@
 
 package frc.robot.subsystems;
 
-import com.playingwithfusion.TimeOfFlight;
-import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -19,9 +17,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.drivers.TimeOfFlightSensor;
 
 public class SS_Feeder extends SubsystemBase {
 
@@ -37,16 +35,16 @@ public class SS_Feeder extends SubsystemBase {
 
   public final int REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
 
-  private final double ENTRY_VALID_RANGE = 300;
-  private final double EXIT_VALID_RANGE = 300;
+  private final double ENTRY_VALID_RANGE = 30;
+  private final double EXIT_VALID_RANGE = 30;
 
   private CANEncoder feederBeltEncoder;
 
   private CANSparkMax belt;
   private CANPIDController beltPID;
 
-  private TimeOfFlight entrySensor;
-  private TimeOfFlight exitSensor;
+  private TimeOfFlightSensor entrySensor;
+  private TimeOfFlightSensor exitSensor;
 
   private State state = State.IDLE;
 
@@ -71,11 +69,8 @@ public class SS_Feeder extends SubsystemBase {
     feederBeltEncoder.setVelocityConversionFactor(FEEDER_BELT_GEAR_RATIO_MULTIPLIER); //set feeder gear ratio
 
     //Sensors for Feeder
-    entrySensor = new TimeOfFlight(Constants.ENTRY_SENSOR);
-    exitSensor = new TimeOfFlight(Constants.EXIT_SENSOR);
-    entrySensor.setRangingMode(RangingMode.Short, 100);
-    exitSensor.setRangingMode(RangingMode.Short, 100);
-
+    entrySensor = new TimeOfFlightSensor(Constants.ENTRY_SENSOR);
+    exitSensor = new TimeOfFlightSensor(Constants.EXIT_SENSOR);
     initTelemetry();
   }
 
@@ -133,6 +128,14 @@ public class SS_Feeder extends SubsystemBase {
     SHOOT_ONE
   }
 
+  public State getState() {
+    return state;
+  }
+
+  public void setState(State state) {
+    this.state = state;
+  }
+
   public enum FeedRate {
     LOAD,
     RETURN,
@@ -144,7 +147,7 @@ public class SS_Feeder extends SubsystemBase {
    * Set the RPM of the feeder belt based on the FeedRate enum
    * @param rate the rate for the belt
    */
-  public void setRPM(FeedRate rate) {
+  public void setFeedRate(FeedRate rate) {
     feedRate = rate;
     int speed = 0;
     switch(rate) {
@@ -172,31 +175,23 @@ public class SS_Feeder extends SubsystemBase {
     belt.getEncoder().setPosition(0);
   }
 
-  public State getState() {
-    return state;
-  }
-
-  public void setState(State state) {
-    this.state = state;
-  }
-
   public double getBeltDistance() {
     return feederBeltEncoder.getPosition();
   }
 
   public double getEntryRange() {
-    return entrySensor.getRange();
+    return entrySensor.getDistance();
   }
 
   public double getExitRange() {
-    return exitSensor.getRange();
+    return exitSensor.getDistance();
   }
 
   public boolean entryIsValidTarget() {
-    return entrySensor.getRange() <= ENTRY_VALID_RANGE;
+    return entrySensor.getDistance() <= ENTRY_VALID_RANGE;
   }
 
   public boolean exitIsValidTarget() {
-    return exitSensor.getRange() <= EXIT_VALID_RANGE;
+    return exitSensor.getDistance() <= EXIT_VALID_RANGE;
   }
 }

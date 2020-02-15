@@ -97,7 +97,7 @@ public class C_Shoot extends CommandBase {
 //====================================END==========================================//
   @Override
   public void end(final boolean interrupted) {
-    feeder.setRPM(FeedRate.IDLE);
+    feeder.setFeedRate(FeedRate.IDLE);
     feeder.setState(State.IDLE);
   }
 //=================================================================================//

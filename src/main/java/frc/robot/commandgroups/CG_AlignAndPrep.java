@@ -8,7 +8,7 @@
 package frc.robot.commandgroups;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.C_PrepBeltToShoot;
+import frc.robot.commands.C_PrepShootingBelt;
 import frc.robot.commands.C_Track;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Drivebase;
@@ -27,6 +27,13 @@ public class CG_AlignAndPrep extends ParallelCommandGroup {
     // super(new FooCommand(), new BarCommand());super();
     addCommands( 
                 new C_Track(vision, drivebase,shooter, () -> 0.0, () -> 0.0),
-                new C_PrepBeltToShoot(shooter, feeder));
+                new C_PrepShootingBelt(feeder));
+  }
+
+  @Override
+  public void execute() {
+
   }
 }
+
+
