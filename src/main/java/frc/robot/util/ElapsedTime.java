@@ -11,9 +11,10 @@ package frc.robot.util;
  * creates a timer class (basically)
  */
 public final class ElapsedTime {
-    private long time = 0;
+    private long time;
 
 	public ElapsedTime() {
+		time = 0;
 		reset();
 	}
 

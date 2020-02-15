@@ -30,13 +30,8 @@ public class C_IntakeIn extends CommandBase {
         return false;
     }
 
-    //@Override
-    public void end() {
+    @Override
+    public void end(boolean interrupted) {
         m_intakeSubsystem.setPickupMotorSpeed(0.0);
-    }
-
-    //@Override
-    public void interrupted() {
-        end();
     }
 }

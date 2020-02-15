@@ -1,14 +1,16 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Intake;
-import frc.robot.util.ElapsedTime;
 import frc.robot.util.IntakePosition;
 
 public class C_SetArmPosition extends CommandBase {
     private IntakePosition position;
     private final SS_Intake m_intakeSubsystem;
-    private final ElapsedTime elapsedTime = new ElapsedTime();
+    private final Timer timer = new Timer();
+    private final double DURATION = 10.0;
+    private double currentTime;
 
     public C_SetArmPosition(SS_Intake subsystem, IntakePosition position) {
         m_intakeSubsystem = subsystem;
@@ -18,17 +20,19 @@ public class C_SetArmPosition extends CommandBase {
 
     @Override
     public void initialize() {
-        elapsedTime.reset();
+        timer.reset();
+        timer.start();
     }
 
     @Override
     public void execute() {
+        currentTime = timer.get();
         m_intakeSubsystem.setArmPosition(position);
     }
     
     @Override
     public boolean isFinished() {
-        if(elapsedTime.getElapsedMillis() >= 100) {
+        if(currentTime >= DURATION) {
             return true;
         }
         return false;
