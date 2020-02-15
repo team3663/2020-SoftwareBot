@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Intake;
 import frc.robot.util.IntakePosition;
@@ -27,6 +28,7 @@ public class C_SetArmPosition extends CommandBase {
     @Override
     public void execute() {
         currentTime = timer.get();
+        SmartDashboard.putNumber("Time Between Transitions", currentTime);
         m_intakeSubsystem.setArmPosition(position);
     }
     

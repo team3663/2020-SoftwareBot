@@ -3,11 +3,11 @@ package frc.robot;
 import org.frcteam2910.common.robot.input.XboxController;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.CG_Roomba;
-import frc.robot.commands.C_IntakeIn;
-import frc.robot.commands.C_IntakeOut;
 import frc.robot.commands.C_SetArmPosition;
+import frc.robot.commands.C_SetIntakeSpeed;
 import frc.robot.subsystems.SS_Intake;
 import frc.robot.util.IntakePosition;
 
@@ -36,10 +36,10 @@ public class RobotContainer {
                 .whenPressed(new InstantCommand(() -> new C_SetArmPosition(ss_Intake, IntakePosition.LONG_RETRACT)));
 
         m_driverController.getBackButton()
-                .whileHeld(new InstantCommand(() -> new C_IntakeOut(ss_Intake)));
+                .whileHeld(new InstantCommand(() -> new C_SetIntakeSpeed(ss_Intake, IntakeConstants.OUTTAKE_SPEED)));
 
         m_driverController.getStartButton()
-                .whileHeld(new InstantCommand(() -> new C_IntakeIn(ss_Intake)));
+                .whileHeld(new InstantCommand(() -> new C_SetIntakeSpeed(ss_Intake, IntakeConstants.INTAKE_SPEED)));
     }
 
     public XboxController getDriveController() {

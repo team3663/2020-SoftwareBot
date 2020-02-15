@@ -39,4 +39,9 @@ public class Constants {
         public static final int L_JOYCLICK = 9;
         public static final int R_JOYCLICK = 10;
     }
+
+    public static final class IntakeConstants {
+        public static final double OUTTAKE_SPEED = -0.5;
+        public static final double INTAKE_SPEED = 0.5;
+    }
 }
