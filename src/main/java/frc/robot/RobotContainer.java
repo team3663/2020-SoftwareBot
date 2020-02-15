@@ -17,38 +17,42 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.commands.C_Drive;
 import frc.robot.subsystems.SS_Drivebase;
+import frc.robot.util.AutoSelector;
 
 public class RobotContainer {
+
+    AutoSelector selector = new AutoSelector();
+
     private final Controller driveController = new XboxController(Constants.DRIVE_CONTROLLER_ID);
 
     // Instantiate subsystems here
-    private final SS_Drivebase drivebase = new SS_Drivebase();
+    // private final SS_Drivebase drivebase = new SS_Drivebase();
 
     // All updatable subsystems should be passed as parameters into the
     // UpdateManager constructor
-    private final UpdateManager updateManager = new UpdateManager(drivebase);
+    // private final UpdateManager updateManager = new UpdateManager(drivebase);
 
     public RobotContainer() {
         
-        driveController.getRightXAxis().setScale(.3);
+        // driveController.getRightXAxis().setScale(.3);
 
-        CommandScheduler.getInstance().setDefaultCommand(drivebase,
-                new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
-                        () -> driveController.getLeftXAxis().get(true),
-                        () -> driveController.getRightXAxis().get(true)));
+        // CommandScheduler.getInstance().setDefaultCommand(drivebase,
+        //         new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
+        //                 () -> driveController.getLeftXAxis().get(true),
+        //                 () -> driveController.getRightXAxis().get(true)));
         
-        /*
-        CommandScheduler.getInstance().setDefaultCommand(drivebase,
-                new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
-                        () -> 0.0,
-                        () -> driveController.getRightXAxis().get(true)));
-        */
-        updateManager.startLoop(5.0e-3);
+        // /*
+        // CommandScheduler.getInstance().setDefaultCommand(drivebase,
+        //         new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
+        //                 () -> 0.0,
+        //                 () -> driveController.getRightXAxis().get(true)));
+        // */
+        // updateManager.startLoop(5.0e-3);
 
-        configureButtonBindings();
+        // configureButtonBindings();
     }
 
     private void configureButtonBindings() {
-        driveController.getBackButton().whenPressed(new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase));
+        // driveController.getBackButton().whenPressed(new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase));
     }
 }
