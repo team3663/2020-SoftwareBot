@@ -44,9 +44,7 @@ public class C_Shoot extends CommandBase {
   //DRIVERS
   private Vision vision;
   //JOYSTICKS
-  private Joystick joystick;
   //SUBSYSTEM
-  private SS_Shooter shooter;
   private SS_Feeder feeder;
   //TIMERS
   private Timer bockedTimer;  //timerBlocked is the timer that starts when we are blocked or cant see the target.
@@ -59,18 +57,17 @@ public class C_Shoot extends CommandBase {
 
 
 //===============================CONSTRUCTOR=======================================//
-  public C_Shoot(Vision vision, SS_Shooter shooter, SS_Feeder feeder, Joystick joystick) {
+  public C_Shoot(Vision vision, SS_Feeder feeder) {
     //SETTER
-    this.shooter = shooter;
+    
     this.feeder = feeder;
     this.vision = vision;
-    this.joystick = joystick;
+    
     //CREATING NEW INSTNACES
-    joystick = new Joystick(0);
     bockedTimer = new Timer();
     outOfRangeTimer = new Timer();
     //REQUARMENTS
-    addRequirements(shooter);
+    
     addRequirements(feeder);
     
   }
@@ -118,9 +115,6 @@ public class C_Shoot extends CommandBase {
 //==================================FIRE===========================================//
 //          IF THE A BUTTON IS PREST THEN IT WILL RUN THE SHOOT METHED
   public void fire(){
-    if(shooter.getShotConfidence() >= SHOOTING_CONFIDENCE_THRESHOLD){
-      feeder.setRPM(FeedRate.SHOOT);
-    }
   }
 //=================================================================================//
 
@@ -129,16 +123,6 @@ public class C_Shoot extends CommandBase {
 //=============================PREHEAT=SHOOTER=====================================//
 //PREHEAT-SHOOTER SEES IF THE BLCOK-TIMER OR THE OUT OF RANGE TIMER IS OUT OF BOUNDS
   private void preheatShooter(){
-
-    if(bockedTimer.get() > SHOOTER_STOP_BLOCK_TIME || outOfRangeTimer.get() > SHOOTER_STOP_OUT_OF_RANGE_TIME){
-
-      shooter.setSpinning(true);
-
-    }else{
-
-      shooter.setSpinning(false);
-
-    }
 
   }
 //=================================================================================//

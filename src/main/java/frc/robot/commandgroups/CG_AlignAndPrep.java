@@ -8,7 +8,8 @@
 package frc.robot.commandgroups;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.C_Shoot;
+import frc.robot.commands.C_PrepBeltToShoot;
+import frc.robot.commands.C_PrepShootingBelt;
 import frc.robot.commands.C_Track;
 import frc.robot.drivers.Vision;
 import frc.robot.subsystems.SS_Drivebase;
@@ -18,16 +19,16 @@ import frc.robot.subsystems.SS_Feeder;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class CG_AlignAndShoot extends ParallelCommandGroup {
+public class CG_AlignAndPrep extends ParallelCommandGroup {
 
 
 
-  public CG_AlignAndShoot(Vision vision, SS_Shooter shooter, SS_Drivebase drivebase, SS_Feeder feeder) {
+  public CG_AlignAndPrep(Vision vision, SS_Shooter shooter, SS_Drivebase drivebase, SS_Feeder feeder) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());super();
-    addCommands(new C_Shoot(vision,shooter,feeder),new C_Track(vision, drivebase, () -> 0.0, () -> 0.0));
-
-    
+    addCommands( 
+                new C_Track(vision, drivebase, () -> 0.0, () -> 0.0),
+                new C_PrepShootingBelt(feeder));
   }
 
   @Override

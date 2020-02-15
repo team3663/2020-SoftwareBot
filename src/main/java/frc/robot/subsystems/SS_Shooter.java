@@ -26,7 +26,7 @@ public class SS_Shooter extends SubsystemBase {
 
   //Known RPMs for different distances. Column one: feet, Column two: RPM. 0 feet is parked directly infront of the power port
   private final int[][] KNOWN_RPM = new int[][] {
-    {0, 0},
+    {0, 2000},
     {10, 3100},
     {15, 3200},
     {20, 3500},

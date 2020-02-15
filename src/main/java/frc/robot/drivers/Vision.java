@@ -34,7 +34,7 @@ public class Vision {
   public static final int DEFAULT_PIPELINE = COARSE_PIPELINE;
 
   //Distance constants
-  public static final double CAMERA_ANGLE = 28;
+  public static final double CAMERA_ANGLE = 23;
   public static final double CAMERA_HEIGHT = 26; //in inches
   public static final double TARGET_HEIGHT = 92; //in inches
 

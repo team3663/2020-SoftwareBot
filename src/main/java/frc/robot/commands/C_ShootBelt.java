@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Feeder;
 import frc.robot.subsystems.SS_Shooter;
@@ -20,12 +19,12 @@ public class C_ShootBelt extends CommandBase {
    */
   private SS_Feeder feeder;
   private SS_Shooter shooter;
-  private Joystick joystick;
-  private final int SHOT_CONFIDENCT_THRESHOLD = 80;
-  public C_ShootBelt(SS_Feeder feeder, SS_Shooter shooter, Joystick joystick) {
+  private boolean isFinished;
+  private final int SHOT_CONFIDENCE_THRESHOLD = 80;
+  public C_ShootBelt(SS_Feeder feeder, SS_Shooter shooter, boolean isFinished) {
     this.feeder = feeder;
     this.shooter = shooter;
-    this.joystick = joystick;
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -38,8 +37,11 @@ public class C_ShootBelt extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(shooter.getShotConfidence() >= SHOT_CONFIDENCT_THRESHOLD){
+    if(shooter.getShotConfidence() >= SHOT_CONFIDENCE_THRESHOLD){
       feeder.setRPM(FeedRate.SHOOT);
+    }
+    if(shooter.isShotFinished()){
+      feeder.setState(State.SHOOT_CONTINOUS);
     }
   }
 
@@ -53,11 +55,11 @@ public class C_ShootBelt extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if((shooter.isShotFinished() && !joystick.getRawButton(1)) || feeder.getBeltDistance() >= feeder.REV_PER_FULL_FEED){
-      return true;
-    }else if(shooter.isShotFinished() && joystick.getRawButton(1)){
-      feeder.setState(State.SHOOT_CONTINOUS);
-    }
-    return false;
+    // if((shooter.isShotFinished() && !controller.getAButton().get()) || feeder.getBeltDistance() >= feeder.REV_PER_FULL_FEED){
+    //   return true;
+    // }else if(shooter.isShotFinished() && controller.getAButton().get()){
+    //   feeder.setState(State.SHOOT_CONTINOUS);
+    // }
+    return (shooter.isShotFinished() && isFinished) || feeder.getBeltDistance() >= feeder.REV_PER_FULL_FEED;
   }
 }
