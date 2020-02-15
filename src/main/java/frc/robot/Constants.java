@@ -8,14 +8,8 @@
 package frc.robot;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants.  This class should not be used for any other purpose.  All constants should be
- * declared globally (i.e. public static).  Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
+ * All constants for robot control are found here.
  */
-<<<<<<< Updated upstream
 public class Constants {
     //ROBOT DIMENSIONS
     public static final double TRACKWIDTH = 23.5;
@@ -41,32 +35,5 @@ public class Constants {
     //MISC
     static int joe = 200;
     public static final byte NAVX_UPDATE_RATE = (byte) joe;
-=======
-public final class Constants {
-    public static final class OIConstants {
-        public static final int DRIVER_CONTROLLER_ID = 0;
-        public static final int L_STICK_X = 0;
-        public static final int L_STICK_Y = 1;
-        public static final int R_STICK_X = 4;
-        public static final int R_STICK_Y = 5;   
-        public static final int L_BUMPER = 5;
-        public static final int R_BUMPER = 6;
-      }
-  
-      public static final class DriveConstants {
-        // for VictorSPX motor controllers
-        public static final int L_VICTOR_SPX_ID = 12;
-        public static final int R_VICTOR_SPX_ID = 10;
-
-        // for TalonSRX motor controllers
-        public static final int L_TALON_SRX_ID = 0;
-        public static final int R_TALON_SRX_ID = 1;
-
-        // for SparkMax motor controllers
-        public static final int GONDOLA_SPARK_MAX_ID = 20;
-        public static final int WENCH_SPARK_MAX_ID = 21;
-
-      }
->>>>>>> Stashed changes
 }
 
