@@ -98,7 +98,7 @@ public class C_Preheat extends CommandBase {
   public void notInRange(){
     outOfRangeTimer.start();
     if(outOfRangeTimer.get() > MAX_OUT_OF_RANGE_TIME){
-      shooter.setSpinning(true,0);
+      shooter.setSpinning(true).setTargetDistance(0);
     }
     
   }
@@ -109,7 +109,7 @@ public class C_Preheat extends CommandBase {
   public void isBlocked(){
     blockedTimer.start();
     if(blockedTimer.get() > MAX_BLOCKED_TIME){
-      shooter.setSpinning(true,0);
+      shooter.setSpinning(true).setTargetDistance(0);
     }
   }
 

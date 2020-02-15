@@ -41,7 +41,7 @@ public class C_ShootRPMTesting extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.setSpinning(true, 0);
+    shooter.setSpinning(true).setTargetDistance(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
