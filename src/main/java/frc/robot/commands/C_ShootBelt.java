@@ -38,7 +38,7 @@ public class C_ShootBelt extends CommandBase {
   @Override
   public void execute() {
     if(shooter.getShotConfidence() >= SHOT_CONFIDENCE_THRESHOLD){
-      feeder.setRPM(FeedRate.SHOOT);
+      feeder.setFeedRate(FeedRate.SHOOT);
     }
     if(shooter.isShotFinished()){
       feeder.setState(State.SHOOT_CONTINOUS);
@@ -49,7 +49,7 @@ public class C_ShootBelt extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     feeder.setState(State.IDLE);
-    feeder.setRPM(FeedRate.IDLE);
+    feeder.setFeedRate(FeedRate.IDLE);
   }
 
   // Returns true when the command should end.

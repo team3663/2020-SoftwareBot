@@ -32,16 +32,16 @@ public class C_IntakeBelt extends CommandBase {
   @Override
   public void execute() {
     if(feeder.entryIsValidTarget() && !feeder.exitIsValidTarget()){
-      feeder.setRPM(FeedRate.LOAD);
+      feeder.setFeedRate(FeedRate.LOAD);
     }else{
-      feeder.setRPM(FeedRate.IDLE);
+      feeder.setFeedRate(FeedRate.IDLE);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.setRPM(FeedRate.IDLE);
+    feeder.setFeedRate(FeedRate.IDLE);
     feeder.setState(State.IDLE);
   }
 
