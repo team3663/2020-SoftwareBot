@@ -34,7 +34,7 @@ public class C_SetArmPosition extends CommandBase {
     
     @Override
     public boolean isFinished() {
-        if(currentTime >= DURATION) {
+        if(m_intakeSubsystem.getReachedLimit() || currentTime > DURATION) {
             return true;
         }
         return false;

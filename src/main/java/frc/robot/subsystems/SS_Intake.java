@@ -6,8 +6,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.util.IntakePosition;
 
 public class SS_Intake extends SubsystemBase {
@@ -15,6 +18,8 @@ public class SS_Intake extends SubsystemBase {
     private DoubleSolenoid longSolenoid;
 
     private CANSparkMax pickupMotor;
+
+    private DigitalInput pneumaticLimitSwitch;
 
     private IntakePosition currentPosition;
     
@@ -24,10 +29,14 @@ public class SS_Intake extends SubsystemBase {
 
         pickupMotor = new CANSparkMax(DriveConstants.powerCellPickUpMotor, CANSparkMaxLowLevel.MotorType.kBrushless);
 
+        pneumaticLimitSwitch = new DigitalInput(IntakeConstants.SWITCH_ID);
+
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
 
     public void setArmPosition(IntakePosition position){
+        SmartDashboard.putBoolean("getReachedSwitch", getReachedLimit());
+        
         currentPosition = position;
         switch(position){
             case FULLY_RETRACTED:
@@ -63,4 +72,8 @@ public class SS_Intake extends SubsystemBase {
     public void setBrakeMode() {
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
+
+    public boolean getReachedLimit() {
+        return !pneumaticLimitSwitch.get();
+    } 
 }
