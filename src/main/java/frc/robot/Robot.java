@@ -8,7 +8,10 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SS_ControlPanel;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -18,7 +21,9 @@ import frc.robot.subsystems.SS_ControlPanel;
  */
 public class Robot extends TimedRobot {
   public static SS_ControlPanel ss_ControlPanel;
-
+  public Command m_autonomousCommand;
+  //private RobotContainer m_robotConainer;
+  
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -26,8 +31,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     new RobotContainer();
-
+    //m_robotContainer = new RobotContainer();
+    
   }
+
+  
   /**
    * This function is called every robot packet, no matter the mode. Use
    * this for items like diagnostics that you want ran during disabled,
@@ -38,6 +46,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
   }
   /**
    * This autonomous (along with the chooser code above) shows how to select
@@ -73,7 +82,13 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during test mode.
    */
+  public void testInit() {
+    CommandScheduler.getInstance().cancelAll();
+  }
   @Override
   public void testPeriodic() {
+
   }
+
+
 }

@@ -6,31 +6,29 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-
+import frc.robot.subsystems.SS_ControlPanel;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SS_ControlPanel;
 
-public class C_TurnWheel extends CommandBase {
-
+public class C_Drive extends CommandBase {
   /**
-   * Creates a new C_SpinWheel.
- * @param SS_ControlPanel 
-   */    
-  private DoubleSupplier leftSpeed;
-  private DoubleSupplier rightSpeed;
-  private SS_ControlPanel ss_ControlPanel;
+   * Creates a new C_Drive.
+   */
+  private final SS_ControlPanel ss_ControlPanel;
+  private DoubleSupplier speedLeft;
+  private DoubleSupplier speedRight;
+  private double scale = 0.5;
 
-  public C_TurnWheel(SS_ControlPanel ss_ControlPanel, DoubleSupplier leftSpeed, DoubleSupplier rightSpeed) {
+  public C_Drive(SS_ControlPanel subsystem, DoubleSupplier speedLeft, DoubleSupplier speedRight) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.leftSpeed = leftSpeed;
-    this.rightSpeed = rightSpeed;
-    this.ss_ControlPanel = ss_ControlPanel;
-    addRequirements(ss_ControlPanel); 
+    ss_ControlPanel = subsystem;
+    this.speedLeft = speedLeft;
+    this.speedRight = speedRight;
+    addRequirements(subsystem);
   }
 
-// Called when the command is initially scheduled.
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
   }
@@ -38,15 +36,14 @@ public class C_TurnWheel extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ss_ControlPanel.setSpeed(leftSpeed.getAsDouble(), rightSpeed.getAsDouble());
+    ss_ControlPanel.tankDrive(speedLeft.getAsDouble() * scale, speedRight.getAsDouble() * scale);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //Robot.ss_ControlPanel.setSpeed(0);
   }
- 
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

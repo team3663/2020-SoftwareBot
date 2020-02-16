@@ -6,50 +6,56 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-
-import java.util.function.DoubleSupplier;
-
+import edu.wpi.first.wpilibj.Timer;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SS_ControlPanel;
 
-public class C_TurnWheel extends CommandBase {
-
+public class C_TimeRoll extends CommandBase {
   /**
-   * Creates a new C_SpinWheel.
- * @param SS_ControlPanel 
-   */    
-  private DoubleSupplier leftSpeed;
-  private DoubleSupplier rightSpeed;
-  private SS_ControlPanel ss_ControlPanel;
-
-  public C_TurnWheel(SS_ControlPanel ss_ControlPanel, DoubleSupplier leftSpeed, DoubleSupplier rightSpeed) {
+   * Creates a new TimeRoll.
+   */
+  private final SS_ControlPanel ss_ControlPanel;
+  private double speed;
+  private final double DURATION = 10.;     // 1000 ms = 1 second
+  private Timer timer = new Timer();
+  private double currentTime;
+  public C_TimeRoll(SS_ControlPanel subsystem, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.leftSpeed = leftSpeed;
-    this.rightSpeed = rightSpeed;
-    this.ss_ControlPanel = ss_ControlPanel;
-    addRequirements(ss_ControlPanel); 
+    ss_ControlPanel = subsystem;
+    this.speed = speed;
+    addRequirements(subsystem);
   }
 
-// Called when the command is initially scheduled.
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ss_ControlPanel.setSpeed(leftSpeed.getAsDouble(), rightSpeed.getAsDouble());
+    currentTime = timer.get();
+    ss_ControlPanel.setSpeed(speed, speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //Robot.ss_ControlPanel.setSpeed(0);
+    ss_ControlPanel.setSpeed(0.0, 0.0);
+    timer.stop();
+    timer.reset();
   }
- 
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if(currentTime > DURATION) {
+      return true;
+  }
+  else {
+      return false;
+    }
   }
 }
