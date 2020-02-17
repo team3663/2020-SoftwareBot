@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.C_Delay;
 
 public class AutonomousBuilder {
@@ -67,18 +68,19 @@ public class AutonomousBuilder {
 
     /**
      * Create the routine for autonomous based on the selected options from the Shuffleboard
-     * @return An array of autonomous commands to be run by the command group
+     * @return A command group for autonomous
      */
-    public Command[] buildAutoRoutine() {
+    public SequentialCommandGroup buildAutoRoutine() {
         //Create commands for autonomous
         C_Delay shootDelay = new C_Delay(shootDelayEntry.getDouble(0.0));
         C_Delay movementDelay = new C_Delay(movementDelayEntry.getDouble(0.0));
 
-        Command[] commandSequence = {
+        SequentialCommandGroup autosRoutine = new SequentialCommandGroup(
             shootDelay,
             movementDelay
-        };
-        return commandSequence;
+        );
+
+        return autosRoutine;
     }
 
     public StartingPosition getStartingPosition() {
