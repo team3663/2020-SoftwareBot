@@ -75,12 +75,12 @@ public class AutonomousBuilder {
         C_Delay shootDelay = new C_Delay(shootDelayEntry.getDouble(0.0));
         C_Delay movementDelay = new C_Delay(movementDelayEntry.getDouble(0.0));
 
-        SequentialCommandGroup autosRoutine = new SequentialCommandGroup(
+        SequentialCommandGroup autoRoutine = new SequentialCommandGroup(
             shootDelay,
             movementDelay
         );
 
-        return autosRoutine;
+        return autoRoutine;
     }
 
     public StartingPosition getStartingPosition() {
