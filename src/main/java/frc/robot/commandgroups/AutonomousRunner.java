@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class AutonomousRunner extends SequentialCommandGroup {
 
   public AutonomousRunner(Command[] commands) {
-    for(Command i: commands) {
+    for(Command i : commands) {
       addCommands(i);
     }
   }
