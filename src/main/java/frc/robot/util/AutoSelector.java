@@ -14,10 +14,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class AutoSelector {
+
     private SendableChooser startingPositionSelector;
     private SendableChooser movementSelector;
     private NetworkTableEntry shootDelayEntry;
-
+    private NetworkTableEntry movementDelayEntry;
     
     public AutoSelector() {
         initStartingPositionSelector();
@@ -33,7 +34,16 @@ public class AutoSelector {
             .withWidget(BuiltInWidgets.kTextView)
             .withPosition(0, 1)
             .withSize(2, 1)
-            .getEntry();    
+            .getEntry();
+        movementDelayEntry = autoTab.add("Movement Delay", 0)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withPosition(0, 2)
+            .withSize(2, 1)
+            .getEntry();
+        autoTab.add("Movement Strategy", movementSelector)
+            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withPosition(0, 3)
+            .withSize(1, 2);
     }
 
     private void initStartingPositionSelector() {
@@ -45,7 +55,10 @@ public class AutoSelector {
     }
 
     private void initMovementSelector() {
-        //movementSelector.setDefaultOption("", object);
+        movementSelector.setDefaultOption("Backward", MovementStrategy.BACKWARD);
+        movementSelector.addOption("Forward", MovementStrategy.FORWARD);
+        movementSelector.addOption("Trench", MovementStrategy.TRENCH);
+        movementSelector.addOption("None", MovementStrategy.NONE);
     }
 
     /**
