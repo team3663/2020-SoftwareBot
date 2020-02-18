@@ -12,11 +12,14 @@ import frc.robot.subsystems.SS_Intake;
 import frc.robot.util.IntakePosition;
 
 public class RobotContainer {
-    private SS_Intake ss_Intake = new SS_Intake();
+    private SS_Intake ss_Intake;
 
-    private XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+    private XboxController m_driverController;
 
     public RobotContainer() {
+        ss_Intake = new SS_Intake();
+        m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+        
         configureButtonBindings();
     }
 
