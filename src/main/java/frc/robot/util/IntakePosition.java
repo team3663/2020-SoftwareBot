@@ -2,9 +2,6 @@ package frc.robot.util;
 
 /**
  * Intake arm extend positions
- */
-
-/**
  * @param FULLY_RETRACTED checks to see if both the long and short solenoids are retracted
  * @param LONG_RETRACT checks to see if ONLY the long solenoid is retracted
  * @param SHORT_RETRACT checks to see if ONLY the short solenoid is retracted
