@@ -24,8 +24,10 @@ public class SS_Intake extends SubsystemBase {
     private IntakePosition currentPosition;
     
     public SS_Intake() { 
-        shortSolenoid = new DoubleSolenoid(DriveConstants.SHORT_SOLENOID_FORWARD, DriveConstants.SHORT_SOLENOID_REVERSE);
-        longSolenoid = new DoubleSolenoid(DriveConstants.LONG_SOLENOID_FORWARD, DriveConstants.LONG_SOLENOID_REVERSE);
+        shortSolenoid = new DoubleSolenoid(DriveConstants.intakeArmSolenoidModule, DriveConstants.intakeArmSolenoidPorts[0], 
+                DriveConstants.intakeArmSolenoidPorts[1]);
+        longSolenoid = new DoubleSolenoid(DriveConstants.intakeArmSolenoidModule, DriveConstants.intakeArmSolenoidPorts[2], 
+                DriveConstants.intakeArmSolenoidPorts[3]);
 
         pickupMotor = new CANSparkMax(DriveConstants.powerCellPickUpMotor, CANSparkMaxLowLevel.MotorType.kBrushless);
 

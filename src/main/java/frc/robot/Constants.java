@@ -9,11 +9,8 @@ package frc.robot;
 
 public class Constants {
     public static final class DriveConstants {
-        public static final int SHORT_SOLENOID_FORWARD = 0;
-        public static final int SHORT_SOLENOID_REVERSE = 1;
-
-        public static final int LONG_SOLENOID_FORWARD = 2;
-        public static final int LONG_SOLENOID_REVERSE = 3;
+        public static final int intakeArmSolenoidModule = 1;
+        public static final int[] intakeArmSolenoidPorts = new int[]{3, 2, 1, 0};
         
         public static final int powerCellPickUpMotor = 10;
     }

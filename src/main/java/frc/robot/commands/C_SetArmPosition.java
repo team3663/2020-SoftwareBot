@@ -23,15 +23,12 @@ public class C_SetArmPosition extends CommandBase {
     public void initialize() {
         timer.reset();
         timer.start();
-    }
 
-    @Override
-    public void execute() {
         currentTime = timer.get();
         SmartDashboard.putNumber("Time Between Transitions", currentTime);
         m_intakeSubsystem.setArmPosition(position);
     }
-    
+
     @Override
     public boolean isFinished() {
         if(m_intakeSubsystem.getReachedLimit() || currentTime > DURATION) {
