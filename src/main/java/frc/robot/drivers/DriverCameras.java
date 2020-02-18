@@ -12,6 +12,9 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 //Code used from: http://docs.wpilib.org/en/latest/docs/software/vision-processing/introduction/using-multiple-cameras.html
 
@@ -32,6 +35,12 @@ public class DriverCameras {
         cameras.put(CameraPosition.FRONT, frontCamera);
         cameras.put(CameraPosition.BACK, backCamera);
         cameras.put(CameraPosition.TOP, topCamera);
+
+        ShuffleboardTab cameraTab = Shuffleboard.getTab("Camera");
+        cameraTab.add("VideoStream", frontCamera)
+            .withWidget(BuiltInWidgets.kCameraStream)
+            .withPosition(4, 0)
+            .withSize(5, 5);
 
         cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
     }
