@@ -20,7 +20,7 @@ public class DriverCameras {
     UsbCamera frontCamera;
     UsbCamera backCamera;
     UsbCamera topCamera;
-    HashMap<Camera, UsbCamera> cameras;
+    HashMap<CameraPosition, UsbCamera> cameras;
     NetworkTableEntry cameraSelection;
 
     public DriverCameras() {
@@ -28,21 +28,21 @@ public class DriverCameras {
         backCamera = CameraServer.getInstance().startAutomaticCapture(1);
         topCamera = CameraServer.getInstance().startAutomaticCapture(2);
 
-        cameras = new HashMap<Camera, UsbCamera>();
-        cameras.put(Camera.FRONT, frontCamera);
-        cameras.put(Camera.BACK, backCamera);
-        cameras.put(Camera.TOP, topCamera);
+        cameras = new HashMap<CameraPosition, UsbCamera>();
+        cameras.put(CameraPosition.FRONT, frontCamera);
+        cameras.put(CameraPosition.BACK, backCamera);
+        cameras.put(CameraPosition.TOP, topCamera);
 
         cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
     }
 
-    public enum Camera {
+    public enum CameraPosition {
         FRONT,
         BACK,
         TOP
     }
 
-    public void switchCameraFeed(Camera camera) {
+    public void switchCameraFeed(CameraPosition camera) {
         cameraSelection.setString(cameras.get(camera).getName());
     }
 }
