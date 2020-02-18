@@ -17,7 +17,7 @@ import org.frcteam2910.common.drivers.SwerveModule;
 import static org.frcteam2910.common.robot.Constants.CAN_TIMEOUT_MS;
 
 /**
- * Driver for Team 3663's 2020 revision of the 2910 swerve module.
+ * Driver for Team 3663's 2020 revision of the 2910 Mk1 swerve module.
  * <p>
  * This implementation assumes that two Spark MAXs are used to control each module over CAN and that
  * the angle Spark MAX is connected to an analog encoder.
@@ -30,7 +30,7 @@ public final class CPRSwerveModule extends SwerveModule {
     private static final double ANGLE_VERSA_GEAR_RATIO = 21.0; // MOTOR REVOLUTIONS TO MODULE REVOLUTIONS
     private static final double ANGLE_TOTAL_GEAR_RATIO = 63.0;
 
-    private static final double DEFAULT_DRIVE_TICKS_PER_UNIT = 36.65; //TODO: find drive ticks per inch with a NEO drive motor
+    private static final double DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT = .6963;
 
     private final double offsetAngle;
 
@@ -40,20 +40,23 @@ public final class CPRSwerveModule extends SwerveModule {
     private final CANAnalog angleAbsoluteEncoder;
     private final CANEncoder angleMotorEncoder;
     private final PIDController anglePIDController;
+    private final CANEncoder driveMotorEncoder;
     private final CANPIDController drivePIDController;
 
     private final double ANGLE_P = .5;
     private final double ANGLE_I = 0.0;
     private final double ANGLE_D = 0.0;
 
+    private double driveEncoderPositionOffset = 0.0;
+
 
 
     /**
      * The amount of drive encoder ticks that occur for one unit of travel.
      *
-     * @see #DEFAULT_DRIVE_TICKS_PER_UNIT
+     * @see #DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT
      */
-    private volatile double driveTicksPerUnit = DEFAULT_DRIVE_TICKS_PER_UNIT;
+    private volatile double driveRevolutionsPerUnit = DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT;
 
     /**
      * @param modulePosition the module's offset from the center of the robot
@@ -94,6 +97,8 @@ public final class CPRSwerveModule extends SwerveModule {
 
         this.driveMotor.setIdleMode(IdleMode.kBrake);
 
+        this.driveMotorEncoder = driveMotor.getEncoder();
+
         // Setup current limiting
         this.driveMotor.setSmartCurrentLimit(Constants.DRIVE_MOTOR_AMP_LIMIT);
     }
@@ -106,10 +111,10 @@ public final class CPRSwerveModule extends SwerveModule {
      * <p>
      * The default value uses inches and should only be used for testing.
      *
-     * @param driveTicksPerUnit the amount of drive ticks that occur per unit of travel
+     * @param driveRevolutionsPerUnit the amount of drive ticks that occur per unit of travel
      */
-    public void setDriveTicksPerUnit(double driveTicksPerUnit) {
-        this.driveTicksPerUnit = driveTicksPerUnit;
+    public void setDriveTicksPerUnit(double driveRevolutionsPerUnit) {
+        this.driveRevolutionsPerUnit = driveRevolutionsPerUnit;
     }
 
     @Override
@@ -136,9 +141,27 @@ public final class CPRSwerveModule extends SwerveModule {
         angleMotorEncoder.setPosition(readAngle());
     }
 
+    public double getDriveRevs() {
+        return driveMotor.getEncoder().getPosition() - driveEncoderPositionOffset;
+    }
+
+    public void zeroDriveEncoder() {
+        driveEncoderPositionOffset = driveMotorEncoder.getPosition();
+    }
+
+    @Override
+    public double getCurrentVelocity() {
+        return driveMotorEncoder.getVelocity() * (1 / 60) * (1 / driveRevolutionsPerUnit);
+    }
+
+    @Override
+    public double getDriveCurrent() {
+        return driveMotor.getOutputCurrent();
+    }
+
     @Override
     public double readDistance() {
-        return driveMotor.getEncoder().getPosition() / driveTicksPerUnit;
+        return driveMotorEncoder.getPosition() / driveRevolutionsPerUnit;
     }
     /**
      * @param angle IN RADIANS

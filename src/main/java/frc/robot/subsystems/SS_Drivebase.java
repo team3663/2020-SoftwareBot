@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import javax.annotation.concurrent.GuardedBy;
 
 import com.revrobotics.CANSparkMax;
@@ -27,8 +29,6 @@ import org.frcteam2910.common.kinematics.SwerveOdometry;
 import org.frcteam2910.common.robot.UpdateManager;
 
 public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatable{
-
-    private static final double ROTATION_VELOCITY_MULTIPLIER = 2.0;
 
     //SWERVE MODULE ANGLE ENCODER OFFSETS (in radians, obviously)
     public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(67);
@@ -79,7 +79,10 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
 
   private final Object stateLock = new Object();
   @GuardedBy("stateLock")
-  private HolonomicDriveSignal driveSignal = null;
+  private HolonomicDriveSignal driveSignal = new HolonomicDriveSignal(Vector2.ZERO, 0.0, false);
+
+  private double currentTime = 0.0;
+  private double dt;
 
   private NetworkTableEntry poseXEntry;
   private NetworkTableEntry poseYEntry;
@@ -91,6 +94,8 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
 
   private NetworkTableEntry[] moduleAngleEntries = new NetworkTableEntry[modules.length];
   private NetworkTableEntry[] moduleEncoderVoltageEntries = new NetworkTableEntry[modules.length];
+
+  private NetworkTableEntry testTickCount;
 
   public SS_Drivebase() {
     synchronized (sensorLock) {
@@ -143,6 +148,8 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
 
     ShuffleboardLayout correctionContainer = drivebaseTab.getLayout("Correction", BuiltInLayouts.kList).withPosition(1, 2).withSize(1, 1);
     correctionAngleEntry = correctionContainer.add("Correction", 0.0).getEntry();
+
+    testTickCount = drivebaseTab.add("Test Tick Count", 0.0).getEntry();
   }
 
   public RigidTransform2 getPose() {
@@ -157,6 +164,40 @@ public void drive(Vector2 translationalVelocity, double rotationalVelocity, bool
     }
 }
 
+public void drive(HolonomicDriveSignal driveSignal) {
+    synchronized(stateLock) {
+        this.driveSignal = driveSignal;
+    }
+}
+
+public void drive(Optional<HolonomicDriveSignal> driveSignal) {
+    if(driveSignal.isPresent()) {
+        synchronized(stateLock) {
+            this.driveSignal = driveSignal.get();
+        }
+    } else {
+        synchronized(stateLock) {
+            this.driveSignal = new HolonomicDriveSignal(Vector2.ZERO, 0.0, false);
+        }
+    }
+}
+
+public HolonomicDriveSignal getDriveSignal() {
+    return driveSignal;
+}
+
+public double getCurrentTime() {
+    return currentTime;
+}
+
+public double getTimeSinceLastUpdate() {
+    return dt;
+}
+
+public CPRSwerveModule[] getModules() {
+    return modules;
+}
+
 public void resetGyroAngle(Rotation2 angle) {
     synchronized (sensorLock) {
         navX.setAdjustmentAngle(
@@ -167,6 +208,9 @@ public void resetGyroAngle(Rotation2 angle) {
 
 @Override
     public void update(double timestamp, double dt) {
+        currentTime = timestamp;
+        this.dt = dt;
+
         updateOdometry(dt);
 
         HolonomicDriveSignal driveSignal;
@@ -183,12 +227,11 @@ public void resetGyroAngle(Rotation2 angle) {
             var module = modules[i];
             module.updateSensors();
 
-            moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(module.getCurrentAngle())).scale(module.getCurrentVelocity());
+            moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(module.readAngle())).scale(module.getCurrentVelocity());
         }
 
         Rotation2 angle;
         synchronized (sensorLock) {
-            System.out.println("angle: " + navX.getAngle());
             angle = navX.getAngle();
         }
 
@@ -197,7 +240,6 @@ public void resetGyroAngle(Rotation2 angle) {
         synchronized (kinematicsLock) {
             this.pose = pose;
         }
-        System.out.println(pose);
     }
 
     private void updateModules(HolonomicDriveSignal signal, double dt) {
@@ -229,12 +271,11 @@ public void resetGyroAngle(Rotation2 angle) {
           module.updateState(dt);
       }
 
-//        var pose = getPose();
         poseXEntry.setDouble(pose.translation.x);
         poseYEntry.setDouble(pose.translation.y);
         poseAngleEntry.setDouble(pose.rotation.toDegrees());
 
-        fieldOrientedEntry.setDouble( signal == null ? 0 : (signal.isFieldOriented() ? 1 : 0));        
+        fieldOrientedEntry.setDouble( signal == null ? 0 : (signal.isFieldOriented() ? 1 : 0));
         gyroAngleEntry.setDouble(navX.getAngle().toDegrees());
 
 
@@ -249,5 +290,6 @@ public void resetGyroAngle(Rotation2 angle) {
             moduleAngleEntries[i].setDouble(Math.toDegrees(module.readAngle()));
             moduleEncoderVoltageEntries[i].setDouble(module.getEncoderVoltage());
         }
+        testTickCount.setDouble(modules[0].getDriveRevs());
     }
 }
