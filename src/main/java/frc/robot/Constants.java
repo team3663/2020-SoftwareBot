@@ -32,6 +32,7 @@ public class Constants {
     //CONTROLLERS
     public static final int DRIVE_CONTROLLER_ID = 0;
     public static final int SENSOR_ID = 20;
+    public static final int SENSOR_ID_TWO = 21;
     //MISC
     static int joe = 200;
     public static final byte NAVX_UPDATE_RATE = (byte) joe;

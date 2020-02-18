@@ -20,7 +20,6 @@ import frc.robot.Constants;
 import frc.robot.commands.C_Drive;
 import frc.robot.drivers.TimeOfFlightSensor;
 import frc.robot.subsystems.SS_Drivebase;
-import frc.robot.test.commands.C_SensorTest;
 
 public class RobotContainer {
     private final Controller driveController = new XboxController(Constants.DRIVE_CONTROLLER_ID);
@@ -48,7 +47,6 @@ public class RobotContainer {
                         () -> driveController.getRightXAxis().get(true)));
         */
         updateManager.startLoop(5.0e-3);
-        CommandScheduler.getInstance().schedule(new C_SensorTest(sensor));
         configureButtonBindings();
     }
 

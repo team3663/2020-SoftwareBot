@@ -16,8 +16,10 @@ public class C_SensorTest extends CommandBase {
    * Creates a new C_SensorTest.
    */
   private TimeOfFlightSensor sensor;
-  public C_SensorTest(TimeOfFlightSensor sensor) {
+  private TimeOfFlightSensor sensorTwo;
+  public C_SensorTest(TimeOfFlightSensor sensor, TimeOfFlightSensor sensorTwo) {
     this.sensor = sensor;
+    this.sensorTwo = sensorTwo;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -30,6 +32,7 @@ public class C_SensorTest extends CommandBase {
   @Override
   public void execute() {
     SmartDashboard.putNumber("Distance", sensor.getDistance());
+    SmartDashboard.putNumber("DistanceTwo", sensorTwo.getDistance());
   }
 
   // Called once the command ends or is interrupted.
