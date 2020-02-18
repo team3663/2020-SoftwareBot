@@ -50,10 +50,12 @@ public class SS_Feeder extends SubsystemBase {
 
   public final int REV_PER_FULL_FEED = 1500; //amount of revolutions before the feeder fully indexes all balls
 
-  private final double BALL_PRESENT_THRESHOLD = 30;
+  private final double ENTRY_SENSOR_MIN_THRESHOLD = 3;
+  private final double ENTRY_SENSOR_MAX_THRESHOLD = 5;
+  private final double EXIT_SENSOR_MIN_THRESHOLD = 3;
+  private final double EXIT_SENSOR_MAX_THRESHOLD = 5;
 
   private CANEncoder feederBeltEncoder;
-
   private CANSparkMax belt;
   private CANPIDController beltPID;
 
@@ -82,7 +84,6 @@ public class SS_Feeder extends SubsystemBase {
     beltPID.setD(KD);
     feederBeltEncoder = belt.getEncoder();
     feederBeltEncoder.setVelocityConversionFactor(FEEDER_BELT_GEAR_RATIO_MULTIPLIER); //set feeder gear ratio
-
     //Sensors for Feeder
     entrySensor = new TimeOfFlightSensor(Constants.ENTRY_SENSOR);
     exitSensor = new TimeOfFlightSensor(Constants.EXIT_SENSOR);
@@ -159,12 +160,12 @@ public class SS_Feeder extends SubsystemBase {
   }
 
   public void resetBeltPosision() {
-    belt.getEncoder().setPosition(0);
+    feederBeltEncoder.setPosition(0);
   }
 
   public double getBeltDistance() {
 
-    return belt.getEncoder().getPosition() * INCHES_PER_REVOLUTION;
+    return feederBeltEncoder.getPosition();
   }
 
   public double getEntryRange() {
@@ -176,10 +177,10 @@ public class SS_Feeder extends SubsystemBase {
   }
 
   public boolean ballInEntry() {
-    return entrySensor.getDistance() <= BALL_PRESENT_THRESHOLD;
+    return entrySensor.getDistance() >= ENTRY_SENSOR_MIN_THRESHOLD && entrySensor.getDistance() <= ENTRY_SENSOR_MAX_THRESHOLD;
   }
 
   public boolean ballInExit() {
-    return exitSensor.getDistance() <= BALL_PRESENT_THRESHOLD;
+    return exitSensor.getDistance() >= EXIT_SENSOR_MIN_THRESHOLD && exitSensor.getDistance() <= EXIT_SENSOR_MAX_THRESHOLD;
   }
 }
