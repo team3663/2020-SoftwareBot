@@ -53,7 +53,7 @@ public class RobotContainer {
                 new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
                         () -> driveController.getLeftXAxis().get(true),
                         () -> driveController.getRightXAxis().get(true)));
-
+        //CommandScheduler.getInstance().setDefaultCommand(shooter, new C_Preheat(shooter));
         //CommandScheduler.getInstance().setDefaultCommand(shooter, new C_Preheat(shooter));
         
         /*
@@ -72,7 +72,7 @@ public class RobotContainer {
         driveController.getLeftBumperButton().whenHeld(new C_Track(vision,drivebase, shooter,
             () -> driveController.getLeftYAxis().get(true),
             () -> driveController.getLeftXAxis().get(true)), true);
-        driveController.getRightBumperButton().whenHeld(new C_Preheat(shooter));
+        //driveController.getRightBumperButton().whenHeld(new C_Preheat(shooter));
         //driveController.getRightBumperButton().whenPressed(new C_Preheat(shooter));
         driveController.getAButton().whenPressed(new C_ShootBelt(feeder, shooter, false));
         driveController.getAButton().whenReleased(new C_ShootBelt(feeder, shooter, true));

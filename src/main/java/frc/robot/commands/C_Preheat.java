@@ -20,9 +20,9 @@ public class C_Preheat extends CommandBase {
   private Vision vision;
   private SS_Shooter shooter;
 
-  private final double MAX_SHOOTING_RANGE = 30;
-  private final double MAX_OUT_OF_RANGE_TIME = 15;
-  private final double MAX_BLOCKED_TIME = 15;
+  private final double MAX_SHOOTING_RANGE = 300;
+  private final double MAX_OUT_OF_RANGE_TIME = 150;
+  private final double MAX_BLOCKED_TIME = 150;
 
   private Timer blockedTimer;
   private Timer outOfRangeTimer;
@@ -63,7 +63,7 @@ public class C_Preheat extends CommandBase {
    * @return Returs if the target is in range.
    */
   public boolean Range(){
-    return true;//vision.getDistance() < MAX_SHOOTING_RANGE;
+    return vision.getDistance() < MAX_SHOOTING_RANGE;
   }
   /**
    * @return Returns if the camera is blocked.
@@ -78,7 +78,7 @@ public class C_Preheat extends CommandBase {
   public void UpdatePreheat(){
     if(Range()){
       if(!blocked()){
-        shooter.setSpinning(true);
+        shooter.setSpinning(true).updateFromVision(true);
         blockedTimer.stop();
         blockedTimer.reset();
       }else{
@@ -89,7 +89,7 @@ public class C_Preheat extends CommandBase {
     }else{
       notInRange();
     }
-    
+    //shooter.setSpinning(true);
   }
 
   /**
