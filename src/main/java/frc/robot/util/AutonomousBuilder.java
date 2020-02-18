@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.C_Delay;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class AutonomousBuilder {
 
@@ -71,8 +71,8 @@ public class AutonomousBuilder {
      */
     public SequentialCommandGroup buildAutoRoutine() {
         //Create commands for autonomous
-        C_Delay shootDelay = new C_Delay(shootDelayEntry.getDouble(0.0));
-        C_Delay movementDelay = new C_Delay(movementDelayEntry.getDouble(0.0));
+        WaitCommand shootDelay = new WaitCommand(shootDelayEntry.getDouble(0.0));
+        WaitCommand movementDelay = new WaitCommand(movementDelayEntry.getDouble(0.0));
 
         SequentialCommandGroup autoRoutine = new SequentialCommandGroup(
             shootDelay,
