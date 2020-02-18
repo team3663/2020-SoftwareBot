@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.util.concurrent.TimeoutException;
+
 import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.robot.UpdateManager;
 import org.frcteam2910.common.robot.input.Controller;
@@ -16,14 +18,16 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.commands.C_Drive;
+import frc.robot.drivers.TimeOfFlightSensor;
 import frc.robot.subsystems.SS_Drivebase;
+import frc.robot.test.commands.C_SensorTest;
 
 public class RobotContainer {
     private final Controller driveController = new XboxController(Constants.DRIVE_CONTROLLER_ID);
 
     // Instantiate subsystems here
     private final SS_Drivebase drivebase = new SS_Drivebase();
-
+    private final TimeOfFlightSensor sensor = new TimeOfFlightSensor(Constants.SENSOR_ID);
     // All updatable subsystems should be passed as parameters into the
     // UpdateManager constructor
     private final UpdateManager updateManager = new UpdateManager(drivebase);
@@ -44,7 +48,7 @@ public class RobotContainer {
                         () -> driveController.getRightXAxis().get(true)));
         */
         updateManager.startLoop(5.0e-3);
-
+        CommandScheduler.getInstance().schedule(new C_SensorTest(sensor));
         configureButtonBindings();
     }
 
