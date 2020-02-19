@@ -11,12 +11,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 import frc.robot.drivers.DriverCameras;
-import frc.robot.drivers.SimpleCamera;
 
 public class Robot extends TimedRobot {
   //private final RobotContainer container = new RobotContainer();
   DriverCameras cameras;
-  SimpleCamera camera;
 
   @Override
   public void robotInit() {
