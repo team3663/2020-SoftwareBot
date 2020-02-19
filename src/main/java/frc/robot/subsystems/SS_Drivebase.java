@@ -188,7 +188,7 @@ public void resetGyroAngle(Rotation2 angle) {
 
         Rotation2 angle;
         synchronized (sensorLock) {
-            System.out.println("angle: " + navX.getAngle());
+            //System.out.println("angle: " + navX.getAngle());
             angle = navX.getAngle();
         }
 
@@ -197,7 +197,7 @@ public void resetGyroAngle(Rotation2 angle) {
         synchronized (kinematicsLock) {
             this.pose = pose;
         }
-        System.out.println(pose);
+        //System.out.println(pose);
     }
 
     private void updateModules(HolonomicDriveSignal signal, double dt) {

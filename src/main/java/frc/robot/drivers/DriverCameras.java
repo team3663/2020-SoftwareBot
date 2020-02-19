@@ -17,23 +17,25 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.networktables.TableEntryListener;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
-//Old code used from: http://docs.wpilib.org/en/latest/docs/software/vision-processing/introduction/using-multiple-cameras.html
+//Doc from WPI: http://docs.wpilib.org/en/latest/docs/software/vision-processing/introduction/using-multiple-cameras.html
 
 public class DriverCameras {
 
+    CameraServer camServer;
     UsbCamera frontCamera;
     UsbCamera backCamera;
     UsbCamera topCamera;
     UsbCamera selectedCamera;
     HashMap<CameraPosition, UsbCamera> cameras;
 
+    ComplexWidget cameraWidget;
     SelectorListener selectorListener; 
     SendableChooser cameraSelector;
-    // NetworkTableEntry cameraSelection;
 
     public DriverCameras() {
         initCameras();
@@ -41,10 +43,11 @@ public class DriverCameras {
     }
 
     private void initCameras() {
-        frontCamera = CameraServer.getInstance().startAutomaticCapture(0);
-        backCamera = CameraServer.getInstance().startAutomaticCapture(1);
-        topCamera = CameraServer.getInstance().startAutomaticCapture(2);
-        selectedCamera = frontCamera;
+        camServer = CameraServer.getInstance();
+        frontCamera = camServer.startAutomaticCapture("front camera", 0);
+        backCamera = camServer.startAutomaticCapture("back camera", 1);
+        topCamera = camServer.startAutomaticCapture("top camera", 2);
+        selectedCamera = backCamera;
 
         cameras = new HashMap<CameraPosition, UsbCamera>();
         cameras.put(CameraPosition.FRONT, frontCamera);
@@ -52,18 +55,20 @@ public class DriverCameras {
         cameras.put(CameraPosition.TOP, topCamera);
 
         ShuffleboardTab cameraTab = Shuffleboard.getTab("Camera");
-        cameraTab.add("Video Stream", selectedCamera)
+        cameraWidget = cameraTab.add("Video Stream", selectedCamera)
             .withWidget(BuiltInWidgets.kCameraStream)
             .withPosition(3, 0)
             .withSize(5, 5);
-        // cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
     }
 
     private void initCameraSelector() {
+        //init camera selector and add options to it
+        cameraSelector = new SendableChooser<CameraPosition>();
         cameraSelector.setDefaultOption("Front", CameraPosition.FRONT);
         cameraSelector.addOption("Back", CameraPosition.BACK);
         cameraSelector.addOption("Top", CameraPosition.TOP);
 
+        //add the camera selector to the shuffleboard
         ShuffleboardTab cameraTab = Shuffleboard.getTab("Camera");
         String selectorName = "SelectedCamera";
         cameraTab.add(selectorName, cameraSelector)
@@ -73,7 +78,7 @@ public class DriverCameras {
 
         selectorListener = new SelectorListener(this);
         //Add the entry listener to the. Code from: https://github.com/wpilibsuite/allwpilib/issues/843
-        NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable(selectorName)
+        NetworkTableInstance.getDefault().getTable("Shuffleboard").getSubTable("Camera").getSubTable(selectorName)
             .addEntryListener("selected", selectorListener, EntryListenerFlags.kUpdate);
     }
 
@@ -89,7 +94,9 @@ public class DriverCameras {
 
     public void switchCameraFeed(CameraPosition camera) {
         selectedCamera = cameras.get(camera);
-        // cameraSelection.setString(cameras.get(camera).getName());
+
+        System.out.println(camera + "==============================");
+        System.out.println(selectedCamera.toString());
     }
 
     private class SelectorListener implements TableEntryListener {
