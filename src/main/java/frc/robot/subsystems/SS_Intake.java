@@ -14,6 +14,8 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.util.IntakePosition;
 
 public class SS_Intake extends SubsystemBase {
+
+    //=====INSTANCE VARIABLES=====//
     private DoubleSolenoid shortSolenoid;
     private DoubleSolenoid longSolenoid;
 
@@ -23,6 +25,7 @@ public class SS_Intake extends SubsystemBase {
 
     private IntakePosition currentPosition;
     
+    //=====CONSTRUCTOR=====//
     public SS_Intake() { 
         shortSolenoid = new DoubleSolenoid(DriveConstants.intakeArmSolenoidModule, DriveConstants.intakeArmSolenoidPorts[0], 
                 DriveConstants.intakeArmSolenoidPorts[1]);
@@ -36,9 +39,12 @@ public class SS_Intake extends SubsystemBase {
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
 
+    //=====SETS THE INTAKE ARM POSITION=====//
     public void setArmPosition(IntakePosition position){
+        //This gets the limit switch for the intake arm (if we have one).
         SmartDashboard.putBoolean("getReachedSwitch", getReachedLimit());
         
+        //Depending on the button pressed, this command sets the intake arm position.
         currentPosition = position;
         switch(position){
             case FULLY_RETRACTED:
@@ -63,18 +69,22 @@ public class SS_Intake extends SubsystemBase {
         }
     }
 
+    //=====RETURNS THE POSITION OF THE INTAKE ARM=====//
     public IntakePosition getIntakePosition() {
         return currentPosition;
     }
 
+    //=====SETS THE SPEED OF THE PICKUP MOTOR=====//
     public void setPickupMotorSpeed(double pickUpSpeed){
     	pickupMotor.set(pickUpSpeed);
     }
 
+    //=====SETS THE BREAK MODE OF THE SPARKS=====//
     public void setBrakeMode() {
         pickupMotor.setIdleMode(IdleMode.kBrake);
     }
 
+    //=====RETURNS IF THE LIMIT SWITCH HAS BEEN ACTIVATED=====//
     public boolean getReachedLimit() {
         return !pneumaticLimitSwitch.get();
     } 

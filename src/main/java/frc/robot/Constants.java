@@ -8,6 +8,7 @@
 package frc.robot;
 
 public class Constants {
+    //=====DRIVE CONSTANTS=====//
     public static final class DriveConstants {
         public static final int intakeArmSolenoidModule = 1;
         public static final int[] intakeArmSolenoidPorts = new int[]{3, 2, 1, 0};
@@ -15,6 +16,7 @@ public class Constants {
         public static final int powerCellPickUpMotor = 10;
     }
 
+    //=====OI CONSTANTS=====//
     public static final class OIConstants {
         public static final int kDriverControllerPort = 0;
         
@@ -37,6 +39,7 @@ public class Constants {
         public static final int R_JOYCLICK = 10;
     }
 
+    //=====INTAKE ARM CONSTANTS=====//
     public static final class IntakeConstants {
         public static final double OUTTAKE_SPEED = -0.5;
         public static final double INTAKE_SPEED = 0.5;
