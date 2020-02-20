@@ -36,24 +36,24 @@ public class Constants {
 
         //shooter constants
         //Ports
-        public static final int FLY_WEEL_MOTOR = 9;
-        public static final int BALL_FEED_MOTOR = 1; //TODO
-        public static final int SHOOTER_ANGLE_SOLENOID = 2; //TODO
-            //Positions of solenoid for near and far shooting angles
-        public static final DoubleSolenoid.Value SHOOTER_NEAR_ANGLE = DoubleSolenoid.Value.kForward; //TODO
-        public static final DoubleSolenoid.Value SHOOTER_FAR_ANGLE = DoubleSolenoid.Value.kReverse; //TODO
+    public static final int FLY_WEEL_MOTOR = 9;
+    public static final int BALL_FEED_MOTOR = 1; //TODO
+    public static final int SHOOTER_ANGLE_SOLENOID = 2; //TODO
+           //Positions of solenoid for near and far shooting angles
+    public static final DoubleSolenoid.Value SHOOTER_NEAR_ANGLE = DoubleSolenoid.Value.kForward; //TODO
+    public static final DoubleSolenoid.Value SHOOTER_FAR_ANGLE = DoubleSolenoid.Value.kReverse; //TODO
     
-        //Intake constants
-        public static final int INTAKE_WHEEL_MOTOR = 3; //TODO
-        public static final int INTAKE_SOLENOID_FORWARD = 4; //TODO
-        public static final int INTAKE_SOLENOID_REVERSE = 5; //TODO
+    //Intake constants
+    public static final int INTAKE_WHEEL_MOTOR = 3; //TODO
+    public static final int INTAKE_SOLENOID_FORWARD = 4; //TODO
+    public static final int INTAKE_SOLENOID_REVERSE = 5; //TODO
     
-        //feeder constants
-        public static final int FEEDER_BELT_MOTOR = 6; //TODO
+    //feeder constants
+    public static final int FEEDER_BELT_MOTOR = 6; //TODO
 
-        //Optical sensors for feeder
-        public static final int ENTRY_SENSOR = 10;
-        public static final int EXIT_SENSOR = 11;
+    //Optical sensors for feeder
+    public static final int ENTRY_SENSOR = 20;
+    public static final int EXIT_SENSOR = 21;
     //MISC
     static int joe = 200;
     public static final byte NAVX_UPDATE_RATE = (byte) joe;
