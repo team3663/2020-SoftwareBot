@@ -9,6 +9,7 @@ package frc.robot.drivers;
 
 import java.util.HashMap;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
@@ -18,6 +19,7 @@ import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.networktables.TableEntryListener;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,7 +28,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class DriverCameras {
 
-    CameraServer camServer;
+    VideoSink server;
+    CameraServer cameraServer;
     UsbCamera frontCamera;
     UsbCamera backCamera;
     UsbCamera topCamera;
@@ -37,17 +40,21 @@ public class DriverCameras {
     SelectorListener selectorListener; 
     SendableChooser cameraSelector;
 
+    NetworkTableEntry cameraSelection;
+
     public DriverCameras() {
         initCameras();
         initCameraSelector();
+
+        cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
     }
 
     private void initCameras() {
-        camServer = CameraServer.getInstance();
-        frontCamera = camServer.startAutomaticCapture("front camera", 0);
-        backCamera = camServer.startAutomaticCapture("back camera", 1);
-        topCamera = camServer.startAutomaticCapture("top camera", 2);
-        selectedCamera = backCamera;
+        cameraServer = CameraServer.getInstance();
+        frontCamera = cameraServer.startAutomaticCapture("front camera", 0);
+        backCamera = cameraServer.startAutomaticCapture("back camera", 1);
+        topCamera = cameraServer.startAutomaticCapture("top camera", 2);
+        selectedCamera = frontCamera;
 
         cameras = new HashMap<CameraPosition, UsbCamera>();
         cameras.put(CameraPosition.FRONT, frontCamera);
@@ -94,9 +101,17 @@ public class DriverCameras {
 
     public void switchCameraFeed(CameraPosition camera) {
         selectedCamera = cameras.get(camera);
+        cameraSelection.setString(selectedCamera.getName());
+
+        ShuffleboardTab cameraTab = Shuffleboard.getTab("Camera");
+        cameraWidget = cameraTab.add(selectedCamera)
+            .withWidget(BuiltInWidgets.kCameraStream)
+            .withPosition(3, 0)
+            .withSize(5, 5);
 
         System.out.println(camera + "==============================");
         System.out.println(selectedCamera.toString());
+        cameraWidget.withSize(2, 2);
     }
 
     private class SelectorListener implements TableEntryListener {
