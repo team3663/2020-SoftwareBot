@@ -22,14 +22,14 @@ import frc.robot.subsystems.SS_Drivebase;
 
 public class C_FollowTrajectory extends CommandBase {
 
-  private PidConstants trajectoryTranslationConstans = new PidConstants(1, 0, 0);
+  private PidConstants trajectoryTranslationConstants = new PidConstants(.11, 0, 0);
   private PidConstants trajectoryRotationConstants = new PidConstants(0, 0, 0);
 
   private SS_Drivebase drivebase;
   private Trajectory trajectory;
   private Optional<HolonomicDriveSignal> driveSignal;
   private HolonomicMotionProfiledTrajectoryFollower trajectoryFollower = 
-              new HolonomicMotionProfiledTrajectoryFollower(trajectoryTranslationConstans, trajectoryRotationConstants, 
+              new HolonomicMotionProfiledTrajectoryFollower(trajectoryTranslationConstants, trajectoryRotationConstants, 
               new HolonomicFeedforward(new DrivetrainFeedforwardConstants(0, 0, 0)));
               
   public C_FollowTrajectory(Trajectory trajectory, SS_Drivebase drivebase) {
@@ -46,8 +46,13 @@ public class C_FollowTrajectory extends CommandBase {
   @Override
   public void execute() {
     driveSignal = trajectoryFollower.update(drivebase.getPose(), drivebase.getDriveSignal().getTranslation(), 
-                drivebase.getDriveSignal().getRotation(),drivebase.getCurrentTime(), drivebase.getTimeSinceLastUpdate());
+                drivebase.getDriveSignal().getRotation(), drivebase.getCurrentTime(), drivebase.getTimeSinceLastUpdate());
     drivebase.drive(driveSignal);
+    /*
+    System.out.println("Drive forward:" + driveSignal.get().getTranslation().y);
+    System.out.println("Drive strafe:" + driveSignal.get().getTranslation().x);
+    System.out.println("Drive rotation:" + driveSignal.get().getRotation());
+    */
   }
 
   @Override

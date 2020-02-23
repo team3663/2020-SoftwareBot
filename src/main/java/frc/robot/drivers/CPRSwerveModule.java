@@ -30,7 +30,9 @@ public final class CPRSwerveModule extends SwerveModule {
     private static final double ANGLE_VERSA_GEAR_RATIO = 21.0; // MOTOR REVOLUTIONS TO MODULE REVOLUTIONS
     private static final double ANGLE_TOTAL_GEAR_RATIO = 63.0;
 
-    private static final double DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT = .6963;
+    private static final double DRIVE_GEAR_RATIO = 8.75;
+
+    private static final double DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT = .0796; //in inches
 
     private final double offsetAngle;
 
@@ -98,6 +100,8 @@ public final class CPRSwerveModule extends SwerveModule {
         this.driveMotor.setIdleMode(IdleMode.kBrake);
 
         this.driveMotorEncoder = driveMotor.getEncoder();
+        this.driveMotorEncoder.setVelocityConversionFactor(1.0);
+        this.driveMotorEncoder.setPositionConversionFactor(1.0);
 
         // Setup current limiting
         this.driveMotor.setSmartCurrentLimit(Constants.DRIVE_MOTOR_AMP_LIMIT);
@@ -149,9 +153,23 @@ public final class CPRSwerveModule extends SwerveModule {
         driveEncoderPositionOffset = driveMotorEncoder.getPosition();
     }
 
+    /**
+     * @return units per second of the drive motor
+     */
     @Override
     public double getCurrentVelocity() {
-        return driveMotorEncoder.getVelocity() * (1 / 60) * (1 / driveRevolutionsPerUnit);
+        return driveMotorEncoder.getVelocity() / 60.0 / DRIVE_GEAR_RATIO / driveRevolutionsPerUnit;
+    }
+
+    /**
+     * @return the current RPMs of the drive motor, not the wheel
+     */
+    public double getDriveMotorRpms() {
+        return driveMotorEncoder.getVelocity();
+    }
+
+    public CANEncoder getDriveEncoder() {
+        return driveMotorEncoder;
     }
 
     @Override

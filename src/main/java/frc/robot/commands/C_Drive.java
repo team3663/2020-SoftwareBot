@@ -34,6 +34,7 @@ public class C_Drive extends CommandBase {
   @Override
   public void execute() {
     drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), rotation.getAsDouble(), true);
+    //drivebase.drive(new Vector2(forward.getAsDouble(), 0.0), 0.0, true);
   }
 
   @Override

@@ -92,10 +92,13 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
   private NetworkTableEntry gyroAngleEntry;
   private NetworkTableEntry correctionAngleEntry;
 
+  private NetworkTableEntry driveSignalXEntry;
+  private NetworkTableEntry driveSignalYEntry;
+  private NetworkTableEntry driveSignalRotationEntry;
+
   private NetworkTableEntry[] moduleAngleEntries = new NetworkTableEntry[modules.length];
   private NetworkTableEntry[] moduleEncoderVoltageEntries = new NetworkTableEntry[modules.length];
-
-  private NetworkTableEntry testTickCount;
+  private NetworkTableEntry[] moduleVelocityEntries = new NetworkTableEntry[modules.length];
 
   public SS_Drivebase() {
     synchronized (sensorLock) {
@@ -116,29 +119,41 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
             .withSize(1, 1)
             .getEntry();
 
+    ShuffleboardLayout driveSignalContainer = drivebaseTab.getLayout("Drive Signal", BuiltInLayouts.kGrid)
+            .withPosition(0, 3)
+            .withSize(3, 1);
+    driveSignalYEntry = driveSignalContainer.add("Drive Signal Forward", 0.0).getEntry();
+    driveSignalXEntry = driveSignalContainer.add("Drive Signal Strafe", 0.0).getEntry();
+    driveSignalRotationEntry = driveSignalContainer.add("Drive Signal Rotation", 0.0).getEntry();
+
+
     ShuffleboardLayout frontLeftModuleContainer = drivebaseTab.getLayout("Front Left Module", BuiltInLayouts.kList)
             .withPosition(5, 0)
             .withSize(2, 2);
     moduleAngleEntries[0] = frontLeftModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[0] = frontLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    moduleVelocityEntries[0] = frontLeftModuleContainer.add("Velocity", 0.0).getEntry();
 
     ShuffleboardLayout frontRightModuleContainer = drivebaseTab.getLayout("Front Right Module", BuiltInLayouts.kList)
             .withPosition(7, 0)
             .withSize(2, 2);
     moduleAngleEntries[1] = frontRightModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[1] = frontRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    moduleVelocityEntries[1] = frontRightModuleContainer.add("Velocity", 0.0).getEntry();
 
     ShuffleboardLayout backLeftModuleContainer = drivebaseTab.getLayout("Back Left Module", BuiltInLayouts.kList)
             .withPosition(5, 2)
             .withSize(2, 2);
     moduleAngleEntries[2] = backLeftModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[2] = backLeftModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    moduleVelocityEntries[2] = backLeftModuleContainer.add("Velocity", 0.0).getEntry();
 
     ShuffleboardLayout backRightModuleContainer = drivebaseTab.getLayout("Back Right Module", BuiltInLayouts.kList)
             .withPosition(7, 2)
             .withSize(2, 2);
     moduleAngleEntries[3] = backRightModuleContainer.add("Angle", 0.0).getEntry();
     moduleEncoderVoltageEntries[3] = backRightModuleContainer.add("Encoder Voltage", 0.0).getEntry();
+    moduleVelocityEntries[3] = backRightModuleContainer.add("Velocity", 0.0).getEntry();
 
     ShuffleboardLayout fieldOrientedContainer = drivebaseTab.getLayout("Field Oriented", BuiltInLayouts.kList).withPosition(1, 0).withSize(1, 1);
     fieldOrientedEntry = fieldOrientedContainer.add("Field Oriented", 0.0).getEntry();
@@ -148,8 +163,6 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
 
     ShuffleboardLayout correctionContainer = drivebaseTab.getLayout("Correction", BuiltInLayouts.kList).withPosition(1, 2).withSize(1, 1);
     correctionAngleEntry = correctionContainer.add("Correction", 0.0).getEntry();
-
-    testTickCount = drivebaseTab.add("Test Tick Count", 0.0).getEntry();
   }
 
   public RigidTransform2 getPose() {
@@ -206,6 +219,12 @@ public void resetGyroAngle(Rotation2 angle) {
     }
 }
 
+public void resetPose() {
+    synchronized(kinematicsLock) {
+        odometry.resetPose(RigidTransform2.ZERO);
+    }
+}
+
 @Override
     public void update(double timestamp, double dt) {
         currentTime = timestamp;
@@ -227,7 +246,9 @@ public void resetGyroAngle(Rotation2 angle) {
             var module = modules[i];
             module.updateSensors();
 
-            moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(module.readAngle())).scale(module.getCurrentVelocity());
+            double moduleAngle = module.readAngle();
+            double moduleVelocity = module.getCurrentVelocity();            
+            moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(moduleAngle)).scale(moduleVelocity);
         }
 
         Rotation2 angle;
@@ -289,7 +310,12 @@ public void resetGyroAngle(Rotation2 angle) {
             var module = modules[i];
             moduleAngleEntries[i].setDouble(Math.toDegrees(module.readAngle()));
             moduleEncoderVoltageEntries[i].setDouble(module.getEncoderVoltage());
+            moduleVelocityEntries[i].setDouble(module.getCurrentVelocity());
         }
-        testTickCount.setDouble(modules[0].getDriveRevs());
+        synchronized(stateLock) {
+            driveSignalYEntry.setDouble(driveSignal.getTranslation().y);
+            driveSignalXEntry.setDouble(driveSignal.getTranslation().x);
+            driveSignalRotationEntry.setDouble(driveSignal.getRotation());
+        }
     }
 }

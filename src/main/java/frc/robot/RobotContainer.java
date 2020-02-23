@@ -33,7 +33,7 @@ public class RobotContainer {
     private final UpdateManager updateManager = new UpdateManager(drivebase);
 
     public RobotContainer() {
-
+        
         driveController.getRightXAxis().setScale(.3);
 
         CommandScheduler.getInstance().setDefaultCommand(drivebase,
@@ -48,14 +48,15 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        driveController.getBackButton()
-                .whenPressed(new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase));
+        driveController.getBackButton().whenPressed(new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase));
+        driveController.getAButton().whenPressed(new InstantCommand(() -> drivebase.resetPose()));
+        driveController.getYButton().whenPressed(new InstantCommand(() -> drivebase.getModules()[0].zeroDriveEncoder(), drivebase));
     }
 
     public void runAutonomousRoutine() {
         //CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new C_FollowTrajectory(Trajectories.testAutoTrajectory, drivebase)));
         CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(
-                new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase),
+                //new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase),
                 new C_FollowTrajectory(Trajectories.driveStraightTrajectoryBuilder(6.0), drivebase))
         );
     }
