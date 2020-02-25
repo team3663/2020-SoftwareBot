@@ -184,14 +184,8 @@ public void drive(HolonomicDriveSignal driveSignal) {
 }
 
 public void drive(Optional<HolonomicDriveSignal> driveSignal) {
-    if(driveSignal.isPresent()) {
-        synchronized(stateLock) {
-            this.driveSignal = driveSignal.get();
-        }
-    } else {
-        synchronized(stateLock) {
-            this.driveSignal = new HolonomicDriveSignal(Vector2.ZERO, 0.0, false);
-        }
+    synchronized(stateLock) {
+        this.driveSignal = driveSignal.orElse(new HolonomicDriveSignal(Vector2.ZERO, 0.0, false));
     }
 }
 

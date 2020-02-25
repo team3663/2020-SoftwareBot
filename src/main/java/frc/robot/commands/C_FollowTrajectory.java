@@ -22,7 +22,7 @@ import frc.robot.subsystems.SS_Drivebase;
 
 public class C_FollowTrajectory extends CommandBase {
 
-  private PidConstants trajectoryTranslationConstants = new PidConstants(.11, 0, 0);
+  private PidConstants trajectoryTranslationConstants = new PidConstants(0, 0, 0);
   private PidConstants trajectoryRotationConstants = new PidConstants(0, 0, 0);
 
   private SS_Drivebase drivebase;
@@ -45,14 +45,9 @@ public class C_FollowTrajectory extends CommandBase {
 
   @Override
   public void execute() {
-    driveSignal = trajectoryFollower.update(drivebase.getPose(), drivebase.getDriveSignal().getTranslation(), 
+    driveSignal = trajectoryFollower.update(drivebase.getPose(), drivebase.getDriveSignal().getTranslation().rotateBy(drivebase.getPose().rotation), 
                 drivebase.getDriveSignal().getRotation(), drivebase.getCurrentTime(), drivebase.getTimeSinceLastUpdate());
-    drivebase.drive(driveSignal);
-    /*
-    System.out.println("Drive forward:" + driveSignal.get().getTranslation().y);
-    System.out.println("Drive strafe:" + driveSignal.get().getTranslation().x);
-    System.out.println("Drive rotation:" + driveSignal.get().getRotation());
-    */
+    drivebase.drive(driveSignal.orElse(new HolonomicDriveSignal(Vector2.ZERO, 0.0, false)));
   }
 
   @Override

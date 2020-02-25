@@ -55,9 +55,9 @@ public class RobotContainer {
 
     public void runAutonomousRoutine() {
         //CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new C_FollowTrajectory(Trajectories.testAutoTrajectory, drivebase)));
-        CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(
+        CommandScheduler.getInstance().schedule(false, new SequentialCommandGroup(
                 //new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase),
-                new C_FollowTrajectory(Trajectories.driveStraightTrajectoryBuilder(6.0), drivebase))
+                new C_FollowTrajectory(Trajectories.driveForwardTrajectory, drivebase))
         );
     }
 }

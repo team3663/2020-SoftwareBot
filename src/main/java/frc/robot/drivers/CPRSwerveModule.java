@@ -30,9 +30,9 @@ public final class CPRSwerveModule extends SwerveModule {
     private static final double ANGLE_VERSA_GEAR_RATIO = 21.0; // MOTOR REVOLUTIONS TO MODULE REVOLUTIONS
     private static final double ANGLE_TOTAL_GEAR_RATIO = 63.0;
 
-    private static final double DRIVE_GEAR_RATIO = 8.75;
+    private static final double DRIVE_GEAR_RATIO = 10.67; //2020 Final Robot 8.75, 2020 Software Bot ~10.67
 
-    private static final double DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT = .0796; //in inches
+    private static final double DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT = .076; //in inches; theoretically .0796, accounted for wheel wear
 
     private final double offsetAngle;
 
@@ -179,7 +179,7 @@ public final class CPRSwerveModule extends SwerveModule {
 
     @Override
     public double readDistance() {
-        return driveMotorEncoder.getPosition() / driveRevolutionsPerUnit;
+        return driveMotorEncoder.getPosition() / driveRevolutionsPerUnit / DRIVE_GEAR_RATIO;
     }
     /**
      * @param angle IN RADIANS

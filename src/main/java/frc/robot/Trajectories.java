@@ -37,7 +37,7 @@ public class Trajectories {
 
     //Basic drive forward trajectory
     static Path driveForwardAutoPath = new SimplePathBuilder(Vector2.ZERO, Rotation2.ZERO).lineTo(new Vector2(0, 6.0)).build();
-    static TrajectoryConstraint[] driveForwardAutoConstraints = {new MaxVelocityConstraint(1.0), new MaxAccelerationConstraint(12.0)};
+    static TrajectoryConstraint[] driveForwardAutoConstraints = {new MaxVelocityConstraint(.5), new MaxAccelerationConstraint(.1)};
     
     public static Trajectory driveForwardTrajectory = new Trajectory(driveForwardAutoPath, driveForwardAutoConstraints, DEFAULT_SAMPLE_DISTANCE);
 
