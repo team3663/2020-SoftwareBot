@@ -33,8 +33,7 @@ public class C_AutoDrive extends CommandBase {
   private double angleKd = 0;
   private PidConstants angleConstants = new PidConstants(angleKp, angleKi, angleKd);
 
-  private PidController forwardController = new PidController(translationConstants);
-  private PidController strafeController = new PidController(translationConstants);
+  private PidController translationController = new PidController(translationConstants);
   private double translationPercentTolerance = .015;
 
   private PidController rotationController = new PidController(angleConstants);
@@ -47,7 +46,9 @@ public class C_AutoDrive extends CommandBase {
   /**
    * @param drivebase the drivebase subsystem
    * @param targetTranslation inches for the robot to travel, negative inches are backwards
-   * @param angle angle to travel at in radians
+   * @param translationPercentOutput the maximum percent output for translation
+   * @param rotation angle to turn to in radians
+   * @param rotationPercentOutput the maximum percent output for rotation
    */
   public C_AutoDrive(SS_Drivebase drivebase, Vector2 targetTranslation, double translationPercentOutput,
       double targetRotation, double rotationPercentOutput) {
@@ -56,10 +57,8 @@ public class C_AutoDrive extends CommandBase {
     this.targetRotation = targetRotation;
     addRequirements(drivebase);
 
-    forwardController.setSetpoint(targetTranslation.x);
-    forwardController.setOutputRange(-translationPercentOutput, translationPercentOutput);
-    strafeController.setSetpoint(targetTranslation.y);
-    strafeController.setOutputRange(-translationPercentOutput, translationPercentOutput);
+    translationController.setSetpoint(targetTranslation.length);
+    translationController.setOutputRange(-translationPercentOutput, translationPercentOutput);
     
     rotationController.setSetpoint(targetRotation);
     rotationController.setInputRange(0, Math.PI * 2);
@@ -80,11 +79,12 @@ public class C_AutoDrive extends CommandBase {
     currentPose = drivebase.getPose();
     currentAngle = currentPose.rotation.toRadians();
 
-    double forward = forwardController.calculate(currentPose.translation.x, dt);
-    double strafe = strafeController.calculate(currentPose.translation.y, dt);
+    double translationSpeed = translationController.calculate(Math.hypot(currentPose.translation.x, currentPose.translation.y), dt);
+    Vector2 translationVector = Vector2.fromAngle(targetTranslation.getAngle()).normal().scale(translationSpeed);
+
     double rotation = rotationController.calculate(currentPose.rotation.toRadians(), dt);
 
-    drivebase.drive(new Vector2(forward, strafe), rotation, true);
+    drivebase.drive(translationVector, rotation, true);
   }
 
   @Override
