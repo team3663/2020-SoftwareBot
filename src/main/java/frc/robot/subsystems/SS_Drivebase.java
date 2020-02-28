@@ -23,6 +23,7 @@ import frc.robot.Constants;
 
 import org.frcteam2910.common.math.*;
 import org.frcteam2910.common.util.HolonomicDriveSignal;
+import org.frcteam2910.common.drivers.Gyroscope;
 import org.frcteam2910.common.kinematics.ChassisVelocity;
 import org.frcteam2910.common.kinematics.SwerveKinematics;
 import org.frcteam2910.common.kinematics.SwerveOdometry;
@@ -34,7 +35,7 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
     public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(67);
     public static final double FRONT_RIGHT_MODULE_OFFSET = Math.toRadians(-12);
     public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(-97);
-    public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-8);
+    public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-58);
 
     private final Vector2 frontLeftModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, Constants.WHEELBASE / 2.0);
     private final Vector2 frontRightModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, -Constants.WHEELBASE / 2.0);
@@ -82,6 +83,7 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
 
     private double currentTime = 0.0;
     private double dt;
+    private ChassisVelocity kinematicVelocity;
 
     private NetworkTableEntry poseXEntry;
     private NetworkTableEntry poseYEntry;
@@ -121,8 +123,8 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
         ShuffleboardLayout driveSignalContainer = drivebaseTab.getLayout("Drive Signal", BuiltInLayouts.kGrid)
                 .withPosition(0, 3)
                 .withSize(3, 1);
-        driveSignalYEntry = driveSignalContainer.add("Drive Signal Forward", 0.0).getEntry();
-        driveSignalXEntry = driveSignalContainer.add("Drive Signal Strafe", 0.0).getEntry();
+        driveSignalYEntry = driveSignalContainer.add("Drive Signal Strafe", 0.0).getEntry();
+        driveSignalXEntry = driveSignalContainer.add("Drive Signal Forward", 0.0).getEntry();
         driveSignalRotationEntry = driveSignalContainer.add("Drive Signal Rotation", 0.0).getEntry();
 
 
@@ -196,12 +198,20 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
         return currentTime;
     }
 
-    public double getTimeSinceLastUpdate() {
+    public double getDeltaTime() {
         return dt;
+    }
+
+    public ChassisVelocity getKinematicVelocity() {
+        return kinematicVelocity;
     }
 
     public CPRSwerveModule[] getModules() {
         return modules;
+    }
+
+    public Gyroscope getGyro() {
+        return navX;
     }
 
     public void resetGyroAngle(Rotation2 angle) {
@@ -215,6 +225,13 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
     public void resetPose() {
         synchronized(kinematicsLock) {
             odometry.resetPose(RigidTransform2.ZERO);
+        }
+    }
+
+    public void resetPoseTranslation() {
+        synchronized(kinematicsLock) {
+            RigidTransform2 previousPose = pose;
+            odometry.resetPose(new RigidTransform2(Vector2.ZERO, previousPose.rotation));
         }
     }
 
@@ -243,6 +260,8 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
             double moduleVelocity = module.getCurrentVelocity();            
             moduleVelocities[i] = Vector2.fromAngle(Rotation2.fromRadians(moduleAngle)).scale(moduleVelocity);
         }
+
+        kinematicVelocity = kinematics.toChassisVelocity(moduleVelocities);
 
         Rotation2 angle;
         synchronized (sensorLock) {

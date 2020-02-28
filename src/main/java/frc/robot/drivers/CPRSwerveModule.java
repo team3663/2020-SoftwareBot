@@ -32,7 +32,7 @@ public final class CPRSwerveModule extends SwerveModule {
 
     private static final double DRIVE_GEAR_RATIO = 10.67; //2020 Final Robot 8.75, 2020 Software Bot ~10.67
 
-    private static final double DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT = .076; //in inches; theoretically .0796, accounted for wheel wear
+    private static final double DEFAULT_WHEEL_REVOLUTIONS_PER_UNIT = .076; //in inches; theoretically .0796, accounted for wheel wear
 
     private final double offsetAngle;
 
@@ -56,9 +56,9 @@ public final class CPRSwerveModule extends SwerveModule {
     /**
      * The amount of drive encoder ticks that occur for one unit of travel.
      *
-     * @see #DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT
+     * @see #DEFAULT_WHEEL_REVOLUTIONS_PER_UNIT
      */
-    private volatile double driveRevolutionsPerUnit = DEFAULT_DRIVE_REVOLUTIONS_PER_UNIT;
+    private volatile double wheelRevolutionsPerUnit = DEFAULT_WHEEL_REVOLUTIONS_PER_UNIT;
 
     /**
      * @param modulePosition the module's offset from the center of the robot
@@ -118,7 +118,7 @@ public final class CPRSwerveModule extends SwerveModule {
      * @param driveRevolutionsPerUnit the amount of drive ticks that occur per unit of travel
      */
     public void setDriveTicksPerUnit(double driveRevolutionsPerUnit) {
-        this.driveRevolutionsPerUnit = driveRevolutionsPerUnit;
+        this.wheelRevolutionsPerUnit = driveRevolutionsPerUnit;
     }
 
     @Override
@@ -158,7 +158,7 @@ public final class CPRSwerveModule extends SwerveModule {
      */
     @Override
     public double getCurrentVelocity() {
-        return driveMotorEncoder.getVelocity() / 60.0 / DRIVE_GEAR_RATIO / driveRevolutionsPerUnit;
+        return driveMotorEncoder.getVelocity() / 60.0 / DRIVE_GEAR_RATIO / wheelRevolutionsPerUnit;
     }
 
     /**
@@ -177,9 +177,12 @@ public final class CPRSwerveModule extends SwerveModule {
         return driveMotor.getOutputCurrent();
     }
 
+    /**
+     * @return distance of the drive encoder in default units
+     */
     @Override
     public double readDistance() {
-        return driveMotorEncoder.getPosition() / driveRevolutionsPerUnit / DRIVE_GEAR_RATIO;
+        return driveMotorEncoder.getPosition() / wheelRevolutionsPerUnit / DRIVE_GEAR_RATIO;
     }
     /**
      * @param angle IN RADIANS

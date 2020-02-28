@@ -34,7 +34,7 @@ public class C_Drive extends CommandBase {
   public void execute() {
     double deadbandedRotation = deadband(rotation.getAsDouble(), .0025);
     drivebase.drive(new Vector2(forward.getAsDouble(), strafe.getAsDouble()), deadbandedRotation, true);
-    //drivebase.drive(new Vector2(forward.getAsDouble(), 0.0), 0.0, true);
+    //drivebase.drive(new Vector2(0.0, forward.getAsDouble()), 0.0, false);
   }
 
   @Override

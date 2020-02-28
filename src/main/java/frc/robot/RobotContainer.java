@@ -8,17 +8,19 @@
 package frc.robot;
 
 import org.frcteam2910.common.math.Rotation2;
+import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.robot.UpdateManager;
 import org.frcteam2910.common.robot.input.Controller;
 import org.frcteam2910.common.robot.input.XboxController;
 import org.frcteam2910.common.robot.input.DPadButton.Direction;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
-import frc.robot.commandgroups.CG_AutonomousRoutine;
 import frc.robot.commands.C_Drive;
+import frc.robot.commands.C_AutoDrive;
 import frc.robot.commands.C_FollowTrajectory;
 import frc.robot.subsystems.SS_Drivebase;
 
@@ -53,11 +55,11 @@ public class RobotContainer {
         driveController.getYButton().whenPressed(new InstantCommand(() -> drivebase.getModules()[0].zeroDriveEncoder(), drivebase));
     }
 
-    public void runAutonomousRoutine() {
-        //CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new C_FollowTrajectory(Trajectories.testAutoTrajectory, drivebase)));
-        CommandScheduler.getInstance().schedule(false, new SequentialCommandGroup(
-                //new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase),
-                new C_FollowTrajectory(Trajectories.driveForwardTrajectory, drivebase))
+    public SequentialCommandGroup getAutonomousCommand() {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase),
+            //new C_FollowTrajectory(Trajectories.driveForwardTrajectory, drivebase)
+            new C_AutoDrive(drivebase, new Vector2(0, 0), 0.0, Math.toRadians(90), 1.0)
         );
     }
 }

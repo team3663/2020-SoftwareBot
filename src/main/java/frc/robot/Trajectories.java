@@ -15,7 +15,7 @@ import org.frcteam2910.common.math.*;
  */
 public class Trajectories {
 
-    private static final double DEFAULT_SAMPLE_DISTANCE = 5.0e-1;
+    private static final double DEFAULT_SAMPLE_DISTANCE = 5.0e-2;
 
     //Test Autonomous Trajectory Creation
     /*
@@ -36,7 +36,7 @@ public class Trajectories {
     public static Trajectory testAutoTrajectory = new Trajectory(testAutoPath, testAutoConstraints, DEFAULT_SAMPLE_DISTANCE);
 
     //Basic drive forward trajectory
-    static Path driveForwardAutoPath = new SimplePathBuilder(Vector2.ZERO, Rotation2.ZERO).lineTo(new Vector2(0, 6.0)).build();
+    static Path driveForwardAutoPath = new SimplePathBuilder(Vector2.ZERO, Rotation2.ZERO).lineTo(new Vector2(0.0, 3.0)).build();
     static TrajectoryConstraint[] driveForwardAutoConstraints = {new MaxVelocityConstraint(.5), new MaxAccelerationConstraint(.1)};
     
     public static Trajectory driveForwardTrajectory = new Trajectory(driveForwardAutoPath, driveForwardAutoConstraints, DEFAULT_SAMPLE_DISTANCE);

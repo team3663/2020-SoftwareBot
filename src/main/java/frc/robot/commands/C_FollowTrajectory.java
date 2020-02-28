@@ -45,18 +45,21 @@ public class C_FollowTrajectory extends CommandBase {
 
   @Override
   public void execute() {
-    driveSignal = trajectoryFollower.update(drivebase.getPose(), drivebase.getDriveSignal().getTranslation().rotateBy(drivebase.getPose().rotation), 
-                drivebase.getDriveSignal().getRotation(), drivebase.getCurrentTime(), drivebase.getTimeSinceLastUpdate());
+    driveSignal = trajectoryFollower.update(drivebase.getPose(), drivebase.getKinematicVelocity().getTranslationalVelocity(),
+                drivebase.getGyro().getRate(), drivebase.getCurrentTime(), drivebase.getDeltaTime());
     drivebase.drive(driveSignal.orElse(new HolonomicDriveSignal(Vector2.ZERO, 0.0, false)));
   }
 
   @Override
   public void end(boolean interrupted) {
-    trajectoryFollower.cancel();
+    if (interrupted) {
+      trajectoryFollower.cancel();
+    }
+    drivebase.drive(new HolonomicDriveSignal(Vector2.ZERO, 0.0, false));
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return trajectoryFollower.getCurrentTrajectory().isEmpty();
   }
 }
