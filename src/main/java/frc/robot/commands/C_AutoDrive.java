@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.commands;
 
 import org.frcteam2910.common.control.PidConstants;
@@ -14,6 +7,7 @@ import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.util.HolonomicDriveSignal;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SS_Drivebase;
 
@@ -23,25 +17,28 @@ public class C_AutoDrive extends CommandBase {
   private Vector2 targetTranslation;
   private double targetRotation;
 
-  private double translationKp = 0;
+  private double translationKp = .017;
   private double translationKi = 0;
   private double translationKd = 0;
   private PidConstants translationConstants = new PidConstants(translationKp, translationKi, translationKd);
 
-  private double angleKp = 0;
-  private double angleKi = 0;
-  private double angleKd = 0;
-  private PidConstants angleConstants = new PidConstants(angleKp, angleKi, angleKd);
+  private double rotationKp = -.048;
+  private double rotationKi = 0;
+  private double rotationKd = 0;
+  private PidConstants rotationConstants = new PidConstants(rotationKp, rotationKi, rotationKd);
 
   private PidController translationController = new PidController(translationConstants);
-  private double translationPercentTolerance = .015;
+  private double translationPercentTolerance = .025;
 
-  private PidController rotationController = new PidController(angleConstants);
+  private PidController rotationController = new PidController(rotationConstants);
   private double rotationPercentTolerance = .01;
 
   private double lastTimeStamp;
   private double currentAngle;
   private RigidTransform2 currentPose;
+
+  private double translationSpeed;
+  private double rotationSpeed;
 
   /**
    * @param drivebase the drivebase subsystem
@@ -61,7 +58,7 @@ public class C_AutoDrive extends CommandBase {
     translationController.setOutputRange(-translationPercentOutput, translationPercentOutput);
     
     rotationController.setSetpoint(targetRotation);
-    rotationController.setInputRange(0, Math.PI * 2);
+    rotationController.setInputRange(0, 2 * Math.PI);
     rotationController.setContinuous(true);
     rotationController.setOutputRange(-rotationPercentOutput, rotationPercentOutput);
   }
@@ -79,12 +76,12 @@ public class C_AutoDrive extends CommandBase {
     currentPose = drivebase.getPose();
     currentAngle = currentPose.rotation.toRadians();
 
-    double translationSpeed = translationController.calculate(Math.hypot(currentPose.translation.x, currentPose.translation.y), dt);
+    translationSpeed = translationController.calculate(Math.hypot(currentPose.translation.x, currentPose.translation.y), dt);
     Vector2 translationVector = Vector2.fromAngle(targetTranslation.getAngle()).normal().scale(translationSpeed);
 
-    double rotation = rotationController.calculate(currentPose.rotation.toRadians(), dt);
-
-    drivebase.drive(translationVector, rotation, true);
+    rotationSpeed = rotationController.calculate(currentAngle, dt);
+    
+    drivebase.drive(translationVector, rotationSpeed, true);
   }
 
   @Override
@@ -94,8 +91,12 @@ public class C_AutoDrive extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return Math.abs(targetRotation - currentAngle) < targetRotation * rotationPercentTolerance &&
-        Math.abs(targetTranslation.y - currentPose.translation.y) < targetTranslation.y * translationPercentTolerance &&
-        Math.abs(targetTranslation.x - currentPose.translation.x) < targetTranslation.x * translationPercentTolerance;
+    return ((Math.abs(targetRotation - currentAngle) <= 2 * Math.PI * rotationPercentTolerance ||
+        targetRotation == 0.0) &&
+        (Math.abs(targetTranslation.y - currentPose.translation.y) <= targetTranslation.y * translationPercentTolerance ||
+        targetTranslation.y == 0.0)&&
+        (Math.abs(targetTranslation.x - currentPose.translation.x) <= targetTranslation.x * translationPercentTolerance ||
+        targetTranslation.x == 0.0))
+        ||(translationSpeed <= .001);
   }
 }

@@ -1,19 +1,18 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.util;
+
+import org.frcteam2910.common.math.Vector2;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.C_AutoDrive;
+import frc.robot.subsystems.SS_Drivebase;
 
 public class AutonomousBuilder {
 
@@ -21,8 +20,10 @@ public class AutonomousBuilder {
     private SendableChooser movementSelector;
     private NetworkTableEntry shootDelayEntry;
     private NetworkTableEntry movementDelayEntry;
+    private SS_Drivebase drivebase;
     
-    public AutonomousBuilder() {
+    public AutonomousBuilder(SS_Drivebase drivebase) {
+        this.drivebase = drivebase;
         initStartingPositionSelector();
         initMovementSelector();
 
@@ -74,10 +75,34 @@ public class AutonomousBuilder {
         WaitCommand shootDelay = new WaitCommand(shootDelayEntry.getDouble(0.0));
         WaitCommand movementDelay = new WaitCommand(movementDelayEntry.getDouble(0.0));
 
-        SequentialCommandGroup autoRoutine = new SequentialCommandGroup(
-            shootDelay,
-            movementDelay
-        );
+        SequentialCommandGroup autoRoutine = new SequentialCommandGroup(shootDelay);
+
+        //add shoot command
+
+        autoRoutine.addCommands(movementDelay);
+
+        if(movementSelector.getSelected().equals(MovementStrategy.BACKWARD)){
+            autoRoutine.addCommands(new C_AutoDrive(drivebase, new Vector2(-24.0, 0.0), .5, 0.0, 0.0));
+        } else if (movementSelector.getSelected().equals(MovementStrategy.FORWARD)) {
+            autoRoutine.addCommands(new C_AutoDrive(drivebase, new Vector2(24.0, 0.0), .5, 0.0, 0.0));
+        } else if(movementSelector.getSelected().equals(MovementStrategy.TRENCH)) {
+            if(startingPositionSelector.getSelected().equals(StartingPosition.RIGHT)){
+                autoRoutine.addCommands(new ParallelCommandGroup(
+                        new C_AutoDrive(drivebase, new Vector2(-190, 0.0), .5, 0.0, 0.0)
+                        //intake command
+                    )
+                );
+            } else if (startingPositionSelector.getSelected().equals(StartingPosition.MIDDLE)) {
+                autoRoutine.addCommands(new C_AutoDrive(drivebase, new Vector2(-80.0, 66.0), .7, 0.0, 0.0),
+                        new ParallelCommandGroup(
+                            new C_AutoDrive(drivebase, new Vector2(-100.0, 0.0), .5, 0.0, 0.0)
+                            // intake command
+                            )
+                );
+            } else if (startingPositionSelector.getSelected().equals(StartingPosition.LEFT)) {
+                //TODO
+            }
+        }
 
         return autoRoutine;
     }
