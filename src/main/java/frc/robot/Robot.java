@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.RobotContainer;
 
 public class Robot extends TimedRobot {
-  private final RobotContainer container = new RobotContainer();
+  private final RobotContainer container = new RobotContainer();    // creating an instance of RobotContainer
 
   @Override
   public void robotInit() {
   }
 
   @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
+  public void robotPeriodic() {   
+    CommandScheduler.getInstance().run();     // robot does not move without this
   }
 
 }

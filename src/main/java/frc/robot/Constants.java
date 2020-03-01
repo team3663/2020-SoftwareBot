@@ -11,9 +11,9 @@ package frc.robot;
  * All constants for robot control are found here.
  */
 public class Constants {
-    //ROBOT DIMENSIONS
-    public static final double TRACKWIDTH = 23.5;
-    public static final double WHEELBASE = 23.63;
+    //ROBOT DIMENSIONS, unit: inches
+    public static final double TRACKWIDTH = 23.5;   // width between left and right swerve module centers
+    public static final double WHEELBASE = 23.63;   // length between front and back swerve module centers
 
     //SWERVE CAN IDs
     public static final int FRONT_LEFT_DRIVE_MOTOR = 1;

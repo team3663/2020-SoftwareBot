@@ -31,11 +31,19 @@ public class SS_Drivebase extends SubsystemBase implements UpdateManager.Updatab
     private static final double ROTATION_VELOCITY_MULTIPLIER = 2.0;
 
     //SWERVE MODULE ANGLE ENCODER OFFSETS (in radians, obviously)
+    //TODO: calibrate this offset so that the drive wheels are aligned properly (straight)
+    //When calibrated properly, angle encoder indicate actual angle (absolute encoder)
     public static final double FRONT_LEFT_MODULE_OFFSET = Math.toRadians(67);
     public static final double FRONT_RIGHT_MODULE_OFFSET = Math.toRadians(-12);
     public static final double BACK_LEFT_MODULE_OFFSET = Math.toRadians(-97);
     public static final double BACK_RIGHT_MODULE_OFFSET = Math.toRadians(-8);
 
+    //As of 3/1/2020, apparently swerve is set up as following:
+    //translational: x-axis is front-and-back, y-axis is left-and-right reversed
+    //rotational: zero degree angle is pointing to the right of the robot,
+    //90 degree angle is pointing the front, 180 degree is pointing to the left, 270 degree pointing to the back
+    //yes, as if we are looking up from the bottom of the robot
+    //TODO: Change the setup so that zero degree is front, 90 is right, etc. ALSO, traditional Cartetian XY coordinates
     private final Vector2 frontLeftModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, Constants.WHEELBASE / 2.0);
     private final Vector2 frontRightModulePosition = new Vector2(-Constants.TRACKWIDTH / 2.0, -Constants.WHEELBASE / 2.0);
     private final Vector2 backLeftModulePosition = new Vector2(Constants.TRACKWIDTH / 2.0, Constants.WHEELBASE / 2.0);

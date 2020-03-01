@@ -30,25 +30,33 @@ public class RobotContainer {
 
     public RobotContainer() {
         
+        // "desensitize" the controller 1.0 is 100%
         driveController.getRightXAxis().setScale(.3);
 
+        // passing controller data to C_Drive command
+        // drive directions: left-x left-y, rotation: rigth-x, SEE ALSO C_Drive command
         CommandScheduler.getInstance().setDefaultCommand(drivebase,
                 new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
                         () -> driveController.getLeftXAxis().get(true),
                         () -> driveController.getRightXAxis().get(true)));
         
+        // this is used to robot drives like a tank-drive
         /*
         CommandScheduler.getInstance().setDefaultCommand(drivebase,
                 new C_Drive(drivebase, () -> driveController.getLeftYAxis().get(true),
                         () -> 0.0,
                         () -> driveController.getRightXAxis().get(true)));
         */
+
         updateManager.startLoop(5.0e-3);
 
-        configureButtonBindings();
+        configureButtonBindings();  
     }
 
     private void configureButtonBindings() {
+        // binding any button to control robot here
+
+        // backButton resets gyro for field orientated driving
         driveController.getBackButton().whenPressed(new InstantCommand(() -> drivebase.resetGyroAngle(Rotation2.ZERO), drivebase));
     }
 }
